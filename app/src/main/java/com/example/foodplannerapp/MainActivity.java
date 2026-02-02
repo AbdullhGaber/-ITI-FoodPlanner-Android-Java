@@ -1,4 +1,4 @@
-package com.example.foodplannerapp.view;
+package com.example.foodplannerapp;
 
 import android.os.Bundle;
 
@@ -7,9 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
-import com.example.foodplannerapp.R;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 

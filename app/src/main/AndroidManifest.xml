@@ -13,16 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FoodPlannerApp">
         <activity
-            android:name=".view.auth.SignUpActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.auth.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.details.MealDetailsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
