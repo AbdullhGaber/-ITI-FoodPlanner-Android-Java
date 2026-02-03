@@ -56,6 +56,7 @@ dependencies {
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.rxjava3)
+    implementation(libs.fragment)
     annotationProcessor(libs.room.compiler)
 
     // Glide

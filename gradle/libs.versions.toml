@@ -19,6 +19,7 @@ lottie = "6.1.0"
 navigation = "2.7.5"
 firebaseBom = "34.8.0" # Latest stable BoM as of Jan 2026
 googleServices = "4.4.0"
+fragment = "1.8.9"
 
 [libraries]
 # ... existing libraries ...
@@ -59,6 +60,7 @@ firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 # Navigation
 navigation-fragment = { module = "androidx.navigation:navigation-fragment", version.ref = "navigation" }
 navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigation" }
+fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
