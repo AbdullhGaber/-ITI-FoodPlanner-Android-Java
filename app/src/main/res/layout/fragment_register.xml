@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:background="@drawable/cream_background"
-    tools:context=".auth.register.views.RegisterFragment">
+    tools:context=".presentation.auth.register.views.RegisterFragment">
 
     <!-- App Logo -->
     <ImageView
