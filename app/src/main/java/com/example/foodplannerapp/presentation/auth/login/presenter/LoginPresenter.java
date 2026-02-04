@@ -1,3 +1,5 @@
 package com.example.foodplannerapp.presentation.auth.login.presenter;
 
-public interface LoginPresenter { }
+public interface LoginPresenter {
+    void login(String email, String password);
+}
