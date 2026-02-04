@@ -1,4 +1,4 @@
-package com.example.foodplannerapp.presentation.activites;
+package com.example.foodplannerapp.presentation.activities;
 
 import android.os.Bundle;
 
