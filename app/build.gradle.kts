@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-
+    implementation(libs.core.splashscreen)
     // Retrofit & GSON
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
