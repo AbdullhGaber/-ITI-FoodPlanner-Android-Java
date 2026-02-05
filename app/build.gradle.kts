@@ -43,6 +43,9 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok.v11834)
+
     implementation(libs.core.splashscreen)
     // Retrofit & GSON
     implementation(libs.retrofit)
