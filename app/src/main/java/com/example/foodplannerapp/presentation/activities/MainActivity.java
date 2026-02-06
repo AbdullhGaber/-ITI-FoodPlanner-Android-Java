@@ -1,6 +1,8 @@
 package com.example.foodplannerapp.presentation.activities;
 
 import static androidx.core.splashscreen.SplashScreen.*;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -21,5 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
         splashScreen.setKeepOnScreenCondition(() -> keepOnScreen[0]);
         setContentView(R.layout.activity_main);
+        Intent intent = new Intent(this, IntroActivity.class);
+        startActivity(intent);
     }
 }
