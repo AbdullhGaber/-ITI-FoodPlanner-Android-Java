@@ -11,6 +11,9 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.foodplannerapp.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class FoodActivity extends AppCompatActivity {
 
     @Override
