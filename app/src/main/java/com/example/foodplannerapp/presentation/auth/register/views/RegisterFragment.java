@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.foodplannerapp.R;
-import com.example.foodplannerapp.data.auth.register.repository.RegisterRepositoryImpl;
+import com.example.foodplannerapp.data.reposetories.auth.register.repository.RegisterRepositoryImpl;
 import com.example.foodplannerapp.presentation.activities.FoodActivity;
 import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenter;
 import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenterImpl;

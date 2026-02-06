@@ -1,6 +1,6 @@
 package com.example.foodplannerapp.presentation.auth.login.presenter;
 
-import com.example.foodplannerapp.data.auth.login.repository.LoginRepository;
+import com.example.foodplannerapp.data.reposetories.auth.login.repository.LoginRepository;
 import com.example.foodplannerapp.data.utils.NetworkResponseCallback;
 import com.example.foodplannerapp.presentation.auth.login.views.LoginView;
 import com.google.firebase.auth.AuthResult;
