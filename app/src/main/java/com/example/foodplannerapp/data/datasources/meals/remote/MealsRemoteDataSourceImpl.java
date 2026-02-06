@@ -3,6 +3,7 @@ package com.example.foodplannerapp.data.datasources.meals.remote;
 import androidx.annotation.NonNull;
 import com.example.foodplannerapp.data.model.meal.MealResponse;
 import com.example.foodplannerapp.data.model.meal_category.CategoryResponse;
+import com.example.foodplannerapp.data.model.meal_ingeredient.IngredientResponse;
 import com.example.foodplannerapp.data.network.MealService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,5 +45,22 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource{
 
                     }
                 });
+    }
+
+    @Override
+    public void getAllIngredients() {
+        mealService.getAllIngredients().enqueue(
+                new Callback<>() {
+                    @Override
+                    public void onResponse(@NonNull Call<IngredientResponse> call, @NonNull Response<IngredientResponse> response) {
+                        System.out.println(response.body().getMeals());
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<IngredientResponse> call, @NonNull Throwable t) {
+
+                    }
+                }
+        );
     }
 }
