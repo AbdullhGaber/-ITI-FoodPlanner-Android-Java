@@ -10,4 +10,5 @@
     <color name="olive_green">#FF869178</color>
     <color name="mocha_brown">#B061594E</color>
     <color name="orange">#FFFCA950</color>
+    <color name="red_error">#FFFF0000</color>
 </resources>
