@@ -21,6 +21,7 @@ import com.example.foodplannerapp.presentation.activities.FoodActivity;
 import com.example.foodplannerapp.presentation.auth.login.presenter.LoginPresenter;
 import com.example.foodplannerapp.presentation.auth.login.presenter.LoginPresenterImpl;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginFragment extends Fragment implements LoginView {
     LoginPresenter presenter;
@@ -29,6 +30,8 @@ public class LoginFragment extends Fragment implements LoginView {
     Button loginButtonEt;
     TextView redirectRegisterTv;
     TextView guestModeTv;
+    TextInputLayout emailLayout;
+    TextInputLayout passwordLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,13 +70,11 @@ public class LoginFragment extends Fragment implements LoginView {
     private void setOnLoginButtonClickListener() {
         loginButtonEt.setOnClickListener(
                 (v) -> {
-                    String email = emailEt.getText().toString();
-                    String password = passwordEt.getText().toString();
+                    String email = emailEt.getText().toString().trim();
+                    String password = passwordEt.getText().toString().trim();
 
-                    if(!email.isBlank() && !password.isBlank()){
-                        presenter.login(email,password);
-                    }else{
-                        Dialogs.showAlertDialog(requireContext(),"Inputs Missing", "Email and Password are required");
+                    if (validateInputs(email, password)) {
+                        presenter.login(email, password);
                     }
                 }
         );
@@ -85,6 +86,34 @@ public class LoginFragment extends Fragment implements LoginView {
         loginButtonEt = view.findViewById(R.id.login_button);
         redirectRegisterTv = view.findViewById(R.id.redirect_register_clickable);
         guestModeTv = view.findViewById(R.id.guest_mode_tv);
+        emailLayout = view.findViewById(R.id.login_email_layout);
+        passwordLayout = view.findViewById(R.id.login_password_layout);
+    }
+
+    private boolean validateInputs(String email, String password) {
+        boolean isValid = true;
+
+        emailLayout.setError(null);
+        passwordLayout.setError(null);
+
+
+        if (email.isEmpty()) {
+            emailLayout.setError("Email is required");
+            isValid = false;
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailLayout.setError("Please enter a valid email address");
+            isValid = false;
+        }
+
+        if (password.isEmpty()) {
+            passwordLayout.setError("Password is required");
+            isValid = false;
+        } else if (password.length() < 6) {
+            passwordLayout.setError("Password must be at least 6 characters");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     @Override

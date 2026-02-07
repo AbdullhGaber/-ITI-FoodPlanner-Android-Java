@@ -21,6 +21,7 @@ import com.example.foodplannerapp.presentation.activities.FoodActivity;
 import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenter;
 import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenterImpl;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class RegisterFragment extends Fragment implements RegisterView {
     TextView redirectLoginTv;
@@ -30,6 +31,10 @@ public class RegisterFragment extends Fragment implements RegisterView {
     EditText confirmPasswordEt;
     Button registerBtn;
     RegisterPresenter presenter;
+    TextInputLayout fullNameLayout;
+    TextInputLayout emailLayout;
+    TextInputLayout passwordLayout;
+    TextInputLayout confirmPasswordLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,24 +62,13 @@ public class RegisterFragment extends Fragment implements RegisterView {
     private void setOnRegisterButtonClick() {
         registerBtn.setOnClickListener(
                 (v) -> {
-                    String name = fullNameEt.getText().toString();
-                    String email = emailEt.getText().toString();
-                    String confirmPassword = confirmPasswordEt.getText().toString();
-                    String password = passwordEt.getText().toString();
+                    String name = fullNameEt.getText().toString().trim();
+                    String email = emailEt.getText().toString().trim();
+                    String password = passwordEt.getText().toString().trim();
+                    String confirmPassword = confirmPasswordEt.getText().toString().trim();
 
-                    if(
-                            !name.isBlank()
-                            && !email.isBlank()
-                            && !password.isBlank()
-                            && !confirmPassword.isBlank()
-                    ){
-                        if(password.equals(confirmPassword)){
-                            presenter.createAccount(email,password);
-                        }else {
-                            Dialogs.showAlertDialog(requireContext(),"Passwords Mismatch", "Password and Confirm Password are different");
-                        }
-                    }else{
-                        Dialogs.showAlertDialog(requireContext(),"Inputs Missing", "Fill in The Empty Fields");
+                    if (validateInputs(name, email, password, confirmPassword)) {
+                        presenter.createAccount(email, password);
                     }
                 }
         );
@@ -87,6 +81,53 @@ public class RegisterFragment extends Fragment implements RegisterView {
         passwordEt = view.findViewById(R.id.register_password_et);
         confirmPasswordEt = view.findViewById(R.id.register_confirm_password_et);
         registerBtn = view.findViewById(R.id.register_button);
+        fullNameLayout = view.findViewById(R.id.register_full_name_layout);
+        emailLayout = view.findViewById(R.id.register_email_layout);
+        passwordLayout = view.findViewById(R.id.register_password_layout);
+        confirmPasswordLayout = view.findViewById(R.id.register_confirm_password_layout);
+    }
+
+    private boolean validateInputs(String name, String email, String password, String confirmPassword) {
+        boolean isValid = true;
+
+        fullNameLayout.setError(null);
+        emailLayout.setError(null);
+        passwordLayout.setError(null);
+        confirmPasswordLayout.setError(null);
+
+        if (name.isEmpty()) {
+            fullNameLayout.setError("Full name is required");
+            isValid = false;
+        } else if (name.length() < 3) {
+            fullNameLayout.setError("Full name must be at least 3 characters");
+            isValid = false;
+        }
+
+        if (email.isEmpty()) {
+            emailLayout.setError("Email is required");
+            isValid = false;
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailLayout.setError("Please enter a valid email address");
+            isValid = false;
+        }
+
+        if (password.isEmpty()) {
+            passwordLayout.setError("Password is required");
+            isValid = false;
+        } else if (password.length() < 6) {
+            passwordLayout.setError("Password must be at least 6 characters");
+            isValid = false;
+        }
+
+        if (confirmPassword.isEmpty()) {
+            confirmPasswordLayout.setError("Please confirm your password");
+            isValid = false;
+        } else if (!password.equals(confirmPassword)) {
+            confirmPasswordLayout.setError("Passwords do not match");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     private void setOnRegisterRedirectClick() {
