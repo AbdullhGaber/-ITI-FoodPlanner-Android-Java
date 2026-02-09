@@ -25,6 +25,7 @@ navigation = "2.7.5"
 firebaseBom = "34.8.0" # Latest stable BoM as of Jan 2026
 googleServices = "4.4.0"
 fragment = "1.8.9"
+shimmer = "0.5.0"
 
 [libraries]
 # ... existing libraries ...
@@ -73,6 +74,9 @@ fragment = { group = "androidx.fragment", name = "fragment", version.ref = "frag
 #DI
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltCompiler" }
+shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
+
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

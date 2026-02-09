@@ -79,8 +79,9 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
-    implementation(libs.hilt.android)
+    implementation(libs.shimmer)
 
+    implementation(libs.hilt.android)
     annotationProcessor(libs.hilt.compiler)
 
     testImplementation(libs.junit)
