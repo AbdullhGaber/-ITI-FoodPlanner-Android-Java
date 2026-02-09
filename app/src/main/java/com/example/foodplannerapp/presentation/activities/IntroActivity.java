@@ -7,43 +7,38 @@ import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
-import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.foodplannerapp.R;
+import com.example.foodplannerapp.databinding.ActivityIntroBinding;
 
 public class IntroActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro);
-
-        ImageView logoIcon = findViewById(R.id.imgLogoIcon);
-        TextView tvAppName = findViewById(R.id.tvAppName);
-        TextView tvSlogan = findViewById(R.id.tvSlogan);
+        ActivityIntroBinding binding = ActivityIntroBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         float distanceY = 100f;
-        logoIcon.setTranslationY(distanceY);
-        tvAppName.setTranslationY(distanceY);
-        tvSlogan.setTranslationY(distanceY);
+        binding.imgLogoIcon.setTranslationY(distanceY);
+        binding.tvAppName.setTranslationY(distanceY);
+        binding.tvSlogan.setTranslationY(distanceY);
 
-        ObjectAnimator iconAlpha = ObjectAnimator.ofFloat(logoIcon, View.ALPHA, 0f, 1f);
-        ObjectAnimator iconTranslate = ObjectAnimator.ofFloat(logoIcon, View.TRANSLATION_Y, distanceY, 0f);
+        ObjectAnimator iconAlpha = ObjectAnimator.ofFloat(binding.imgLogoIcon, View.ALPHA, 0f, 1f);
+        ObjectAnimator iconTranslate = ObjectAnimator.ofFloat(binding.imgLogoIcon, View.TRANSLATION_Y, distanceY, 0f);
 
 
-        ObjectAnimator iconRotate = ObjectAnimator.ofFloat(logoIcon, View.ROTATION_Y, 0f, 360f);
+        ObjectAnimator iconRotate = ObjectAnimator.ofFloat(binding.imgLogoIcon, View.ROTATION_Y, 0f, 360f);
 
-        ObjectAnimator textAlpha = ObjectAnimator.ofFloat(tvAppName, View.ALPHA, 0f, 1f);
+        ObjectAnimator textAlpha = ObjectAnimator.ofFloat(binding.tvAppName, View.ALPHA, 0f, 1f);
         textAlpha.setStartDelay(200);
-        ObjectAnimator textTranslate = ObjectAnimator.ofFloat(tvAppName, View.TRANSLATION_Y, distanceY, 0f);
+        ObjectAnimator textTranslate = ObjectAnimator.ofFloat(binding.tvAppName, View.TRANSLATION_Y, distanceY, 0f);
         textTranslate.setStartDelay(200);
 
-        ObjectAnimator sloganAlpha = ObjectAnimator.ofFloat(tvSlogan, View.ALPHA, 0f, 1f);
+        ObjectAnimator sloganAlpha = ObjectAnimator.ofFloat(binding.tvSlogan, View.ALPHA, 0f, 1f);
         sloganAlpha.setStartDelay(400);
-        ObjectAnimator sloganTranslate = ObjectAnimator.ofFloat(tvSlogan, View.TRANSLATION_Y, distanceY, 0f);
+        ObjectAnimator sloganTranslate = ObjectAnimator.ofFloat(binding.tvSlogan, View.TRANSLATION_Y, distanceY, 0f);
         sloganTranslate.setStartDelay(400);
 
         AnimatorSet animatorSet = new AnimatorSet();
@@ -59,7 +54,7 @@ public class IntroActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                logoIcon.postDelayed(() -> navigateToMain(), 1000);
+                binding.imgLogoIcon.postDelayed(() -> navigateToMain(), 1000);
             }
         });
 

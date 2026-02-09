@@ -6,9 +6,7 @@ import com.example.foodplannerapp.data.model.meal_area.AreaListResponse;
 import com.example.foodplannerapp.data.model.meal_category.CategoryResponse;
 import com.example.foodplannerapp.data.model.meal_ingeredient.IngredientResponse;
 import com.example.foodplannerapp.data.network.MealService;
-
 import javax.inject.Inject;
-
 import io.reactivex.rxjava3.core.Single;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,19 +21,8 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource{
     }
 
     @Override
-    public void getRandomMeal() {
-        mealService.getRandomMeal()
-                .enqueue(new Callback<>() {
-                    @Override
-                    public void onResponse(@NonNull Call<MealResponse> call, @NonNull Response<MealResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<MealResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+    public Single<MealResponse> getRandomMeal() {
+        return mealService.getRandomMeal();
     }
 
     @Override

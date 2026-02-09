@@ -2,6 +2,7 @@ package com.example.foodplannerapp.data.reposetories.meals;
 
 import com.example.foodplannerapp.data.datasources.meals.local.MealsLocalDataSource;
 import com.example.foodplannerapp.data.datasources.meals.remote.MealsRemoteDataSource;
+import com.example.foodplannerapp.data.model.meal.MealResponse;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_area.AreaListResponse;
 import com.example.foodplannerapp.data.model.meal_category.CategoryResponse;
@@ -22,8 +23,8 @@ public class MealsRepositoryImpl implements MealsRepository{
     }
 
     @Override
-    public void getRandomMeal() {
-        mealsRemoteDataSource.getRandomMeal();
+    public Single<MealResponse> getRandomMeal() {
+        return mealsRemoteDataSource.getRandomMeal();
     }
 
     @Override

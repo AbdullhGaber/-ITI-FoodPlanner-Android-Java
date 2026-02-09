@@ -2,7 +2,6 @@ package com.example.foodplannerapp.presentation.home.view.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal_area.Area;
+import com.example.foodplannerapp.databinding.ItemAreaBinding;
+import com.example.foodplannerapp.databinding.ItemAreaGridBinding;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 
@@ -46,9 +47,15 @@ public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.AreaViewHolder
     @NonNull
     @Override
     public AreaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        int layoutId = isGrid ? R.layout.item_area_grid : R.layout.item_area;
-        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
-        return new AreaViewHolder(view);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        
+        if (isGrid) {
+            ItemAreaGridBinding binding = ItemAreaGridBinding.inflate(inflater, parent, false);
+            return new AreaViewHolder(binding.getRoot(), binding.imgFlag, binding.tvAreaName, parent.getContext());
+        } else {
+            ItemAreaBinding binding = ItemAreaBinding.inflate(inflater, parent, false);
+            return new AreaViewHolder(binding.getRoot(), binding.imgFlag, binding.tvAreaName, parent.getContext());
+        }
     }
 
     @Override
@@ -71,11 +78,11 @@ public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.AreaViewHolder
         private final TextView tvAreaName;
         private final Context context;
 
-        public AreaViewHolder(@NonNull View itemView) {
+        public AreaViewHolder(@NonNull android.view.View itemView, ImageView imgFlag, TextView tvAreaName, Context context) {
             super(itemView);
-            context = itemView.getContext();
-            imgFlag = itemView.findViewById(R.id.imgFlag);
-            tvAreaName = itemView.findViewById(R.id.tvAreaName);
+            this.imgFlag = imgFlag;
+            this.tvAreaName = tvAreaName;
+            this.context = context;
         }
 
         public void bind(Area area) {

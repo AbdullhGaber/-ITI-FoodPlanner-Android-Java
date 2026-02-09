@@ -9,20 +9,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.foodplannerapp.R;
+import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_category.Category;
+import com.example.foodplannerapp.databinding.FragmentHomeBinding;
 import com.example.foodplannerapp.presentation.home.presenter.home.HomePresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
 import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
-import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -35,19 +34,15 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class HomeFragment extends Fragment implements HomeView{
     @Inject
     HomePresenter homePresenter;
-    RecyclerView areasRv;
+    FragmentHomeBinding binding;
     AreaAdapter areaAdapter;
-    RecyclerView categoriesRv;
     CategoryAdapter categoryAdapter;
-    ShimmerFrameLayout areaShimmer;
-    ShimmerFrameLayout categoryShimmer;
-    TextView seeAllCountriesTv;
-    TextView seeAllCategoriesTv;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home,container,false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -66,23 +61,21 @@ public class HomeFragment extends Fragment implements HomeView{
     private void setUpRvAdapters() {
         areaAdapter = new AreaAdapter();
         categoryAdapter = new CategoryAdapter();
-        areasRv.setAdapter(areaAdapter);
-        categoriesRv.setAdapter(categoryAdapter);
+        binding.recyclerAreas.setAdapter(areaAdapter);
+        binding.recyclerCategories.setAdapter(categoryAdapter);
+    }
+
+    @Override
+    public void showRandomMeal(List<Meal> categories) {
+
     }
 
     private void initViews() {
-        areasRv = requireView().findViewById(R.id.recycler_areas);
-        categoriesRv = requireView().findViewById(R.id.recycler_categories);
-        areaShimmer = requireView().findViewById(R.id.areaShimmer);
-        categoryShimmer = requireView().findViewById(R.id.categoryShimmer);
-        seeAllCountriesTv = requireView().findViewById(R.id.tv_see_all_countries);
-        seeAllCategoriesTv = requireView().findViewById(R.id.tv_see_all_categories);
-
-        seeAllCountriesTv.setOnClickListener(
+        binding.tvSeeAllCountries.setOnClickListener(
                 v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allAreasFragment)
         );
 
-        seeAllCategoriesTv.setOnClickListener(
+        binding.tvSeeAllCategories.setOnClickListener(
                 v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allCategoriesFragment)
         );
     }
@@ -111,25 +104,25 @@ public class HomeFragment extends Fragment implements HomeView{
 
     @Override
     public void showAreaShimmer() {
-        areaShimmer.showShimmer(true);
-        areaShimmer.setVisibility(VISIBLE);
+        binding.areaShimmer.showShimmer(true);
+        binding.areaShimmer.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideAreaShimmer() {
-        areaShimmer.showShimmer(false);
-        areaShimmer.setVisibility(GONE);
+        binding.areaShimmer.showShimmer(false);
+        binding.areaShimmer.setVisibility(GONE);
     }
 
     @Override
     public void showCategoryShimmer() {
-        categoryShimmer.showShimmer(true);
-        categoryShimmer.setVisibility(VISIBLE);
+        binding.categoryShimmer.showShimmer(true);
+        binding.categoryShimmer.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideCategoryShimmer() {
-        categoryShimmer.showShimmer(false);
-        categoryShimmer.setVisibility(GONE);
+        binding.categoryShimmer.showShimmer(false);
+        binding.categoryShimmer.setVisibility(GONE);
     }
 }

@@ -22,7 +22,20 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void getRandomMeal() {
-        mealsRepository.getRandomMeal();
+        Disposable d = mealsRepository.getRandomMeal()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        response -> {
+                            view.showRandomMeal(response.getMeals());
+                            view.hideCategoryShimmer();
+                        },
+                        error -> {
+                            view.hideCategoryShimmer();
+                            view.showError(error.getMessage());
+                        }
+                );
+        compositeDisposable.add(d);
     }
 
     @Override

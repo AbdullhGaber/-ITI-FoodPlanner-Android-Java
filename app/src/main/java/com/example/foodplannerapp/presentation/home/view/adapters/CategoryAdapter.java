@@ -2,7 +2,6 @@ package com.example.foodplannerapp.presentation.home.view.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal_category.Category;
+import com.example.foodplannerapp.databinding.ItemCategoryBinding;
+import com.example.foodplannerapp.databinding.ItemCategoryGridBinding;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 import java.util.List;
@@ -46,9 +47,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        int layoutId = isGrid ? R.layout.item_category_grid : R.layout.item_category;
-        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
-        return new CategoryViewHolder(view);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        
+        if (isGrid) {
+            ItemCategoryGridBinding binding = ItemCategoryGridBinding.inflate(inflater, parent, false);
+            return new CategoryViewHolder(binding.getRoot(), binding.imgCategory, binding.tvCategoryName, parent.getContext());
+        } else {
+            ItemCategoryBinding binding = ItemCategoryBinding.inflate(inflater, parent, false);
+            return new CategoryViewHolder(binding.getRoot(), binding.imgCategory, binding.tvCategoryName, parent.getContext());
+        }
     }
 
     @Override
@@ -70,11 +77,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         TextView tvCategoryName;
         Context context;
 
-        public CategoryViewHolder(@NonNull View itemView) {
+        public CategoryViewHolder(@NonNull android.view.View itemView, ImageView imgCategory, TextView tvCategoryName, Context context) {
             super(itemView);
-            context = itemView.getContext();
-            imgCategory = itemView.findViewById(R.id.imgCategory);
-            tvCategoryName = itemView.findViewById(R.id.tvCategoryName);
+            this.imgCategory = imgCategory;
+            this.tvCategoryName = tvCategoryName;
+            this.context = context;
         }
 
         public void bind(Category category) {

@@ -11,7 +11,7 @@ import retrofit2.http.GET;
 
 public interface MealService {
     @GET("random.php")
-    Call<MealResponse> getRandomMeal();
+    Single<MealResponse> getRandomMeal();
 
     @GET("categories.php")
     Single<CategoryResponse> getAllMealsCategories();
