@@ -11,4 +11,6 @@
     <color name="mocha_brown">#B061594E</color>
     <color name="orange">#FFFCA950</color>
     <color name="red_error">#FFFF0000</color>
+    <color name="light_grey">#DDDDDD</color>
+    <color name="dark_grey">#CCCCCC</color>
 </resources>
