@@ -1,33 +1,35 @@
-package com.example.foodplannerapp.presentation.home.presenter.areas;
+package com.example.foodplannerapp.presentation.home.presenter.categories;
 
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.presentation.home.view.areas.AllAreasView;
+import com.example.foodplannerapp.presentation.home.view.categories.AllCategoriesView;
+
 import javax.inject.Inject;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class AllAreasPresenterImpl implements AllAreasPresenter{
+public class AllCategoriesPresenterImpl implements AllCategoriesPresenter{
+    private final AllCategoriesView view;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final MealsRepository mealsRepository;
-    private final AllAreasView view;
 
     @Inject
-    public AllAreasPresenterImpl(MealsRepository mealsRepository, AllAreasView view) {
+    public AllCategoriesPresenterImpl(MealsRepository mealsRepository, AllCategoriesView view) {
         this.mealsRepository = mealsRepository;
         this.view = view;
     }
-
     @Override
-    public void observeAllAreas() {
+    public void observeAllCategories() {
         view.showShimmer();
-        Disposable d = mealsRepository.getAllAreas()
+        Disposable d = mealsRepository.getAllCategories()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         response -> {
-                            view.showAreas(response.getAreas());
+                            view.showCategories(response.getCategories());
                             view.hideShimmer();
                         },
                         error -> {
@@ -40,7 +42,6 @@ public class AllAreasPresenterImpl implements AllAreasPresenter{
 
     @Override
     public void onDestroy() {
-        compositeDisposable.dispose();
-        compositeDisposable.clear();
+
     }
 }

@@ -17,4 +17,6 @@
     <string name="show_all">show all</string>
     <string name="explore_categories">Explore Categories</string>
     <string name="explore_countries">Explore Countries</string>
+    <string name="all_countries">All Countries</string>
+    <string name="all_categories">All Categories</string>
 </resources>

@@ -81,6 +81,10 @@ public class HomeFragment extends Fragment implements HomeView{
         seeAllCountriesTv.setOnClickListener(
                 v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allAreasFragment)
         );
+
+        seeAllCategoriesTv.setOnClickListener(
+                v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allCategoriesFragment)
+        );
     }
 
     @Override

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_allAreasFragment"
             app:destination="@id/allAreasFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_allCategoriesFragment"
+            app:destination="@id/allCategoriesFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
@@ -23,4 +26,8 @@
         android:id="@+id/allAreasFragment"
         android:name="com.example.foodplannerapp.presentation.home.view.areas.AllAreasFragment"
         android:label="AllAreasFragment" />
+    <fragment
+        android:id="@+id/allCategoriesFragment"
+        android:name="com.example.foodplannerapp.presentation.home.view.categories.AllCategoriesFragment"
+        android:label="AllCategoriesFragment" />
 </navigation>

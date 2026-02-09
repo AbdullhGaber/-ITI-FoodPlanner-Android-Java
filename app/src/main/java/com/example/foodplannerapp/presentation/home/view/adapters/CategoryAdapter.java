@@ -33,10 +33,21 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     private final AsyncListDiffer<Category> differ = new AsyncListDiffer<>(this, diffCallback);
 
+    private final boolean isGrid;
+
+    public CategoryAdapter() {
+        this.isGrid = false;
+    }
+
+    public CategoryAdapter(boolean isGrid) {
+        this.isGrid = isGrid;
+    }
+
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category, parent, false);
+        int layoutId = isGrid ? R.layout.item_category_grid : R.layout.item_category;
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
         return new CategoryViewHolder(view);
     }
 
