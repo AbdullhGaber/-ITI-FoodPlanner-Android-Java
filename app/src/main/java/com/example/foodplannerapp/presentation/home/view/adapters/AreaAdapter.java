@@ -9,13 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
-import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.databinding.ItemAreaBinding;
 import com.example.foodplannerapp.databinding.ItemAreaGridBinding;
-import com.facebook.shimmer.Shimmer;
-import com.facebook.shimmer.ShimmerDrawable;
+import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
 
 import java.util.List;
 
@@ -87,23 +84,7 @@ public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.AreaViewHolder
 
         public void bind(Area area) {
             tvAreaName.setText(area.getAreaName());
-
-            Shimmer shimmer = new Shimmer.AlphaHighlightBuilder()
-                    .setDuration(1800)
-                    .setBaseAlpha(0.7f)
-                    .setHighlightAlpha(0.6f)
-                    .setDirection(Shimmer.Direction.LEFT_TO_RIGHT)
-                    .setAutoStart(true)
-                    .build();
-
-            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
-            shimmerDrawable.setShimmer(shimmer);
-
-            Glide.with(context)
-                    .load(area.getFlagUrl())
-                    .placeholder(shimmerDrawable)
-                    .error(R.drawable.ic_broken_image)
-                    .into(imgFlag);
+            ShimmerUtil.addShimmerToImage(context,area.getFlagUrl(), imgFlag);
         }
     }
 }

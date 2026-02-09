@@ -14,4 +14,7 @@ public interface HomeView {
     void hideAreaShimmer();
     void showCategoryShimmer();
     void hideCategoryShimmer();
+
+    void showRandomMealShimmer();
+    void hideRandomMealShimmer();
 }

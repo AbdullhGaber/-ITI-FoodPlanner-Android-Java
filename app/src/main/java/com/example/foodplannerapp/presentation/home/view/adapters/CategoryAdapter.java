@@ -1,5 +1,6 @@
 package com.example.foodplannerapp.presentation.home.view.adapters;
 
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -9,13 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
-import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal_category.Category;
 import com.example.foodplannerapp.databinding.ItemCategoryBinding;
 import com.example.foodplannerapp.databinding.ItemCategoryGridBinding;
-import com.facebook.shimmer.Shimmer;
-import com.facebook.shimmer.ShimmerDrawable;
+import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
+
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
@@ -86,23 +85,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
         public void bind(Category category) {
             tvCategoryName.setText(category.getName());
-
-            Shimmer shimmer = new Shimmer.AlphaHighlightBuilder()
-                    .setDuration(1800)
-                    .setBaseAlpha(0.7f)
-                    .setHighlightAlpha(0.6f)
-                    .setDirection(Shimmer.Direction.LEFT_TO_RIGHT)
-                    .setAutoStart(true)
-                    .build();
-
-            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
-            shimmerDrawable.setShimmer(shimmer);
-
-            Glide.with(context)
-                    .load(category.getImage())
-                    .placeholder(shimmerDrawable)
-                    .error(R.drawable.ic_broken_image)
-                    .into(imgCategory);
+            ShimmerUtil.addShimmerToImage(context, category.getImage(), imgCategory);
         }
     }
 }

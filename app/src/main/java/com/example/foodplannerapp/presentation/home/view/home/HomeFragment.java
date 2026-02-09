@@ -22,6 +22,7 @@ import com.example.foodplannerapp.databinding.FragmentHomeBinding;
 import com.example.foodplannerapp.presentation.home.presenter.home.HomePresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
 import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
+import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -56,6 +57,7 @@ public class HomeFragment extends Fragment implements HomeView{
     private void observeData() {
         homePresenter.observeAllAreas();
         homePresenter.observeAllCategories();
+        homePresenter.observeRandomMeal();
     }
 
     private void setUpRvAdapters() {
@@ -65,10 +67,7 @@ public class HomeFragment extends Fragment implements HomeView{
         binding.recyclerCategories.setAdapter(categoryAdapter);
     }
 
-    @Override
-    public void showRandomMeal(List<Meal> categories) {
 
-    }
 
     private void initViews() {
         binding.tvSeeAllCountries.setOnClickListener(
@@ -79,14 +78,13 @@ public class HomeFragment extends Fragment implements HomeView{
                 v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allCategoriesFragment)
         );
     }
-
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        homePresenter.onDestroy();
-        homePresenter = null;
+    public void showRandomMeal(List<Meal> meals) {
+        Meal meal = meals.get(0);
+        ShimmerUtil.addShimmerToImage(requireContext(), meal.getStrMealThumb(), binding.imgMealDay);
+        binding.tvMealDayName.setText(meal.getStrMeal());
+        binding.tvMealDayDesc.setText(String.format("%s • %s", meal.getStrArea(), meal.getStrCategory()));
     }
-
     @Override
     public void showAreas(List<Area> areas) {
         areaAdapter.submitList(areas);
@@ -121,8 +119,28 @@ public class HomeFragment extends Fragment implements HomeView{
     }
 
     @Override
+    public void hideRandomMealShimmer() {
+        binding.mealShimmer.showShimmer(false);
+        binding.mealShimmer.setVisibility(GONE);
+        binding.cardMealOfDay.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void showRandomMealShimmer() {
+        binding.mealShimmer.showShimmer(true);
+        binding.mealShimmer.setVisibility(VISIBLE);
+    }
+
+    @Override
     public void hideCategoryShimmer() {
         binding.categoryShimmer.showShimmer(false);
         binding.categoryShimmer.setVisibility(GONE);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        homePresenter.onDestroy();
+        homePresenter = null;
     }
 }

@@ -21,17 +21,18 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     @Override
-    public void getRandomMeal() {
+    public void observeRandomMeal() {
+        view.showRandomMealShimmer();
         Disposable d = mealsRepository.getRandomMeal()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         response -> {
                             view.showRandomMeal(response.getMeals());
-                            view.hideCategoryShimmer();
+                            view.hideRandomMealShimmer();
                         },
                         error -> {
-                            view.hideCategoryShimmer();
+                            view.hideRandomMealShimmer();
                             view.showError(error.getMessage());
                         }
                 );
