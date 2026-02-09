@@ -112,7 +112,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="32dp"
             android:fontFamily="@font/poppins_bold"
-            android:text="@string/explore_ingredients"
+            android:text="@string/explore_countries"
             android:textColor="@color/dark_charcoal"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -130,17 +130,47 @@
             app:layout_constraintBaseline_toBaselineOf="@id/tv_ingredients_title"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_ingredients"
+        <FrameLayout
+            android:id="@+id/area_rv_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
             android:paddingHorizontal="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/tv_ingredients_title"
-            tools:listitem="@layout/item_explore_card" />
+            >
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/areaShimmer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:shimmer_auto_start="true"
+               >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="16dp"
+                    android:orientation="horizontal">
+
+                    <include layout="@layout/item_area_placeholder" />
+                    <include layout="@layout/item_area_placeholder" />
+                    <include layout="@layout/item_area_placeholder" />
+                    <include layout="@layout/item_area_placeholder" />
+
+                </LinearLayout>
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_areas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_area" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/tv_categories_title"
@@ -153,7 +183,7 @@
             android:textColor="@color/dark_charcoal"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_ingredients" />
+            app:layout_constraintTop_toBottomOf="@id/area_rv_frame" />
 
         <TextView
             android:id="@+id/tv_see_all_categories"

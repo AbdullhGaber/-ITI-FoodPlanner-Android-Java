@@ -122,8 +122,8 @@
         app:hintEnabled="false"
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
-        app:errorTextColor="@color/red_error">
-        app:boxStrokeWidthFocused="0dp">
+        app:errorTextColor="@color/red_error"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/register_password_et"
@@ -156,7 +156,6 @@
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
         app:errorTextColor="@color/red_error">
-        app:boxStrokeWidthFocused="0dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/register_confirm_password_et"
