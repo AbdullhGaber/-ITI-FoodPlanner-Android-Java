@@ -1,8 +1,22 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FDF7F2</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_google_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.FoodPlannerApp</item>
+    </style>
     <!-- Base application theme. -->
     <style name="Base.Theme.FoodPlannerApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="ShapeAppearance.AreaFlag" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
     <style name="Theme.FoodPlannerApp" parent="Base.Theme.FoodPlannerApp" />

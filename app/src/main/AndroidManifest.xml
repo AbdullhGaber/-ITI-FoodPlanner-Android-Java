@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
+        android:name=".FoodPlanner"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -13,16 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FoodPlannerApp">
         <activity
-            android:name=".view.auth.SignUpActivity"
+            android:name=".presentation.activities.FoodActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".presentation.activities.IntroActivity"
             android:exported="false" />
         <activity
-            android:name=".view.auth.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.details.MealDetailsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.MainActivity"
+            android:name=".presentation.activities.MainActivity"
+            android:theme="@style/Theme.App.Starting"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -4,6 +4,8 @@ import org.gradle.kotlin.dsl.implementation
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.androidx.navigation.safeargs)
 }
 
 android {
@@ -35,6 +37,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -43,7 +48,10 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok.v11834)
 
+    implementation(libs.core.splashscreen)
     // Retrofit & GSON
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
@@ -56,6 +64,7 @@ dependencies {
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.rxjava3)
+    implementation(libs.fragment)
     annotationProcessor(libs.room.compiler)
 
     // Glide
@@ -73,6 +82,11 @@ dependencies {
     // Navigation
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+
+    implementation(libs.shimmer)
+
+    implementation(libs.hilt.android)
+    annotationProcessor(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
