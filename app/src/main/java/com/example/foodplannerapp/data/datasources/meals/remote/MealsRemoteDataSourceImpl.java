@@ -39,19 +39,8 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource{
     }
 
     @Override
-    public void getAllMealsCategories() {
-        mealService.getAllMealsCategories()
-                .enqueue(new Callback<>() {
-                    @Override
-                    public void onResponse(@NonNull Call<CategoryResponse> call, @NonNull Response<CategoryResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<CategoryResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+    public Single<CategoryResponse> getAllMealsCategories() {
+        return mealService.getAllMealsCategories();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.example.foodplannerapp.data.model.meal_category;
 
+import com.google.gson.annotations.SerializedName;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -8,8 +10,15 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category {
-    private String idCategory;
-    private String strCategory;
-    private String strCategoryThumb;
-    private String strCategoryDescription;
+    @SerializedName("idCategory")
+    private String id;
+
+    @SerializedName("strCategory")
+    private String name;
+
+    @SerializedName("strCategoryThumb")
+    private String image;
+
+    @SerializedName("strCategoryDescription")
+    private String description;
 }

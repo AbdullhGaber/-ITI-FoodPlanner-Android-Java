@@ -26,19 +26,38 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     @Override
+    public void observeAllCategories() {
+        view.showCategoryShimmer();
+        Disposable d = mealsRepository.getAllCategories()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        response -> {
+                            view.showCategories(response.getCategories());
+                            view.hideCategoryShimmer();
+                        },
+                        error -> {
+                            view.hideCategoryShimmer();
+                            view.showError(error.getMessage());
+                        }
+                );
+        compositeDisposable.add(d);
+    }
+
+    @Override
     public void observeAllArea() {
-        view.showShimmer();
+        view.showAreaShimmer();
         Disposable d = mealsRepository.getAllAreas()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         response -> {
                             view.showAreas(response.getAreas());
-                            view.hideShimmer();
+                            view.hideAreaShimmer();
                         },
                         error -> {
+                            view.hideAreaShimmer();
                             view.showError(error.getMessage());
-                            view.hideShimmer();
                         }
                 );
         compositeDisposable.add(d);

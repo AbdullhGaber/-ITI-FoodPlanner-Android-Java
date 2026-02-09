@@ -16,8 +16,10 @@ import android.view.ViewGroup;
 
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal_area.Area;
+import com.example.foodplannerapp.data.model.meal_category.Category;
 import com.example.foodplannerapp.presentation.home.presenter.HomePresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
+import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -33,7 +35,10 @@ public class HomeFragment extends Fragment implements HomeView{
     HomePresenter homePresenter;
     RecyclerView areasRv;
     AreaAdapter areaAdapter;
+    RecyclerView categoriesRv;
+    CategoryAdapter categoryAdapter;
     ShimmerFrameLayout areaShimmer;
+    ShimmerFrameLayout categoryShimmer;
 
     @Nullable
     @Override
@@ -46,23 +51,33 @@ public class HomeFragment extends Fragment implements HomeView{
         super.onViewCreated(view, savedInstanceState);
         initViews();
         setUpRvAdapters();
+        observeData();
+    }
+
+    private void observeData() {
         homePresenter.observeAllArea();
+        homePresenter.observeAllCategories();
     }
 
     private void setUpRvAdapters() {
         areaAdapter = new AreaAdapter();
+        categoryAdapter = new CategoryAdapter();
         areasRv.setAdapter(areaAdapter);
+        categoriesRv.setAdapter(categoryAdapter);
     }
 
     private void initViews() {
         areasRv = requireView().findViewById(R.id.recycler_areas);
+        categoriesRv = requireView().findViewById(R.id.recycler_categories);
         areaShimmer = requireView().findViewById(R.id.areaShimmer);
+        categoryShimmer = requireView().findViewById(R.id.categoryShimmer);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
         homePresenter.onDestroy();
+        homePresenter = null;
     }
 
     @Override
@@ -71,19 +86,36 @@ public class HomeFragment extends Fragment implements HomeView{
     }
 
     @Override
+    public void showCategories(List<Category> categories) {
+        categoryAdapter.submitList(categories);
+    }
+
+    @Override
     public void showError(String msg) {
         Snackbar.make(requireView(),msg,Snackbar.ANIMATION_MODE_FADE).show();
     }
 
     @Override
-    public void showShimmer() {
+    public void showAreaShimmer() {
         areaShimmer.showShimmer(true);
         areaShimmer.setVisibility(VISIBLE);
     }
 
     @Override
-    public void hideShimmer() {
+    public void hideAreaShimmer() {
         areaShimmer.showShimmer(false);
         areaShimmer.setVisibility(GONE);
+    }
+
+    @Override
+    public void showCategoryShimmer() {
+        categoryShimmer.showShimmer(true);
+        categoryShimmer.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideCategoryShimmer() {
+        categoryShimmer.showShimmer(false);
+        categoryShimmer.setVisibility(GONE);
     }
 }
