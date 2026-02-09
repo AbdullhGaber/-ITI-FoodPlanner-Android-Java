@@ -67,8 +67,6 @@ public class HomeFragment extends Fragment implements HomeView{
         binding.recyclerCategories.setAdapter(categoryAdapter);
     }
 
-
-
     private void initViews() {
         binding.tvSeeAllCountries.setOnClickListener(
                 v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allAreasFragment)
@@ -81,6 +79,13 @@ public class HomeFragment extends Fragment implements HomeView{
     @Override
     public void showRandomMeal(List<Meal> meals) {
         Meal meal = meals.get(0);
+        binding.mealDayContainer.setOnClickListener(
+                (v) ->{
+                    HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
+                            HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal);
+                    Navigation.findNavController(v).navigate(action);
+                }
+        );
         ShimmerUtil.addShimmerToImage(requireContext(), meal.getStrMealThumb(), binding.imgMealDay);
         binding.tvMealDayName.setText(meal.getStrMeal());
         binding.tvMealDayDesc.setText(String.format("%s • %s", meal.getStrArea(), meal.getStrCategory()));

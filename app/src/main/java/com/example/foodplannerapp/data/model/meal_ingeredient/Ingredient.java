@@ -13,4 +13,8 @@ public class Ingredient {
     private String strDescription;
     private String strThumb;
     private String strType;
+    public Ingredient(String name){
+        strIngredient = name;
+        strThumb = "https://www.themealdb.com/images/ingredients/" + name + "-Small.png";
+    }
 }

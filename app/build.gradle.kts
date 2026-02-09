@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.androidx.navigation.safeargs)
 }
 
 android {
