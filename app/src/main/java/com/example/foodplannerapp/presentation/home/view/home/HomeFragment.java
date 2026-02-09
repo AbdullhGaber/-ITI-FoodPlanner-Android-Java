@@ -1,4 +1,4 @@
-package com.example.foodplannerapp.presentation.home.view;
+package com.example.foodplannerapp.presentation.home.view.home;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -8,16 +8,18 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_category.Category;
-import com.example.foodplannerapp.presentation.home.presenter.HomePresenter;
+import com.example.foodplannerapp.presentation.home.presenter.home.HomePresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
 import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -39,6 +41,8 @@ public class HomeFragment extends Fragment implements HomeView{
     CategoryAdapter categoryAdapter;
     ShimmerFrameLayout areaShimmer;
     ShimmerFrameLayout categoryShimmer;
+    TextView seeAllCountriesTv;
+    TextView seeAllCategoriesTv;
 
     @Nullable
     @Override
@@ -55,7 +59,7 @@ public class HomeFragment extends Fragment implements HomeView{
     }
 
     private void observeData() {
-        homePresenter.observeAllArea();
+        homePresenter.observeAllAreas();
         homePresenter.observeAllCategories();
     }
 
@@ -71,6 +75,12 @@ public class HomeFragment extends Fragment implements HomeView{
         categoriesRv = requireView().findViewById(R.id.recycler_categories);
         areaShimmer = requireView().findViewById(R.id.areaShimmer);
         categoryShimmer = requireView().findViewById(R.id.categoryShimmer);
+        seeAllCountriesTv = requireView().findViewById(R.id.tv_see_all_countries);
+        seeAllCategoriesTv = requireView().findViewById(R.id.tv_see_all_categories);
+
+        seeAllCountriesTv.setOnClickListener(
+                v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allAreasFragment)
+        );
     }
 
     @Override

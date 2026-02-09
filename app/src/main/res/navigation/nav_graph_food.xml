@@ -7,12 +7,20 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.foodplannerapp.presentation.home.view.HomeFragment"
+        android:name="com.example.foodplannerapp.presentation.home.view.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_allAreasFragment"
+            app:destination="@id/allAreasFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.example.foodplannerapp.presentation.favorites.view.FavoriteFragment"
         android:label="fragment_favorite"
         tools:layout="@layout/fragment_favorite" />
+    <fragment
+        android:id="@+id/allAreasFragment"
+        android:name="com.example.foodplannerapp.presentation.home.view.areas.AllAreasFragment"
+        android:label="AllAreasFragment" />
 </navigation>

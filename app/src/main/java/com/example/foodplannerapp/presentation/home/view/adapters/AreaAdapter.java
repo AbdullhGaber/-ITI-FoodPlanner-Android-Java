@@ -33,12 +33,21 @@ public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.AreaViewHolder
     };
 
     private final AsyncListDiffer<Area> differ = new AsyncListDiffer<>(this, diffCallback);
+    private final boolean isGrid;
+
+    public AreaAdapter() {
+        this.isGrid = false;
+    }
+
+    public AreaAdapter(boolean isGrid) {
+        this.isGrid = isGrid;
+    }
 
     @NonNull
     @Override
     public AreaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_area, parent, false);
+        int layoutId = isGrid ? R.layout.item_area_grid : R.layout.item_area;
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
         return new AreaViewHolder(view);
     }
 

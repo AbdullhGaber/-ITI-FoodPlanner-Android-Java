@@ -1,8 +1,8 @@
-package com.example.foodplannerapp.presentation.home.presenter;
+package com.example.foodplannerapp.presentation.home.presenter.home;
 
 public interface HomePresenter {
     void getRandomMeal();
-    void observeAllArea();
+    void observeAllAreas();
     void observeAllCategories();
     void onDestroy();
 }

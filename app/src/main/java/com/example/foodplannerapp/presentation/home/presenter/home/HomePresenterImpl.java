@@ -1,7 +1,7 @@
-package com.example.foodplannerapp.presentation.home.presenter;
+package com.example.foodplannerapp.presentation.home.presenter.home;
 
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
-import com.example.foodplannerapp.presentation.home.view.HomeView;
+import com.example.foodplannerapp.presentation.home.view.home.HomeView;
 import javax.inject.Inject;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -45,7 +45,7 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     @Override
-    public void observeAllArea() {
+    public void observeAllAreas() {
         view.showAreaShimmer();
         Disposable d = mealsRepository.getAllAreas()
                 .subscribeOn(Schedulers.io())
