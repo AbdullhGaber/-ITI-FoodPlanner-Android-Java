@@ -5,4 +5,5 @@ import com.google.firebase.auth.AuthResult;
 
 public interface LoginRepository {
     void login(String email, String password, NetworkResponseCallback<AuthResult> callback);
+    void loginWithGoogle(String idToken, NetworkResponseCallback<AuthResult> callback);
 }

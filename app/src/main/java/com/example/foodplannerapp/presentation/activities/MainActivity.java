@@ -12,6 +12,9 @@ import androidx.core.splashscreen.SplashScreen;
 
 import com.example.foodplannerapp.R;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

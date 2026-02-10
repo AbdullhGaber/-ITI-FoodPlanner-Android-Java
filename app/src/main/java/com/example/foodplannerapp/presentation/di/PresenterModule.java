@@ -3,6 +3,12 @@ package com.example.foodplannerapp.presentation.di;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.foodplannerapp.presentation.auth.login.presenter.LoginPresenter;
+import com.example.foodplannerapp.presentation.auth.login.presenter.LoginPresenterImpl;
+import com.example.foodplannerapp.presentation.auth.login.views.LoginView;
+import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenter;
+import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenterImpl;
+import com.example.foodplannerapp.presentation.auth.register.views.RegisterView;
 import com.example.foodplannerapp.presentation.favorites.presenter.FavoritePresenter;
 import com.example.foodplannerapp.presentation.favorites.presenter.FavoritePresenterImpl;
 import com.example.foodplannerapp.presentation.favorites.view.FavoriteView;
@@ -28,6 +34,32 @@ import dagger.hilt.android.components.FragmentComponent;
 @Module
 @InstallIn(FragmentComponent.class)
 public abstract class PresenterModule {
+    @Binds
+    abstract LoginPresenter getLoginPresenter(LoginPresenterImpl loginPresenter);
+
+    @NonNull
+    @Contract("null -> fail")
+    @Provides
+    public static LoginView provideLoginView(Fragment fragment) {
+        if (fragment instanceof LoginView) {
+            return (LoginView) fragment;
+        }
+        throw new IllegalStateException("Fragment must implement LoginView");
+    }
+
+    @Binds
+    abstract RegisterPresenter getRegisterPresenter(RegisterPresenterImpl registerPresenter);
+
+    @NonNull
+    @Contract("null -> fail")
+    @Provides
+    public static RegisterView provideRegisterView(Fragment fragment) {
+        if (fragment instanceof RegisterView) {
+            return (RegisterView) fragment;
+        }
+        throw new IllegalStateException("Fragment must implement RegisterView");
+    }
+
     @Binds
     abstract HomePresenter getHomePresenter(HomePresenterImpl homePresenter);
 
