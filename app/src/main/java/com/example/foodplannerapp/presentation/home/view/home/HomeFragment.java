@@ -75,6 +75,12 @@ public class HomeFragment extends Fragment implements HomeView{
         binding.tvSeeAllCategories.setOnClickListener(
                 v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allCategoriesFragment)
         );
+
+        binding.ivSearch.setOnClickListener(
+                (v) -> {
+                    Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_searchFragment);
+                }
+        );
     }
     @Override
     public void showRandomMeal(List<Meal> meals) {

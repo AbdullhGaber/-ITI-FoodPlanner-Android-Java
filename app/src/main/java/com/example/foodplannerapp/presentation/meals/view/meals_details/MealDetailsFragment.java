@@ -1,4 +1,4 @@
-package com.example.foodplannerapp.presentation.meals.view;
+package com.example.foodplannerapp.presentation.meals.view.meals_details;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.databinding.FragmentMealDetailsBinding;
-import com.example.foodplannerapp.presentation.meals.presenter.MealDetailsPresenter;
+import com.example.foodplannerapp.presentation.meals.presenter.meal_details.MealDetailsPresenter;
 import com.example.foodplannerapp.presentation.meals.view.adapters.IngredientsAdapter;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -43,11 +43,10 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         if (getArguments() != null) {
             String mealId = MealDetailsFragmentArgs.fromBundle(getArguments()).getMealId();
-
             presenter.getMealDetails(mealId);
         }
 
-        setupIngredients(); // Init adapter early
+        setupIngredients();
 
         binding.btnFavorite.setOnClickListener(v -> toggleFavorite());
         binding.btnBack.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
@@ -57,8 +56,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     public void showMealDetails(Meal meal) {
         this.currentMeal = meal;
 
-        // 3. Determine if it's a favorite
-        // If it came from Local DB, it has image bytes. If from Remote, it doesn't.
         if (meal.getLocalImageBytes() != null && meal.getLocalImageBytes().length > 0) {
             isFavorite = true;
         } else {
@@ -76,8 +73,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         binding.tvMealName.setText(currentMeal.getStrMeal());
         binding.tvArea.setText(currentMeal.getStrArea());
         binding.tvInstructions.setText(currentMeal.getStrInstructions());
-
-        // Smart Image Loading (Offline vs Online)
+        
         if (currentMeal.getLocalImageBytes() != null && currentMeal.getLocalImageBytes().length > 0) {
             Glide.with(this).load(currentMeal.getLocalImageBytes()).into(binding.ivMealImage);
         } else {

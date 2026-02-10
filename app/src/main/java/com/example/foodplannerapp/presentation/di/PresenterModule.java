@@ -21,9 +21,13 @@ import com.example.foodplannerapp.presentation.home.presenter.home.HomePresenter
 import com.example.foodplannerapp.presentation.home.view.areas.AllAreasView;
 import com.example.foodplannerapp.presentation.home.view.categories.AllCategoriesView;
 import com.example.foodplannerapp.presentation.home.view.home.HomeView;
-import com.example.foodplannerapp.presentation.meals.presenter.MealDetailsPresenter;
-import com.example.foodplannerapp.presentation.meals.presenter.MealDetailsPresenterImpl;
-import com.example.foodplannerapp.presentation.meals.view.MealDetailsView;
+import com.example.foodplannerapp.presentation.meals.presenter.meal_details.MealDetailsPresenter;
+import com.example.foodplannerapp.presentation.meals.presenter.meal_details.MealDetailsPresenterImpl;
+import com.example.foodplannerapp.presentation.meals.presenter.meals_search.SearchPresenter;
+import com.example.foodplannerapp.presentation.meals.presenter.meals_search.SearchPresenterImpl;
+import com.example.foodplannerapp.presentation.meals.view.meals_details.MealDetailsView;
+import com.example.foodplannerapp.presentation.meals.view.meals_search.SearchView;
+
 import org.jetbrains.annotations.Contract;
 import dagger.Binds;
 import dagger.Module;
@@ -123,5 +127,18 @@ public abstract class PresenterModule {
             return (MealDetailsView) fragment;
         }
         throw new IllegalStateException("Fragment must implement MealDetailsView");
+    }
+
+    @Binds
+    abstract SearchPresenter bindSearchPresenter(SearchPresenterImpl impl);
+
+    @NonNull
+    @Contract("null -> fail")
+    @Provides
+    public static SearchView provideSearchView(Fragment fragment) {
+        if (fragment instanceof SearchView) {
+            return (SearchView) fragment;
+        }
+        throw new IllegalStateException("Fragment must implement SearchView");
     }
 }

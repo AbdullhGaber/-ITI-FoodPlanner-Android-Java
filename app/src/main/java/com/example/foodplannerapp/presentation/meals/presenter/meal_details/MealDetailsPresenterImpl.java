@@ -1,10 +1,10 @@
-package com.example.foodplannerapp.presentation.meals.presenter;
+package com.example.foodplannerapp.presentation.meals.presenter.meal_details;
 
 import android.content.Context;
 import com.example.foodplannerapp.data.db.meals.entities.Meal;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.data.utils.MealMapper;
-import com.example.foodplannerapp.presentation.meals.view.MealDetailsView;
+import com.example.foodplannerapp.presentation.meals.view.meals_details.MealDetailsView;
 
 import javax.inject.Inject;
 

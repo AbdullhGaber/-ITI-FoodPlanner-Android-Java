@@ -9,6 +9,7 @@ import com.example.foodplannerapp.data.model.meal_area.AreaListResponse;
 import com.example.foodplannerapp.data.model.meal_category.CategoryResponse;
 import com.example.foodplannerapp.data.utils.MealMapper;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -68,5 +69,34 @@ public class MealsRepositoryImpl implements MealsRepository{
                         mealsRemoteDataSource.getMealById(mealId)
                                 .map(response -> response.getMeals().get(0))
                 ).toSingle();
+    }
+
+    @Override
+    public Single<List<com.example.foodplannerapp.data.model.meal.Meal>> searchMeals(String query, SearchType type) {
+        Single<MealResponse> responseSingle;
+
+        switch (type) {
+            case INGREDIENT:
+                responseSingle = mealsRemoteDataSource.searchByIngredient(query);
+                break;
+            case AREA:
+                responseSingle = mealsRemoteDataSource.searchByArea(query);
+                break;
+            case CATEGORY:
+                responseSingle = mealsRemoteDataSource.searchByCategory(query);
+                break;
+            case NAME:
+            default:
+                responseSingle = mealsRemoteDataSource.searchByName(query);
+                break;
+        }
+
+        return responseSingle.map(response -> {
+            if (response.getMeals() != null) {
+                return response.getMeals();
+            } else {
+                return Collections.emptyList();
+            }
+        });
     }
 }

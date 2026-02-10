@@ -14,7 +14,17 @@ import retrofit2.http.Query;
 public interface MealService {
     @GET("random.php")
     Single<MealResponse> getRandomMeal();
+    @GET("search.php")
+    Single<MealResponse> searchByName(@Query("s") String query);
 
+    @GET("filter.php")
+    Single<MealResponse> filterByIngredient(@Query("i") String query);
+
+    @GET("filter.php")
+    Single<MealResponse> filterByArea(@Query("a") String query);
+
+    @GET("filter.php")
+    Single<MealResponse> filterByCategory(@Query("c") String query);
     @GET("lookup.php")
     Maybe<MealResponse> getMealById(@Query("i") String id);
 

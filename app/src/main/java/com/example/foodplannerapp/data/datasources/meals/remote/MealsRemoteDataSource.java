@@ -11,4 +11,8 @@ public interface MealsRemoteDataSource {
     Single<CategoryResponse> getAllMealsCategories();
     Maybe<MealResponse> getMealById(String id);
     Single<AreaListResponse> getAllAreas();
+    Single<MealResponse> searchByName(String query);
+    Single<MealResponse> searchByIngredient(String query);
+    Single<MealResponse> searchByArea(String query);
+    Single<MealResponse> searchByCategory(String query);
 }

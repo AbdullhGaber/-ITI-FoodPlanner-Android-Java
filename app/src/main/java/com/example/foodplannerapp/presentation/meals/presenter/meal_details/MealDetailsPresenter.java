@@ -1,4 +1,4 @@
-package com.example.foodplannerapp.presentation.meals.presenter;
+package com.example.foodplannerapp.presentation.meals.presenter.meal_details;
 
 import android.content.Context;
 import com.example.foodplannerapp.data.model.meal.Meal;

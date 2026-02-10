@@ -36,4 +36,23 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource{
     public Single<AreaListResponse> getAllAreas() {
         return mealService.getAllArea();
     }
+    @Override
+    public Single<MealResponse> searchByName(String query) {
+        return mealService.searchByName(query);
+    }
+
+    @Override
+    public Single<MealResponse> searchByIngredient(String query) {
+        return mealService.filterByIngredient(query);
+    }
+
+    @Override
+    public Single<MealResponse> searchByArea(String query) {
+        return mealService.filterByArea(query);
+    }
+
+    @Override
+    public Single<MealResponse> searchByCategory(String query) {
+        return mealService.filterByCategory(query);
+    }
 }

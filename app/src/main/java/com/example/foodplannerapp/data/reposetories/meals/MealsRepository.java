@@ -14,9 +14,12 @@ public interface MealsRepository {
     Single<MealResponse> getRandomMeal();
     Single<AreaListResponse> getAllAreas();
     Single<CategoryResponse> getAllCategories();
-
     Flowable<List<Meal>> getFavMeals();
     Completable insertMeal(Meal meal);
     Completable deleteMeal(Meal meal);
     Single<com.example.foodplannerapp.data.model.meal.Meal> getMealDetails(String mealId);
+    Single<List<com.example.foodplannerapp.data.model.meal.Meal>> searchMeals(String query, SearchType type);
+    enum SearchType {
+        NAME, INGREDIENT, AREA, CATEGORY
+    }
 }
