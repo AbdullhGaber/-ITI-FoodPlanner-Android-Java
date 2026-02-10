@@ -24,4 +24,6 @@ public interface PlanDao {
 
     @Query("SELECT * FROM plan_table WHERE dayOfWeek = :day")
     Flowable<List<PlanMeal>> getPlansByDay(String day);
+    @Query("SELECT * FROM plan_table")
+    Flowable<List<PlanMeal>> getAllPlans();
 }

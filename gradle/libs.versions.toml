@@ -3,6 +3,7 @@
 agp = "8.13.2"
 core = "13.0.0"
 coreSplashscreen = "1.2.0"
+firebaseFirestore = "26.1.0"
 hiltAndroid = "2.51"
 hiltCompiler = "2.51.1"
 junit = "4.13.2"
@@ -33,6 +34,7 @@ playServicesAuth = "21.0.0"
 # ... existing libraries ...
 core = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "core" }
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+google-firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

@@ -16,4 +16,9 @@
         android:icon="@drawable/ic_calendar"
         android:title="Plan" />
 
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_user"
+        android:title="Profile" />
+
 </menu>

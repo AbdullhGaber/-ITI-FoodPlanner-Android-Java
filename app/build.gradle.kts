@@ -90,7 +90,7 @@ dependencies {
     implementation(libs.core)
     implementation(libs.hilt.android)
     annotationProcessor(libs.hilt.compiler)
-
+    implementation(libs.google.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
