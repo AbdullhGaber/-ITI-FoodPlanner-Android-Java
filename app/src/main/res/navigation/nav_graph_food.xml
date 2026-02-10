@@ -19,12 +19,19 @@
         <action
             android:id="@+id/action_homeFragment_to_mealDetailsFragment"
             app:destination="@id/mealDetailsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.example.foodplannerapp.presentation.favorites.view.FavoriteFragment"
         android:label="fragment_favorite"
-        tools:layout="@layout/fragment_favorite" />
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_favoriteFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/allAreasFragment"
         android:name="com.example.foodplannerapp.presentation.home.view.areas.AllAreasFragment"
@@ -35,10 +42,31 @@
         android:label="AllCategoriesFragment" />
     <fragment
         android:id="@+id/mealDetailsFragment"
-        android:name="com.example.foodplannerapp.presentation.meals.view.MealDetailsFragment"
+        android:name="com.example.foodplannerapp.presentation.meals.view.meals_details.MealDetailsFragment"
         android:label="MealDetailsFragment" >
         <argument
-            android:name="Meal"
-            app:argType="com.example.foodplannerapp.data.model.meal.Meal" />
+            android:name="mealId"
+            app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.foodplannerapp.presentation.meals.view.meals_search.SearchFragment"
+        android:label="SearchFragment" >
+        <action
+            android:id="@+id/action_searchFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/plannerFragment"
+        android:name="com.example.foodplannerapp.presentation.planner.view.PlannerFragment"
+        android:label="PlannerFragment" >
+        <action
+            android:id="@+id/action_plannerFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.foodplannerapp.presentation.profile.view.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

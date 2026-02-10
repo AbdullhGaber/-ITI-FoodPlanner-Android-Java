@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.foodplannerapp.R;
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_category.Category;
@@ -35,6 +36,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class HomeFragment extends Fragment implements HomeView{
     @Inject
     HomePresenter homePresenter;
+    @Inject
+    UserPreferenceDataSource userPref;
     FragmentHomeBinding binding;
     AreaAdapter areaAdapter;
     CategoryAdapter categoryAdapter;
@@ -55,7 +58,13 @@ public class HomeFragment extends Fragment implements HomeView{
     }
 
     private void observeData() {
-        homePresenter.observeAllAreas();
+        if(userPref.isGuest())
+        {
+            hideAreaShimmer();
+        }else{
+            homePresenter.observeAllAreas();
+        }
+
         homePresenter.observeAllCategories();
         homePresenter.observeRandomMeal();
     }
@@ -63,17 +72,30 @@ public class HomeFragment extends Fragment implements HomeView{
     private void setUpRvAdapters() {
         areaAdapter = new AreaAdapter();
         categoryAdapter = new CategoryAdapter();
-        binding.recyclerAreas.setAdapter(areaAdapter);
+        if(!userPref.isGuest())
+            binding.recyclerAreas.setAdapter(areaAdapter);
+
         binding.recyclerCategories.setAdapter(categoryAdapter);
     }
 
     private void initViews() {
+        if(userPref.isGuest()){
+            binding.tvIngredientsTitle.setVisibility(GONE);
+            binding.recyclerAreas.setVisibility(GONE);
+        }
+
         binding.tvSeeAllCountries.setOnClickListener(
                 v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allAreasFragment)
         );
 
         binding.tvSeeAllCategories.setOnClickListener(
                 v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allCategoriesFragment)
+        );
+
+        binding.ivSearch.setOnClickListener(
+                (v) -> {
+                    Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_searchFragment);
+                }
         );
     }
     @Override
@@ -82,7 +104,7 @@ public class HomeFragment extends Fragment implements HomeView{
         binding.mealDayContainer.setOnClickListener(
                 (v) ->{
                     HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
-                            HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal);
+                            HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal.getIdMeal());
                     Navigation.findNavController(v).navigate(action);
                 }
         );

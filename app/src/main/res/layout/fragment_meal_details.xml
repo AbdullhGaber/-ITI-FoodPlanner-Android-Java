@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/creamy"
+    android:background="@drawable/cream_background"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,9 +48,24 @@
             android:text="Spicy Arrabiata Pasta"
             android:textColor="#2E2E2E"
             android:textSize="22sp"
-            app:layout_constraintEnd_toStartOf="@+id/btn_favorite"
+            app:layout_constraintEnd_toStartOf="@+id/btn_calendar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iv_meal_image" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_calendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:backgroundTint="#4CAF50"
+            android:src="@drawable/ic_calendar"
+            app:tint="@android:color/white"
+            app:borderWidth="0dp"
+            app:elevation="4dp"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_meal_name"
+            app:layout_constraintEnd_toStartOf="@+id/btn_favorite"
+            app:layout_constraintTop_toTopOf="@+id/tv_meal_name" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_favorite"
@@ -90,16 +105,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/tv_origin_label"
             app:layout_constraintStart_toEndOf="@+id/tv_origin_label"
             app:layout_constraintTop_toTopOf="@+id/tv_origin_label" />
-
-        <ImageView
-            android:id="@+id/iv_flag"
-            android:layout_width="24dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="8dp"
-            tools:src="@drawable/logo"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_area"
-            app:layout_constraintStart_toEndOf="@+id/tv_area"
-            app:layout_constraintTop_toTopOf="@+id/tv_area" />
 
         <TextView
             android:id="@+id/tv_ingredients_title"
@@ -145,7 +150,7 @@
             android:layout_marginEnd="24dp"
             android:fontFamily="@font/poppins_regular"
             android:lineSpacingExtra="4dp"
-            android:text="1. Bring a large pot of water to a boil.\n   Add kosher salt and the pasta. Cook for 9 minutes.\n2. In a large skillet, heat olive oil and sauté garlic until fragrant.\n3. Add chopped tomatoes, red chile flakes, Italian seasoning, salt, and pepper. Simmer for 5 minutes.\n4. Drain pasta and add to the sauce.\n   Garnish with Parmigiano-Reggiano and basil."
+            android:text="Instructions go here..."
             android:textColor="#505050"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -155,31 +160,25 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/video_container"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
             android:layout_marginTop="24dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:layout_constraintTop_toBottomOf="@+id/tv_instructions">
 
-            <WebView
-                android:id="@+id/wv_video"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/sample_meal"
-                android:alpha="0.8"/>
+                <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                    android:id="@+id/youtube_player_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:autoPlay="false" />
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_play"
-                app:tint="@android:color/white"/>
+            </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 
