@@ -1,5 +1,8 @@
 package com.example.foodplannerapp.presentation.auth.login.views;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -163,6 +166,7 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void onLoginSuccess() {
+        binding.progressBar3.setVisibility(GONE);
         Intent intent = new Intent(getActivity(), FoodActivity.class);
         startActivity(intent);
         requireActivity().finish();
@@ -171,6 +175,16 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public void onLoginFailed(String title, String message) {
         Dialogs.showAlertDialog(requireContext(), title, message);
+    }
+
+    @Override
+    public void showProgressbar() {
+        binding.progressBar3.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideProgressbar() {
+        binding.progressBar3.setVisibility(GONE);
     }
 
     @Override

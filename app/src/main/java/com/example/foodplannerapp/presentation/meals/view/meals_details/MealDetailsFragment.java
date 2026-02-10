@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
+import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.databinding.FragmentMealDetailsBinding;
 import com.example.foodplannerapp.presentation.activities.MainActivity;
@@ -21,6 +22,8 @@ import com.example.foodplannerapp.presentation.meals.presenter.meal_details.Meal
 import com.example.foodplannerapp.presentation.meals.view.adapters.IngredientsAdapter;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 
@@ -174,7 +177,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private void showDayPicker() {
         final String[] days = {"Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
 
-        new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Choose a Day")
                 .setItems(days, (dialog, which) -> {
                     String selectedDay = days[which];
@@ -185,8 +188,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private void saveMealToPlan(String day) {
         if (currentMeal == null) return;
 
-        com.example.foodplannerapp.data.db.meals.entities.PlanMeal plan =
-                new com.example.foodplannerapp.data.db.meals.entities.PlanMeal(
+        PlanMeal plan = new PlanMeal(
                         currentMeal.getIdMeal(),
                         day,
                         currentMeal.getStrMeal(),
@@ -201,13 +203,12 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     @Override
     public void showLoading() {
-        // Create a ProgressBar in your XML with id "progressBar"
-        // binding.progressBar.setVisibility(View.VISIBLE);
+//        binding.progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-        // binding.progressBar.setVisibility(View.GONE);
+//        binding.progressBar.setVisibility(View.GONE);
     }
 
     @Override

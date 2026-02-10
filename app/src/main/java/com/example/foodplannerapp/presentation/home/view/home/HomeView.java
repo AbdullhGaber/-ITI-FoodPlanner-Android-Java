@@ -7,6 +7,8 @@ import com.example.foodplannerapp.data.model.meal_category.Category;
 import java.util.List;
 public interface HomeView {
     void showAreas(List<Area> areas);
+    void showProgressbar();
+    void hideProgressbar();
     void showCategories(List<Category> categories);
     void showRandomMeal(List<Meal> categories);
     void showError(String msg);

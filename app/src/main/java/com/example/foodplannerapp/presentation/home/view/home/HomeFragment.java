@@ -103,9 +103,11 @@ public class HomeFragment extends Fragment implements HomeView{
         Meal meal = meals.get(0);
         binding.mealDayContainer.setOnClickListener(
                 (v) ->{
+                    showProgressbar();
                     HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
                             HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal.getIdMeal());
                     Navigation.findNavController(v).navigate(action);
+                    hideProgressbar();
                 }
         );
         ShimmerUtil.addShimmerToImage(requireContext(), meal.getStrMealThumb(), binding.imgMealDay);
@@ -115,6 +117,16 @@ public class HomeFragment extends Fragment implements HomeView{
     @Override
     public void showAreas(List<Area> areas) {
         areaAdapter.submitList(areas);
+    }
+
+    @Override
+    public void showProgressbar() {
+        binding.progressBar2.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideProgressbar() {
+        binding.progressBar2.setVisibility(GONE);
     }
 
     @Override

@@ -32,20 +32,24 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void login(String email, String password) {
+        loginView.showProgressbar();
         loginRepository.login(email, password, new NetworkResponseCallback<>() {
             @Override
             public void onSuccess(AuthResult result) {
+                loginView.hideProgressbar();
                 loginView.onLoginSuccess();
                 userPrefs.setLoginState(true, email);
             }
 
             @Override
             public void onFail(String message) {
+                loginView.hideProgressbar();
                 loginView.onLoginFailed("Request Error", message);
             }
 
             @Override
             public void onServerError(String message) {
+                loginView.hideProgressbar();
                 loginView.onLoginFailed("Server Error", message);
             }
         });
