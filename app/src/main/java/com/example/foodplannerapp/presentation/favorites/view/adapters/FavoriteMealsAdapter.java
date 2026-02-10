@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.data.db.meals.entities.Meal;
 import com.example.foodplannerapp.databinding.ItemMealFavBinding;
 
@@ -76,6 +77,17 @@ public class FavoriteMealsAdapter extends RecyclerView.Adapter<FavoriteMealsAdap
         public void bind(Meal meal) {
             binding.tvFavMealName.setText(meal.getStrMeal());
             binding.tvFavMealArea.setText(String.format("%s • %s", meal.getStrArea(), meal.getStrCategory()));
+
+            // Load image from local bytes if available, otherwise from remote URL
+            if (meal.getLocalImageBytes() != null && meal.getLocalImageBytes().length > 0) {
+                Glide.with(binding.getRoot().getContext())
+                        .load(meal.getLocalImageBytes())
+                        .into(binding.ivFavMeal);
+            } else {
+                Glide.with(binding.getRoot().getContext())
+                        .load(meal.getStrMealThumb())
+                        .into(binding.ivFavMeal);
+            }
 
             binding.getRoot().setOnClickListener(v -> {
                 if (listener != null) listener.onMealClick(meal);
