@@ -1,5 +1,6 @@
 package com.example.foodplannerapp.presentation.meals.view.meals_details;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.R;
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.databinding.FragmentMealDetailsBinding;
+import com.example.foodplannerapp.presentation.activities.MainActivity;
 import com.example.foodplannerapp.presentation.meals.presenter.meal_details.MealDetailsPresenter;
 import com.example.foodplannerapp.presentation.meals.view.adapters.IngredientsAdapter;
 import javax.inject.Inject;
@@ -23,7 +26,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 
 @AndroidEntryPoint
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
-
+    @Inject
+    UserPreferenceDataSource userPrefs;
     @Inject
     MealDetailsPresenter presenter;
 
@@ -90,6 +94,10 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     }
 
     private void toggleFavorite() {
+        if (userPrefs.isGuest()) {
+            showGuestDialog(); // Stop here
+            return;
+        }
         if (currentMeal == null) return;
 
         isFavorite = !isFavorite;
@@ -100,6 +108,24 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         } else {
             presenter.removeFromFavorites(currentMeal);
         }
+    }
+
+    private void showGuestDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Guest Mode")
+                .setMessage("You must login to save favorites or plan meals.")
+                .setPositiveButton("Login", (dialog, which) -> {
+                    // Clear Guest Mode
+                    userPrefs.saveGuestMode(false);
+
+                    // Navigate back to MainActivity (Auth)
+                    Intent intent = new Intent(requireActivity(), MainActivity.class);
+                    // Clear the back stack so they can't go back to FoodActivity without login
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void updateFavoriteIcon() {

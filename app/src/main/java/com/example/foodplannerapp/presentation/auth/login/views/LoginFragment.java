@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.foodplannerapp.R; // Ensure this imports YOUR R class
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.databinding.FragmentLoginBinding;
 import com.example.foodplannerapp.presentation.activities.FoodActivity;
 import com.example.foodplannerapp.presentation.auth.login.presenter.LoginPresenter;
@@ -70,6 +71,12 @@ public class LoginFragment extends Fragment implements LoginView {
         setOnGoogleSignInClick();
     }
 
+    private void setOnContinueAsAGuestClick() {
+        binding.guestModeTv.setOnClickListener((v) -> {
+            presenter.guestMode();
+        });
+    }
+
     private void initGoogleSignIn() {
         // FIX 2: You MUST use the "Web Client ID" from Firebase Console here.
         // Do NOT use the Android Client ID.
@@ -118,11 +125,6 @@ public class LoginFragment extends Fragment implements LoginView {
                 (v) -> Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment)
         );
     }
-
-    private void setOnContinueAsAGuestClick() {
-        binding.guestModeTv.setOnClickListener((v) -> onLoginSuccess());
-    }
-
     private void setOnLoginButtonClickListener() {
         binding.loginButton.setOnClickListener(
                 (v) -> {

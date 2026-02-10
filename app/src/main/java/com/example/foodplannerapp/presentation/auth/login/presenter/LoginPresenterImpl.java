@@ -14,6 +14,13 @@ public class LoginPresenterImpl implements LoginPresenter {
     private final LoginRepository loginRepository;
     private final LoginView loginView;
     private final UserPreferenceDataSource userPrefs;
+
+    @Override
+    public void guestMode() {
+        userPrefs.setGuestMode(true);
+        loginView.onLoginSuccess();
+    }
+
     private CompositeDisposable disposables = new CompositeDisposable();
 
     @Inject
@@ -43,6 +50,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             }
         });
     }
+
 
     @Override
     public void loginWithGoogle(String idToken) {
