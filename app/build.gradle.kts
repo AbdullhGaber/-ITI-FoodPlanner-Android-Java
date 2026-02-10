@@ -87,7 +87,7 @@ dependencies {
     implementation(libs.navigation.ui)
 
     implementation(libs.shimmer)
-
+    implementation(libs.core)
     implementation(libs.hilt.android)
     annotationProcessor(libs.hilt.compiler)
 

@@ -18,6 +18,8 @@ import com.example.foodplannerapp.presentation.meals.presenter.meal_details.Meal
 import com.example.foodplannerapp.presentation.meals.view.adapters.IngredientsAdapter;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 
 @AndroidEntryPoint
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
@@ -112,15 +114,35 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     private void setupVideo() {
         String videoUrl = currentMeal.getStrYoutube();
+
         if (videoUrl != null && !videoUrl.isEmpty()) {
-            String embedUrl = videoUrl.replace("watch?v=", "embed/");
-            binding.wvVideo.getSettings().setJavaScriptEnabled(true);
-            binding.wvVideo.setWebChromeClient(new WebChromeClient());
-            binding.wvVideo.loadUrl(embedUrl);
             binding.videoContainer.setVisibility(View.VISIBLE);
+
+            getLifecycle().addObserver(binding.youtubePlayerView);
+
+            binding.youtubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+                @Override
+                public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                    String videoId = getVideoId(videoUrl);
+
+                    if (videoId != null) {
+                        youTubePlayer.cueVideo(videoId, 0);
+                    }
+                }
+            });
         } else {
             binding.videoContainer.setVisibility(View.GONE);
         }
+    }
+
+    private String getVideoId(String videoUrl) {
+        if (videoUrl != null && videoUrl.contains("v=")) {
+            String[] split = videoUrl.split("v=");
+            if (split.length > 1) {
+                return split[1];
+            }
+        }
+        return null;
     }
 
     private void showDayPicker() {
@@ -184,5 +206,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         if (presenter != null) {
             presenter.onDestroy();
         }
+        if (binding != null) {
+            binding.youtubePlayerView.release(); // Explicitly release just in case
+        }
+        binding = null;
     }
 }
