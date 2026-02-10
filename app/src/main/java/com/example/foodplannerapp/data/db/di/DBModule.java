@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.room.Room;
 import com.example.foodplannerapp.data.db.meals.dao.MealDao;
+import com.example.foodplannerapp.data.db.meals.dao.PlanDao;
 import com.example.foodplannerapp.data.db.room.AppDatabase;
 import javax.inject.Singleton;
 import dagger.Module;
@@ -30,5 +31,11 @@ public class DBModule {
     @Singleton
     public MealDao provideMealDao(@NonNull AppDatabase database) {
         return database.mealDao();
+    }
+
+    @Provides
+    @Singleton
+    public PlanDao providePlanDao(@NonNull AppDatabase database) {
+        return database.planDao();
     }
 }

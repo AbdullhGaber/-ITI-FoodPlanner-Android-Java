@@ -2,6 +2,7 @@ package com.example.foodplannerapp.presentation.meals.presenter.meal_details;
 
 import android.content.Context;
 import com.example.foodplannerapp.data.db.meals.entities.Meal;
+import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.data.utils.MealMapper;
 import com.example.foodplannerapp.presentation.meals.view.meals_details.MealDetailsView;
@@ -76,6 +77,18 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter{
                 .subscribe(
                         () -> view.showSuccess("Removed from Favorites"),
                         error -> view.showError("Failed to remove favorite: " + error.getMessage())
+                );
+        compositeDisposable.add(d);
+    }
+
+    @Override
+    public void addToPlan(PlanMeal plan) {
+        Disposable d = mealsRepository.insertPlan(plan)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> view.showSuccess("Meal added to " + plan.getDayOfWeek()),
+                        error -> view.showError(error.getMessage())
                 );
         compositeDisposable.add(d);
     }

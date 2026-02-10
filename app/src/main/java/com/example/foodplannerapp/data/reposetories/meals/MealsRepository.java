@@ -1,6 +1,7 @@
 package com.example.foodplannerapp.data.reposetories.meals;
 
 import com.example.foodplannerapp.data.db.meals.entities.Meal;
+import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
 import com.example.foodplannerapp.data.model.meal.MealResponse;
 import com.example.foodplannerapp.data.model.meal_area.AreaListResponse;
 import com.example.foodplannerapp.data.model.meal_category.CategoryResponse;
@@ -22,4 +23,7 @@ public interface MealsRepository {
     enum SearchType {
         NAME, INGREDIENT, AREA, CATEGORY
     }
+    Completable insertPlan(PlanMeal plan);
+    Completable deletePlan(PlanMeal plan);
+    Flowable<List<PlanMeal>> getPlansByDay(String day);
 }

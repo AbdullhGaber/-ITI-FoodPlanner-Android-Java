@@ -3,6 +3,7 @@ package com.example.foodplannerapp.data.reposetories.meals;
 import com.example.foodplannerapp.data.datasources.meals.local.MealsLocalDataSource;
 import com.example.foodplannerapp.data.datasources.meals.remote.MealsRemoteDataSource;
 import com.example.foodplannerapp.data.db.meals.entities.Meal;
+import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
 import com.example.foodplannerapp.data.model.meal.MealResponse;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_area.AreaListResponse;
@@ -98,5 +99,20 @@ public class MealsRepositoryImpl implements MealsRepository{
                 return Collections.emptyList();
             }
         });
+    }
+
+    @Override
+    public Completable insertPlan(PlanMeal plan) {
+        return mealslocalDataSource.insertPlan(plan);
+    }
+
+    @Override
+    public Completable deletePlan(PlanMeal plan) {
+        return mealslocalDataSource.deletePlan(plan);
+    }
+
+    @Override
+    public Flowable<List<PlanMeal>> getPlansByDay(String day) {
+        return mealslocalDataSource.getPlansByDay(day);
     }
 }

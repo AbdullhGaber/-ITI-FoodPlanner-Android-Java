@@ -50,6 +50,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         binding.btnFavorite.setOnClickListener(v -> toggleFavorite());
         binding.btnBack.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
+        binding.btnCalendar.setOnClickListener(v -> showDayPicker());
     }
 
     @Override
@@ -120,6 +121,34 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         } else {
             binding.videoContainer.setVisibility(View.GONE);
         }
+    }
+
+    private void showDayPicker() {
+        final String[] days = {"Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Choose a Day")
+                .setItems(days, (dialog, which) -> {
+                    String selectedDay = days[which];
+                    saveMealToPlan(selectedDay);
+                })
+                .show();
+    }
+    private void saveMealToPlan(String day) {
+        if (currentMeal == null) return;
+
+        com.example.foodplannerapp.data.db.meals.entities.PlanMeal plan =
+                new com.example.foodplannerapp.data.db.meals.entities.PlanMeal(
+                        currentMeal.getIdMeal(),
+                        day,
+                        currentMeal.getStrMeal(),
+                        currentMeal.getStrMealThumb(),
+                        currentMeal.getStrArea(),
+                        currentMeal.getStrCategory(),
+                        currentMeal.getLocalImageBytes()
+                );
+
+        presenter.addToPlan(plan);
     }
 
     @Override

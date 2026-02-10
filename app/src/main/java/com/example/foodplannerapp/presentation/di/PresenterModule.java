@@ -27,6 +27,9 @@ import com.example.foodplannerapp.presentation.meals.presenter.meals_search.Sear
 import com.example.foodplannerapp.presentation.meals.presenter.meals_search.SearchPresenterImpl;
 import com.example.foodplannerapp.presentation.meals.view.meals_details.MealDetailsView;
 import com.example.foodplannerapp.presentation.meals.view.meals_search.SearchView;
+import com.example.foodplannerapp.presentation.planner.presenter.PlannerPresenter;
+import com.example.foodplannerapp.presentation.planner.presenter.PlannerPresenterImpl;
+import com.example.foodplannerapp.presentation.planner.view.PlannerView;
 
 import org.jetbrains.annotations.Contract;
 import dagger.Binds;
@@ -140,5 +143,18 @@ public abstract class PresenterModule {
             return (SearchView) fragment;
         }
         throw new IllegalStateException("Fragment must implement SearchView");
+    }
+
+    @Binds
+    abstract PlannerPresenter bindPlannerPresenter(PlannerPresenterImpl impl);
+
+    @NonNull
+    @Contract("null -> fail")
+    @Provides
+    public static PlannerView providePlannerView(Fragment fragment) {
+        if (fragment instanceof PlannerView) {
+            return (PlannerView) fragment;
+        }
+        throw new IllegalStateException("Fragment must implement PlannerView");
     }
 }
