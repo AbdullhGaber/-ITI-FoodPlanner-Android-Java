@@ -82,7 +82,7 @@ public class HomeFragment extends Fragment implements HomeView{
         binding.mealDayContainer.setOnClickListener(
                 (v) ->{
                     HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
-                            HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal);
+                            HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal.getIdMeal());
                     Navigation.findNavController(v).navigate(action);
                 }
         );

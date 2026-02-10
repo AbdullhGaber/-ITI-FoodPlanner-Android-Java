@@ -24,7 +24,11 @@
         android:id="@+id/favoriteFragment"
         android:name="com.example.foodplannerapp.presentation.favorites.view.FavoriteFragment"
         android:label="fragment_favorite"
-        tools:layout="@layout/fragment_favorite" />
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_favoriteFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/allAreasFragment"
         android:name="com.example.foodplannerapp.presentation.home.view.areas.AllAreasFragment"
@@ -38,7 +42,7 @@
         android:name="com.example.foodplannerapp.presentation.meals.view.MealDetailsFragment"
         android:label="MealDetailsFragment" >
         <argument
-            android:name="Meal"
-            app:argType="com.example.foodplannerapp.data.model.meal.Meal" />
+            android:name="mealId"
+            app:argType="string" />
     </fragment>
 </navigation>

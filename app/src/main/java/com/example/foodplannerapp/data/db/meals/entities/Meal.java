@@ -62,4 +62,5 @@ public class Meal {
     private String strSource;
     private String strTags;
     private String strYoutube;
+    private byte[] localImageBytes;
 }

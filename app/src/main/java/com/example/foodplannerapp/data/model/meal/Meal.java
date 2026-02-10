@@ -67,6 +67,7 @@ public class Meal implements Parcelable {
     private String strSource;
     private String strTags;
     private String strYoutube;
+    private byte[] localImageBytes;
 
 
     public List<Ingredient> getIngredientsList() {
@@ -157,6 +158,7 @@ public class Meal implements Parcelable {
         strSource = in.readString();
         strTags = in.readString();
         strYoutube = in.readString();
+        localImageBytes = in.createByteArray();
     }
 
     @Override
@@ -214,6 +216,7 @@ public class Meal implements Parcelable {
         dest.writeString(strSource);
         dest.writeString(strTags);
         dest.writeString(strYoutube);
+        dest.writeByteArray(localImageBytes);
     }
 
     @Override

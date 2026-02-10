@@ -1,16 +1,13 @@
 package com.example.foodplannerapp.data.datasources.meals.remote;
 
-import androidx.annotation.NonNull;
+
 import com.example.foodplannerapp.data.model.meal.MealResponse;
 import com.example.foodplannerapp.data.model.meal_area.AreaListResponse;
 import com.example.foodplannerapp.data.model.meal_category.CategoryResponse;
-import com.example.foodplannerapp.data.model.meal_ingeredient.IngredientResponse;
 import com.example.foodplannerapp.data.network.MealService;
 import javax.inject.Inject;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource{
     private final MealService mealService;
@@ -31,20 +28,8 @@ public class MealsRemoteDataSourceImpl implements MealsRemoteDataSource{
     }
 
     @Override
-    public void getAllIngredients() {
-        mealService.getAllIngredients().enqueue(
-                new Callback<>() {
-                    @Override
-                    public void onResponse(@NonNull Call<IngredientResponse> call, @NonNull Response<IngredientResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<IngredientResponse> call, @NonNull Throwable t) {
-
-                    }
-                }
-        );
+    public Maybe<MealResponse> getMealById(String id) {
+        return mealService.getMealById(id);
     }
 
     @Override

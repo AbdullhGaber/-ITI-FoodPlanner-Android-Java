@@ -2,6 +2,10 @@ package com.example.foodplannerapp.presentation.di;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.example.foodplannerapp.presentation.favorites.presenter.FavoritePresenter;
+import com.example.foodplannerapp.presentation.favorites.presenter.FavoritePresenterImpl;
+import com.example.foodplannerapp.presentation.favorites.view.FavoriteView;
 import com.example.foodplannerapp.presentation.home.presenter.areas.AllAreasPresenter;
 import com.example.foodplannerapp.presentation.home.presenter.areas.AllAreasPresenterImpl;
 import com.example.foodplannerapp.presentation.home.presenter.categories.AllCategoriesPresenter;
@@ -11,6 +15,9 @@ import com.example.foodplannerapp.presentation.home.presenter.home.HomePresenter
 import com.example.foodplannerapp.presentation.home.view.areas.AllAreasView;
 import com.example.foodplannerapp.presentation.home.view.categories.AllCategoriesView;
 import com.example.foodplannerapp.presentation.home.view.home.HomeView;
+import com.example.foodplannerapp.presentation.meals.presenter.MealDetailsPresenter;
+import com.example.foodplannerapp.presentation.meals.presenter.MealDetailsPresenterImpl;
+import com.example.foodplannerapp.presentation.meals.view.MealDetailsView;
 import org.jetbrains.annotations.Contract;
 import dagger.Binds;
 import dagger.Module;
@@ -58,5 +65,31 @@ public abstract class PresenterModule {
             return (AllCategoriesView) fragment;
         }
         throw new IllegalStateException("Fragment must implement AllCategoriesView");
+    }
+
+    @Binds
+    abstract FavoritePresenter getFavoritePresenter(FavoritePresenterImpl favoritePresenter);
+
+    @NonNull
+    @Contract("null -> fail")
+    @Provides
+    public static FavoriteView provideFavoriteView(Fragment fragment) {
+        if (fragment instanceof FavoriteView) {
+            return (FavoriteView) fragment;
+        }
+        throw new IllegalStateException("Fragment must implement FavoriteView");
+    }
+
+    @Binds
+    abstract MealDetailsPresenter getMealDetailsPresenter(MealDetailsPresenterImpl mealDetailsPresenter);
+
+    @NonNull
+    @Contract("null -> fail")
+    @Provides
+    public static MealDetailsView provideMealDetailsView(Fragment fragment) {
+        if (fragment instanceof MealDetailsView) {
+            return (MealDetailsView) fragment;
+        }
+        throw new IllegalStateException("Fragment must implement MealDetailsView");
     }
 }
