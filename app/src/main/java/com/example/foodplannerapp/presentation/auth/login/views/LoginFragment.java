@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -18,8 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.example.foodplannerapp.R; // Ensure this imports YOUR R class
-import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
+import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.databinding.FragmentLoginBinding;
 import com.example.foodplannerapp.presentation.activities.FoodActivity;
 import com.example.foodplannerapp.presentation.auth.login.presenter.LoginPresenter;
@@ -166,7 +164,6 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void onLoginSuccess() {
-        binding.progressBar3.setVisibility(GONE);
         Intent intent = new Intent(getActivity(), FoodActivity.class);
         startActivity(intent);
         requireActivity().finish();
@@ -180,11 +177,13 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public void showProgressbar() {
         binding.progressBar3.setVisibility(VISIBLE);
+        binding.loadingOverlay.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideProgressbar() {
         binding.progressBar3.setVisibility(GONE);
+        binding.loadingOverlay.setVisibility(GONE);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.example.foodplannerapp.presentation.auth.register.views;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -42,7 +45,6 @@ public class RegisterFragment extends Fragment implements RegisterView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initViews();
         setOnRegisterButtonClick();
         setOnRegisterRedirectClick();
     }
@@ -60,10 +62,6 @@ public class RegisterFragment extends Fragment implements RegisterView {
                     }
                 }
         );
-    }
-
-    private void initViews() {
-        // Views are now accessed through the binding object
     }
 
     private boolean validateInputs(String name, String email, String password, String confirmPassword) {
@@ -125,6 +123,18 @@ public class RegisterFragment extends Fragment implements RegisterView {
     @Override
     public void onRegisterFailed(String title, String message) {
         Dialogs.showAlertDialog(requireContext(), title, message);
+    }
+
+    @Override
+    public void showProgressbar() {
+        binding.progressBar3.setVisibility(VISIBLE);
+        binding.loadingOverlay.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideProgressbar() {
+        binding.progressBar3.setVisibility(GONE);
+        binding.loadingOverlay.setVisibility(GONE);
     }
 
 }

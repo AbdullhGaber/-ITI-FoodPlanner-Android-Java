@@ -33,7 +33,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     UserPreferenceDataSource userPrefs;
     @Inject
     MealDetailsPresenter presenter;
-
     private FragmentMealDetailsBinding binding;
     private IngredientsAdapter ingredientsAdapter;
     private Meal currentMeal;
@@ -98,7 +97,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     private void toggleFavorite() {
         if (userPrefs.isGuest()) {
-            showGuestDialog(); // Stop here
+            showGuestDialog();
             return;
         }
         if (currentMeal == null) return;

@@ -14,20 +14,24 @@ public class RegisterPresenterImpl implements RegisterPresenter {
     }
     @Override
     public void createAccount(String email, String password) {
+        registerView.showProgressbar();
         registerRepository.createAccount(email, password, new NetworkResponseCallback<>() {
             @Override
             public void onSuccess(AuthResult result) {
                 registerView.onRegisterSuccess();
+                registerView.hideProgressbar();
             }
 
             @Override
             public void onFail(String message) {
                 registerView.onRegisterFailed("Request Error", message);
+                registerView.hideProgressbar();
             }
 
             @Override
             public void onServerError(String message) {
                 registerView.onRegisterFailed("Server Error", message);
+                registerView.hideProgressbar();
             }
         });
     }
