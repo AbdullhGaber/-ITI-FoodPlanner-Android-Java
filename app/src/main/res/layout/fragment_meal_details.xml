@@ -1,187 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/cream_background"
-    android:fillViewport="true">
+    android:background="@drawable/cream_background">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="32dp">
+        android:layout_height="match_parent"
+        app:shimmer_auto_start="true"
+        tools:visibility="visible">
 
-        <ImageView
-            android:id="@+id/iv_meal_image"
-            android:layout_width="match_parent"
-            android:layout_height="280dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/sample_meal"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+        <include layout="@layout/placeholder_meal_details" />
 
-        <ImageView
-            android:id="@+id/btn_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/circle_white_bg"
-            android:elevation="4dp"
-            android:padding="8dp"
-            android:src="@drawable/ic_arrow_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="#2E2E2E" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
-        <TextView
-            android:id="@+id/tv_meal_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/poppins_bold"
-            android:text="Spicy Arrabiata Pasta"
-            android:textColor="#2E2E2E"
-            android:textSize="22sp"
-            app:layout_constraintEnd_toStartOf="@+id/btn_calendar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_meal_image" />
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/content_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:visibility="gone">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_calendar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:backgroundTint="#4CAF50"
-            android:src="@drawable/ic_calendar"
-            app:tint="@android:color/white"
-            app:borderWidth="0dp"
-            app:elevation="4dp"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_meal_name"
-            app:layout_constraintEnd_toStartOf="@+id/btn_favorite"
-            app:layout_constraintTop_toTopOf="@+id/tv_meal_name" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:backgroundTint="#FCA950"
-            android:src="@drawable/ic_heart_unfilled"
-            app:tint="@android:color/white"
-            app:borderWidth="0dp"
-            app:elevation="4dp"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_meal_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_meal_name" />
-
-        <TextView
-            android:id="@+id/tv_origin_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:fontFamily="@font/poppins_regular"
-            android:text="Origin : "
-            android:textColor="#808080"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@+id/tv_meal_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_meal_name" />
-
-        <TextView
-            android:id="@+id/tv_area"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_regular"
-            android:text="Italian "
-            android:textColor="#505050"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_origin_label"
-            app:layout_constraintStart_toEndOf="@+id/tv_origin_label"
-            app:layout_constraintTop_toTopOf="@+id/tv_origin_label" />
-
-        <TextView
-            android:id="@+id/tv_ingredients_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/poppins_bold"
-            android:text="Ingredients"
-            android:textColor="#2E2E2E"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/tv_meal_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_origin_label" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_ingredients"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_ingredient"
-            app:layout_constraintTop_toBottomOf="@+id/tv_ingredients_title" />
+            android:paddingBottom="32dp">
 
-        <TextView
-            android:id="@+id/tv_instructions_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/poppins_bold"
-            android:text="Instructions"
-            android:textColor="#2E2E2E"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/tv_meal_name"
-            app:layout_constraintTop_toBottomOf="@+id/rv_ingredients" />
+            <ImageView
+                android:id="@+id/iv_meal_image"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/sample_meal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_instructions"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:fontFamily="@font/poppins_regular"
-            android:lineSpacingExtra="4dp"
-            android:text="Instructions go here..."
-            android:textColor="#505050"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/tv_meal_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_instructions_title" />
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/circle_white_bg"
+                android:elevation="4dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#2E2E2E" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/video_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="24dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            app:layout_constraintTop_toBottomOf="@+id/tv_instructions">
+            <TextView
+                android:id="@+id/tv_meal_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Spicy Arrabiata Pasta"
+                android:textColor="#2E2E2E"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toStartOf="@+id/btn_calendar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_meal_image" />
 
-            <LinearLayout
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:backgroundTint="#4CAF50"
+                android:src="@drawable/ic_calendar"
+                app:borderWidth="0dp"
+                app:elevation="4dp"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_meal_name"
+                app:layout_constraintEnd_toStartOf="@+id/btn_favorite"
+                app:layout_constraintTop_toTopOf="@+id/tv_meal_name"
+                app:tint="@android:color/white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:backgroundTint="#FCA950"
+                android:src="@drawable/ic_heart_unfilled"
+                app:borderWidth="0dp"
+                app:elevation="4dp"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_meal_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_meal_name"
+                app:tint="@android:color/white" />
+
+            <TextView
+                android:id="@+id/tv_origin_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Origin : "
+                android:textColor="#808080"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@+id/tv_meal_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_meal_name" />
+
+            <TextView
+                android:id="@+id/tv_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Italian "
+                android:textColor="#505050"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_origin_label"
+                app:layout_constraintStart_toEndOf="@+id/tv_origin_label"
+                app:layout_constraintTop_toTopOf="@+id/tv_origin_label" />
+
+            <TextView
+                android:id="@+id/tv_ingredients_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Ingredients"
+                android:textColor="#2E2E2E"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/tv_meal_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_origin_label" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_ingredients"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="12dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/tv_ingredients_title"
+                tools:listitem="@layout/item_ingredient" />
 
-                <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-                    android:id="@+id/youtube_player_view"
+            <TextView
+                android:id="@+id/tv_instructions_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Instructions"
+                android:textColor="#2E2E2E"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/tv_meal_name"
+                app:layout_constraintTop_toBottomOf="@+id/rv_ingredients" />
+
+            <TextView
+                android:id="@+id/tv_instructions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/poppins_regular"
+                android:lineSpacingExtra="4dp"
+                android:text="Instructions go here..."
+                android:textColor="#505050"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_meal_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_instructions_title" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/video_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_instructions">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:autoPlay="false" />
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                        android:id="@+id/youtube_player_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:autoPlay="false" />
 
-        </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
-</androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

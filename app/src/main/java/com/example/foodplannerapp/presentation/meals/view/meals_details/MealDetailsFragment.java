@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +21,9 @@ import com.example.foodplannerapp.presentation.meals.presenter.meal_details.Meal
 import com.example.foodplannerapp.presentation.meals.view.adapters.IngredientsAdapter;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
-
+import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
@@ -63,6 +64,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     @Override
     public void showMealDetails(Meal meal) {
+        ShimmerUtil.showShimmer(binding.shimmerViewContainer);
         this.currentMeal = meal;
 
         if (meal.getLocalImageBytes() != null && meal.getLocalImageBytes().length > 0) {
@@ -75,6 +77,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         setupUI();
         setupVideo();
 
+        ShimmerUtil.hideShimmer(binding.shimmerViewContainer);
+
+        binding.contentScrollView.setVisibility(View.VISIBLE);
         ingredientsAdapter.submitList(meal.getIngredientsList());
     }
 
