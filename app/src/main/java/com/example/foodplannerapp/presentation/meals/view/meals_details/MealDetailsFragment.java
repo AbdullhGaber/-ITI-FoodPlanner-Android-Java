@@ -21,12 +21,15 @@ import com.example.foodplannerapp.presentation.meals.presenter.meal_details.Meal
 import com.example.foodplannerapp.presentation.meals.view.adapters.IngredientsAdapter;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
+
+import com.example.foodplannerapp.presentation.meals.view.adapters.InstructionsAdapter;
 import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
-import com.facebook.shimmer.Shimmer;
-import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AndroidEntryPoint
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
@@ -36,6 +39,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     MealDetailsPresenter presenter;
     private FragmentMealDetailsBinding binding;
     private IngredientsAdapter ingredientsAdapter;
+    private InstructionsAdapter instructionsAdapter; // Declare adapter
     private Meal currentMeal;
     private boolean isFavorite = false;
 
@@ -54,9 +58,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             String mealId = MealDetailsFragmentArgs.fromBundle(getArguments()).getMealId();
             presenter.getMealDetails(mealId);
         }
-
-        setupIngredients();
-
+        updateFavoriteIcon();
         binding.btnFavorite.setOnClickListener(v -> toggleFavorite());
         binding.btnBack.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
         binding.btnCalendar.setOnClickListener(v -> showDayPicker());
@@ -66,38 +68,54 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     public void showMealDetails(Meal meal) {
         ShimmerUtil.showShimmer(binding.shimmerViewContainer);
         this.currentMeal = meal;
-
-        if (meal.getLocalImageBytes() != null && meal.getLocalImageBytes().length > 0) {
-            isFavorite = true;
-        } else {
-            isFavorite = false;
-        }
-        updateFavoriteIcon();
+        isFavorite = meal.getLocalImageBytes() != null && meal.getLocalImageBytes().length > 0;
 
         setupUI();
         setupVideo();
-
         ShimmerUtil.hideShimmer(binding.shimmerViewContainer);
+    }
 
-        binding.contentScrollView.setVisibility(View.VISIBLE);
-        ingredientsAdapter.submitList(meal.getIngredientsList());
+    private void setupIngredientsAdapter() {
+        ingredientsAdapter = new IngredientsAdapter();
+        binding.rvIngredients.setAdapter(ingredientsAdapter);
+    }
+    private void setupInstructionsAdapter() {
+        instructionsAdapter = new InstructionsAdapter();
+        binding.rvInstructions.setAdapter(instructionsAdapter);
+    }
+
+    private void setUpIngredientsRv() {
+        ingredientsAdapter.submitList(currentMeal.getIngredientsList());
+    }
+    private void setUpMealInstructionsRv(){
+        String rawInstructions = currentMeal.getStrInstructions();
+
+        if (rawInstructions != null && !rawInstructions.isEmpty()) {
+            String[] splitSteps = rawInstructions.split("\\r?\\n");
+            List<String> stepList = new ArrayList<>();
+            for (String step : splitSteps) {
+                if (!step.trim().isEmpty() && !step.toLowerCase().contains("step") && step.length() > 1) {
+                    stepList.add(step.trim());
+                }
+            }
+            instructionsAdapter.submitList(stepList);
+        }
     }
 
     private void setupUI() {
+        binding.contentScrollView.setVisibility(View.VISIBLE);
         binding.tvMealName.setText(currentMeal.getStrMeal());
         binding.tvArea.setText(currentMeal.getStrArea());
-        binding.tvInstructions.setText(currentMeal.getStrInstructions());
-        
+        setupIngredientsAdapter();
+        setupInstructionsAdapter();
+        setUpMealInstructionsRv();
+        setUpIngredientsRv();
+        binding.rvInstructions.setNestedScrollingEnabled(false);
         if (currentMeal.getLocalImageBytes() != null && currentMeal.getLocalImageBytes().length > 0) {
             Glide.with(this).load(currentMeal.getLocalImageBytes()).into(binding.ivMealImage);
         } else {
             Glide.with(this).load(currentMeal.getStrMealThumb()).into(binding.ivMealImage);
         }
-    }
-
-    private void setupIngredients() {
-        ingredientsAdapter = new IngredientsAdapter();
-        binding.rvIngredients.setAdapter(ingredientsAdapter);
     }
 
     private void toggleFavorite() {
@@ -122,12 +140,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 .setTitle("Guest Mode")
                 .setMessage("You must login to save favorites or plan meals.")
                 .setPositiveButton("Login", (dialog, which) -> {
-                    // Clear Guest Mode
                     userPrefs.saveGuestMode(false);
-
-                    // Navigate back to MainActivity (Auth)
                     Intent intent = new Intent(requireActivity(), MainActivity.class);
-                    // Clear the back stack so they can't go back to FoodActivity without login
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 })
@@ -238,7 +252,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             presenter.onDestroy();
         }
         if (binding != null) {
-            binding.youtubePlayerView.release(); // Explicitly release just in case
+            binding.youtubePlayerView.release();
         }
         binding = null;
     }

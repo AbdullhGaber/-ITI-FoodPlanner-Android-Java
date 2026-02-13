@@ -37,8 +37,6 @@ public class ShimmerUtil {
 
     public static void  showShimmer(ShimmerFrameLayout shimmerViewContainer){
         Shimmer shimmer = ShimmerUtil.getShimmer();
-        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
-        shimmerDrawable.setShimmer(shimmer);
         shimmerViewContainer.setShimmer(shimmer);
         shimmerViewContainer.startShimmer();
         shimmerViewContainer.setVisibility(View.VISIBLE);
