@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="32dp">
+
+    <View
+        android:id="@+id/view_image_dummy"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:background="#E0E0E0"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view_title_dummy"
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:background="#E0E0E0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_image_dummy" />
+
+    <View
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:background="#E0E0E0"
+        app:layout_constraintStart_toStartOf="@id/view_title_dummy"
+        app:layout_constraintTop_toBottomOf="@id/view_title_dummy" />
+
+    <View
+        android:id="@+id/view_ing_title_dummy"
+        android:layout_width="120dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="32dp"
+        android:background="#E0E0E0"
+        app:layout_constraintStart_toStartOf="@id/view_title_dummy"
+        app:layout_constraintTop_toBottomOf="@id/view_title_dummy" />
+
+    <LinearLayout
+        android:id="@+id/layout_ing_dummy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/view_ing_title_dummy">
+
+        <View android:layout_width="60dp" android:layout_height="60dp" android:layout_marginEnd="16dp" android:background="@drawable/circle_white_bg" android:backgroundTint="#E0E0E0"/>
+        <View android:layout_width="60dp" android:layout_height="60dp" android:layout_marginEnd="16dp" android:background="@drawable/circle_white_bg" android:backgroundTint="#E0E0E0"/>
+        <View android:layout_width="60dp" android:layout_height="60dp" android:layout_marginEnd="16dp" android:background="@drawable/circle_white_bg" android:backgroundTint="#E0E0E0"/>
+        <View android:layout_width="60dp" android:layout_height="60dp" android:layout_marginEnd="16dp" android:background="@drawable/circle_white_bg" android:backgroundTint="#E0E0E0"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="32dp"
+        android:background="#E0E0E0"
+        app:layout_constraintTop_toBottomOf="@id/layout_ing_dummy"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="8dp"
+        android:background="#E0E0E0"
+        app:layout_constraintTop_toBottomOf="@id/layout_ing_dummy"
+        android:layout_marginBottom="50dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
