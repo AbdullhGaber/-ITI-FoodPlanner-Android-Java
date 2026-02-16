@@ -5,11 +5,8 @@ import com.example.foodplannerapp.data.reposetories.auth.login.repository.LoginR
 import com.example.foodplannerapp.data.utils.NetworkResponseCallback;
 import com.example.foodplannerapp.presentation.auth.login.views.LoginView;
 import com.google.firebase.auth.AuthResult;
-
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
-
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -27,6 +24,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
                             userPrefs.setGuestMode(true);
+                            userPrefs.setLoginState(true, "guest123");
                             loginView.onLoginSuccess();
                         }, throwable -> {
                             loginView.hideProgressbar();

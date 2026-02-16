@@ -41,12 +41,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         Intent intent = new Intent(this, IntroActivity.class);
         startActivity(intent);
-
         checkLoginState();
     }
 
     private void checkLoginState() {
-        if (userPrefs.isUserLoggedIn() && FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (userPrefs.isUserLoggedIn()) {
             Intent intent = new Intent(this, FoodActivity.class);
             startActivity(intent);
         }
