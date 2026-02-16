@@ -42,6 +42,8 @@ public class HomeFragment extends Fragment implements HomeView{
     AreaAdapter areaAdapter;
     CategoryAdapter categoryAdapter;
 
+    Meal currentMeal;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -53,8 +55,22 @@ public class HomeFragment extends Fragment implements HomeView{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews();
+        binding.mealDayContainer.setOnClickListener(
+                (v) ->{
+                    if(currentMeal != null){
+                        homePresenter.onRandomMealClick();
+                    }
+                }
+        );
         setUpRvAdapters();
         observeData();
+    }
+
+    @Override
+    public void navigateToMealDetailsFragment() {
+        HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
+                HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(currentMeal.getIdMeal());
+        Navigation.findNavController(requireView()).navigate(action);
     }
 
     private void observeData() {
@@ -81,6 +97,7 @@ public class HomeFragment extends Fragment implements HomeView{
     private void initViews() {
         if(userPref.isGuest()){
             binding.tvIngredientsTitle.setVisibility(GONE);
+            binding.tvSeeAllCountries.setVisibility(GONE);
             binding.recyclerAreas.setVisibility(GONE);
         }
 
@@ -100,19 +117,10 @@ public class HomeFragment extends Fragment implements HomeView{
     }
     @Override
     public void showRandomMeal(List<Meal> meals) {
-        Meal meal = meals.get(0);
-        binding.mealDayContainer.setOnClickListener(
-                (v) ->{
-                    showProgressbar();
-                    HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
-                            HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal.getIdMeal());
-                    Navigation.findNavController(v).navigate(action);
-                    hideProgressbar();
-                }
-        );
-        ShimmerUtil.addShimmerToImage(requireContext(), meal.getStrMealThumb(), binding.imgMealDay);
-        binding.tvMealDayName.setText(meal.getStrMeal());
-        binding.tvMealDayDesc.setText(String.format("%s • %s", meal.getStrArea(), meal.getStrCategory()));
+        currentMeal = meals.get(0);
+        ShimmerUtil.addShimmerToImage(requireContext(), currentMeal.getStrMealThumb(), binding.imgMealDay);
+        binding.tvMealDayName.setText(currentMeal.getStrMeal());
+        binding.tvMealDayDesc.setText(String.format("%s • %s", currentMeal.getStrArea(), currentMeal.getStrCategory()));
     }
     @Override
     public void showAreas(List<Area> areas) {
@@ -121,12 +129,14 @@ public class HomeFragment extends Fragment implements HomeView{
 
     @Override
     public void showProgressbar() {
-        binding.progressBar2.setVisibility(VISIBLE);
+        binding.progressBarHome.setVisibility(VISIBLE);
+        binding.loadingOverlayHome.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideProgressbar() {
-        binding.progressBar2.setVisibility(GONE);
+        binding.progressBarHome.setVisibility(GONE);
+        binding.loadingOverlayHome.setVisibility(GONE);
     }
 
     @Override

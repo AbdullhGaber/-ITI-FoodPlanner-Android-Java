@@ -127,14 +127,14 @@ public class RegisterFragment extends Fragment implements RegisterView {
 
     @Override
     public void showProgressbar() {
-        binding.progressBar3.setVisibility(VISIBLE);
-        binding.loadingOverlay.setVisibility(VISIBLE);
+        binding.progressBarRegister.setVisibility(VISIBLE);
+        binding.loadingOverlayRegister.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideProgressbar() {
-        binding.progressBar3.setVisibility(GONE);
-        binding.loadingOverlay.setVisibility(GONE);
+        binding.progressBarRegister.setVisibility(GONE);
+        binding.loadingOverlayRegister.setVisibility(GONE);
     }
 
 }

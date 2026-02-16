@@ -2,8 +2,12 @@ package com.example.foodplannerapp.presentation.home.presenter.home;
 
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.presentation.home.view.home.HomeView;
+
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -37,6 +41,22 @@ public class HomePresenterImpl implements HomePresenter {
                         }
                 );
         compositeDisposable.add(d);
+    }
+
+    @Override
+    public void onRandomMealClick() {
+        view.showProgressbar();
+        compositeDisposable.add(
+                Completable.timer(
+                        100,
+                        TimeUnit.MILLISECONDS
+                ).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                view::navigateToMealDetailsFragment,
+                                (throwable -> view.showError(throwable.getMessage()))
+                        )
+        );
     }
 
     @Override

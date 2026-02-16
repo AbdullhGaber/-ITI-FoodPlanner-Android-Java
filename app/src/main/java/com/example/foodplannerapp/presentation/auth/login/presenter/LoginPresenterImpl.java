@@ -6,23 +6,34 @@ import com.example.foodplannerapp.data.utils.NetworkResponseCallback;
 import com.example.foodplannerapp.presentation.auth.login.views.LoginView;
 import com.google.firebase.auth.AuthResult;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class LoginPresenterImpl implements LoginPresenter {
     private final LoginRepository loginRepository;
     private final LoginView loginView;
     private final UserPreferenceDataSource userPrefs;
-
+    private final CompositeDisposable disposables = new CompositeDisposable();
     @Override
     public void guestMode() {
-        userPrefs.setGuestMode(true);
-        loginView.onLoginSuccess();
+        loginView.showProgressbar();
+        disposables.add(
+                Completable.timer(2, TimeUnit.SECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(() -> {
+                            userPrefs.setGuestMode(true);
+                            loginView.onLoginSuccess();
+                        }, throwable -> {
+                            loginView.hideProgressbar();
+                            loginView.onLoginFailed("Error", "Something went wrong");
+                        })
+        );
     }
-
-    private CompositeDisposable disposables = new CompositeDisposable();
-
     @Inject
     public LoginPresenterImpl(LoginRepository loginRepository, LoginView loginView, UserPreferenceDataSource userPrefs) {
         this.loginRepository = loginRepository;

@@ -176,14 +176,14 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void showProgressbar() {
-        binding.progressBar3.setVisibility(VISIBLE);
-        binding.loadingOverlay.setVisibility(VISIBLE);
+        binding.progressBarLogin.setVisibility(VISIBLE);
+        binding.loadingOverlayLogin.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideProgressbar() {
-        binding.progressBar3.setVisibility(GONE);
-        binding.loadingOverlay.setVisibility(GONE);
+        binding.progressBarLogin.setVisibility(GONE);
+        binding.loadingOverlayLogin.setVisibility(GONE);
     }
 
     @Override
