@@ -103,7 +103,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     }
 
     private void setupUI() {
-        binding.contentScrollView.setVisibility(View.VISIBLE);
+        binding.contentCoordinator.setVisibility(View.VISIBLE);
         binding.tvMealName.setText(currentMeal.getStrMeal());
         binding.tvArea.setText(currentMeal.getStrArea());
         setupIngredientsAdapter();
