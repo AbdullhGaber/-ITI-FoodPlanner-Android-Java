@@ -35,4 +35,14 @@
         app:layout_constraintStart_toStartOf="@+id/iv_ingredient"
         app:layout_constraintEnd_toEndOf="@+id/iv_ingredient" />
 
+    <TextView
+        android:id="@+id/tv_measure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1/2"
+        android:fontFamily="@font/poppins_bold_italic"
+        app:layout_constraintEnd_toEndOf="@+id/tv_ingredient_name"
+        app:layout_constraintStart_toStartOf="@+id/tv_ingredient_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_ingredient_name" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

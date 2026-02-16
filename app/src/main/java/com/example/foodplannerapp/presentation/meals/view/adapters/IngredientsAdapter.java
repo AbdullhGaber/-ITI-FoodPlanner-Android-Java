@@ -65,6 +65,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
         public void bind(Ingredient ingredient) {
             binding.tvIngredientName.setText(ingredient.getStrIngredient());
+            binding.tvMeasure.setText(ingredient.getStrMeasure());
             ShimmerUtil.addShimmerToImage(itemView.getContext(), ingredient.getStrThumb(), binding.ivIngredient);
         }
     }

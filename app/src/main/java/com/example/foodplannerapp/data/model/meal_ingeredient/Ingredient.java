@@ -13,8 +13,10 @@ public class Ingredient {
     private String strDescription;
     private String strThumb;
     private String strType;
-    public Ingredient(String name){
+    private String strMeasure;
+    public Ingredient(String name, String measure){
         strIngredient = name;
+        strMeasure = measure;
         strThumb = "https://www.themealdb.com/images/ingredients/" + name + "-Small.png";
     }
 }
