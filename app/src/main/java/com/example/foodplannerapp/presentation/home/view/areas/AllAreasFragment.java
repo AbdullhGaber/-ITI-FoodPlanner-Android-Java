@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -66,6 +68,15 @@ public class AllAreasFragment extends Fragment implements AllAreasView {
     @Override
     public void showAreas(List<Area> areas) {
         adapter.submitList(areas);
+
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
+                requireContext(),
+                R.anim.layout_animation_jump
+        );
+
+        binding.rvAllItems.setLayoutAnimation(controller);
+
+        binding.rvAllItems.scheduleLayoutAnimation();
     }
 
     private void initViews(){
