@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.FragmentFavoriteBinding;
 import com.example.foodplannerapp.presentation.favorites.presenter.FavoritePresenter;
@@ -51,11 +53,16 @@ public class FavoriteFragment extends Fragment implements FavoriteView, Favorite
     @Override
     public void showFavoriteMeals(List<MealEntity> meals) {
         if (meals == null || meals.isEmpty()) {
-            binding.layoutEmptyState.setVisibility(View.VISIBLE);
             binding.rvFavorites.setVisibility(View.GONE);
+            binding.layoutEmpty.emptyStateContainer.setVisibility(View.VISIBLE);
+
+            binding.layoutEmpty.tvEmptyTitle.setText(R.string.no_favorites_yet);
+            binding.layoutEmpty.tvEmptySubtitle.setText(R.string.tap_the_heart_icon_on_a_meal_to_save_it_here);
+
         } else {
-            binding.layoutEmptyState.setVisibility(View.GONE);
+            binding.layoutEmpty.emptyStateContainer.setVisibility(View.GONE);
             binding.rvFavorites.setVisibility(View.VISIBLE);
+
             adapter.submitList(meals);
         }
     }

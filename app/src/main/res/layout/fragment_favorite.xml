@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/cream_background">
-
+    android:background="@color/creamy">
     <TextView
         android:id="@+id/tv_favorites_title"
         android:layout_width="wrap_content"
@@ -31,33 +30,11 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_favorites_title"
         tools:listitem="@layout/item_meal_fav" />
 
-    <LinearLayout
-        android:id="@+id/layout_empty_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:alpha="0.5"
-            android:src="@drawable/ic_heart_filled"
-            app:tint="#808080" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/poppins_medium"
-            android:text="No favorites yet"
-            android:textColor="#808080"
-            android:textSize="18sp" />
-    </LinearLayout>
+    <include
+        android:id="@+id/layout_empty"
+        layout="@layout/layout_favorite_empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

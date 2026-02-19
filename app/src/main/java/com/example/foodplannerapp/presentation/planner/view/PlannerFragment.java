@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.FragmentPlannerBinding;
 import com.example.foodplannerapp.presentation.planner.view.adapters.CalendarAdapter;
@@ -93,7 +95,19 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
 
     @Override
     public void showPlannedMeals(List<MealEntity> plans) {
-        adapter.submitList(plans);
+        if (plans == null || plans.isEmpty()) {
+            binding.rvPlanner.setVisibility(View.GONE);
+            binding.layoutEmpty.emptyStateContainer.setVisibility(View.VISIBLE);
+
+            binding.layoutEmpty.tvEmptyTitle.setText(R.string.no_planned_meals_yet);
+            binding.layoutEmpty.tvEmptySubtitle.setText(R.string.tap_on_calendar_icon_on_a_meal_to_see_it_here);
+
+        } else {
+            binding.layoutEmpty.emptyStateContainer.setVisibility(View.GONE);
+            binding.rvPlanner.setVisibility(View.VISIBLE);
+
+            adapter.submitList(plans);
+        }
     }
 
     @Override
