@@ -2,18 +2,15 @@ package com.example.foodplannerapp.presentation.home.view.home;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-
+import android.app.Dialog;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.model.meal.Meal;
@@ -23,6 +20,8 @@ import com.example.foodplannerapp.databinding.FragmentHomeBinding;
 import com.example.foodplannerapp.presentation.home.presenter.home.HomePresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
 import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
+import com.example.foodplannerapp.presentation.utils.Constants;
+import com.example.foodplannerapp.presentation.utils.Dialogs;
 import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -41,7 +40,6 @@ public class HomeFragment extends Fragment implements HomeView{
     FragmentHomeBinding binding;
     AreaAdapter areaAdapter;
     CategoryAdapter categoryAdapter;
-
     Meal currentMeal;
 
     @Nullable
@@ -54,6 +52,7 @@ public class HomeFragment extends Fragment implements HomeView{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        checkAndShowAuthSuccessDialog();
         initViews();
         binding.mealDayContainer.setOnClickListener(
                 (v) ->{
@@ -64,6 +63,39 @@ public class HomeFragment extends Fragment implements HomeView{
         );
         setUpRvAdapters();
         observeData();
+    }
+
+    private void checkAndShowAuthSuccessDialog() {
+        if (requireActivity().getIntent() != null) {
+
+            boolean showLoginSuccess = requireActivity().getIntent().getBooleanExtra(
+                    Constants.SP_LOGIN_KEY, false);
+
+            boolean showRegisterSuccess = requireActivity().getIntent().getBooleanExtra(
+                    Constants.SP_REGISTER_KEY, false);
+
+            if (showLoginSuccess) {
+                Dialogs.show(
+                        requireContext(),
+                        Dialogs.DialogType.SUCCESS,
+                        "Logged In Successfully",
+                        "Explore and enjoy meals to add to your plans",
+                        "Let's Get Started",
+                        Dialog::dismiss
+                );
+
+                requireActivity().getIntent().removeExtra("SHOW_REGISTER_SUCCESS");
+            }else if(showRegisterSuccess){
+                Dialogs.show(
+                        requireContext(),
+                        Dialogs.DialogType.SUCCESS,
+                        "Account Registered Successfully",
+                        "Explore and enjoy meals to add to your plans",
+                        "Let's Get Started",
+                        Dialog::dismiss
+                );
+            }
+        }
     }
 
     @Override
@@ -110,9 +142,7 @@ public class HomeFragment extends Fragment implements HomeView{
         );
 
         binding.ivSearch.setOnClickListener(
-                (v) -> {
-                    Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_searchFragment);
-                }
+                (v) -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_searchFragment)
         );
     }
     @Override

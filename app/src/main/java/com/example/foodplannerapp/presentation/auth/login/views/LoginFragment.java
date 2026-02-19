@@ -4,6 +4,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.databinding.FragmentLoginBinding;
 import com.example.foodplannerapp.presentation.activities.FoodActivity;
 import com.example.foodplannerapp.presentation.auth.login.presenter.LoginPresenter;
+import com.example.foodplannerapp.presentation.utils.Constants;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -165,6 +167,9 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public void onLoginSuccess() {
         Intent intent = new Intent(getActivity(), FoodActivity.class);
+        if(!presenter.isGuestMode()){
+            intent.putExtra(Constants.SP_LOGIN_KEY, true);
+        }
         startActivity(intent);
         requireActivity().finish();
     }

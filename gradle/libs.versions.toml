@@ -12,6 +12,7 @@ espressoCore = "3.7.0"
 appcompat = "1.7.1"
 lombok = "1.18.42"
 lombokVersion = "1.18.34"
+lottieVersion = "6.3.0"
 material = "1.13.0"
 activity = "1.12.2"
 constraintlayout = "2.2.1"
@@ -41,6 +42,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 lombok-v11834 = { module = "org.projectlombok:lombok", version.ref = "lombokVersion" }
+lottie-v630 = { module = "com.airbnb.android:lottie", version.ref = "lottieVersion" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }

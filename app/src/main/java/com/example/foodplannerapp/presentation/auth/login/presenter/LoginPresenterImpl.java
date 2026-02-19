@@ -32,6 +32,12 @@ public class LoginPresenterImpl implements LoginPresenter {
                         })
         );
     }
+
+    @Override
+    public boolean isGuestMode() {
+        return userPrefs.isGuest();
+    }
+
     @Inject
     public LoginPresenterImpl(LoginRepository loginRepository, LoginView loginView, UserPreferenceDataSource userPrefs) {
         this.loginRepository = loginRepository;

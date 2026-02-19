@@ -15,11 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.reposetories.auth.register.repository.RegisterRepositoryImpl;
 import com.example.foodplannerapp.databinding.FragmentRegisterBinding;
 import com.example.foodplannerapp.presentation.activities.FoodActivity;
 import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenter;
 import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenterImpl;
+import com.example.foodplannerapp.presentation.utils.Constants;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
 
 public class RegisterFragment extends Fragment implements RegisterView {
@@ -109,13 +111,14 @@ public class RegisterFragment extends Fragment implements RegisterView {
 
     private void setOnRegisterRedirectClick() {
         binding.redirectLoginClickable.setOnClickListener(
-                (v) -> Navigation.findNavController(v).navigate(com.example.foodplannerapp.R.id.action_registerFragment_to_loginFragment)
+                (v) -> Navigation.findNavController(v).navigate(R.id.action_registerFragment_to_loginFragment)
         );
     }
 
     @Override
     public void onRegisterSuccess() {
         Intent intent = new Intent(getActivity(), FoodActivity.class);
+        intent.putExtra(Constants.SP_REGISTER_KEY, true);
         startActivity(intent);
         requireActivity().finish();
     }
