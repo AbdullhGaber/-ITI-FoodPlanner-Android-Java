@@ -229,7 +229,7 @@ public class Meal implements Parcelable {
         return 0;
     }
 
-    public static final Creator<Meal> CREATOR = new Creator<Meal>() {
+    public static final Creator<Meal> CREATOR = new Creator<>() {
         @Override
         public Meal createFromParcel(Parcel in) {
             return new Meal(in);

@@ -115,14 +115,12 @@
                     app:layout_constraintStart_toStartOf="@+id/tv_meal_name"
                     app:layout_constraintTop_toBottomOf="@+id/tv_meal_name" />
 
-                <TextView
-                    android:id="@+id/tv_area"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="Italian "
-                    android:textColor="@color/light_grey300"
-                    android:textSize="14sp"
+                <ImageView
+                    android:id="@+id/iv_area_flag"
+                    android:layout_width="32dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="8dp"
+                    android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_origin_label"
                     app:layout_constraintStart_toEndOf="@+id/tv_origin_label"
                     app:layout_constraintTop_toTopOf="@+id/tv_origin_label" />

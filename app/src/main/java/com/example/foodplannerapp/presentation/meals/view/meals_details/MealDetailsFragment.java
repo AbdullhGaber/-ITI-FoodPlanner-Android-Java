@@ -1,5 +1,7 @@
 package com.example.foodplannerapp.presentation.meals.view.meals_details;
 
+import static com.example.foodplannerapp.presentation.utils.ShimmerUtil.addShimmerToImage;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
 import com.example.foodplannerapp.data.model.meal.Meal;
+import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.databinding.FragmentMealDetailsBinding;
 import com.example.foodplannerapp.presentation.activities.MainActivity;
 import com.example.foodplannerapp.presentation.meals.presenter.meal_details.MealDetailsPresenter;
@@ -105,12 +108,25 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private void setupUI() {
         binding.contentCoordinator.setVisibility(View.VISIBLE);
         binding.tvMealName.setText(currentMeal.getStrMeal());
-        binding.tvArea.setText(currentMeal.getStrArea());
+
+        if (currentMeal.getStrArea() != null && !currentMeal.getStrArea().isEmpty()) {
+            Area areaMapper = new Area();
+
+            areaMapper.setAreaName(currentMeal.getStrArea());
+            addShimmerToImage(
+                    requireContext(),
+                    areaMapper.getFlagUrl(),
+                    binding.ivAreaFlag
+            );
+        }
+
+
         setupIngredientsAdapter();
         setupInstructionsAdapter();
         setUpMealInstructionsRv();
         setUpIngredientsRv();
         binding.rvInstructions.setNestedScrollingEnabled(false);
+
         if (currentMeal.getLocalImageBytes() != null && currentMeal.getLocalImageBytes().length > 0) {
             Glide.with(this).load(currentMeal.getLocalImageBytes()).into(binding.ivMealImage);
         } else {
