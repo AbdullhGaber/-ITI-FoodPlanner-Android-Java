@@ -22,6 +22,7 @@ import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
 import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
 import com.example.foodplannerapp.presentation.utils.Constants;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.example.foodplannerapp.presentation.utils.Dialogs.SuccessStrategy;
 import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -77,7 +78,7 @@ public class HomeFragment extends Fragment implements HomeView{
             if (showLoginSuccess) {
                 Dialogs.show(
                         requireContext(),
-                        Dialogs.DialogType.SUCCESS,
+                        new SuccessStrategy(),
                         "Logged In Successfully",
                         "Explore and enjoy meals to add to your plans",
                         "Let's Get Started",
@@ -88,7 +89,7 @@ public class HomeFragment extends Fragment implements HomeView{
             }else if(showRegisterSuccess){
                 Dialogs.show(
                         requireContext(),
-                        Dialogs.DialogType.SUCCESS,
+                        new SuccessStrategy(),
                         "Account Registered Successfully",
                         "Explore and enjoy meals to add to your plans",
                         "Let's Get Started",
