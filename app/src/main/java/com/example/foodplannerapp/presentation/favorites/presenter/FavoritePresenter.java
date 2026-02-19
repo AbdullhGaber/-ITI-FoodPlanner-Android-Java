@@ -1,9 +1,9 @@
 package com.example.foodplannerapp.presentation.favorites.presenter;
 
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 
 public interface FavoritePresenter {
     void getFavMeals();
     void onDestroy();
-    void deleteMeal(Meal meal);
+    void deleteMeal(MealEntity meal);
 }

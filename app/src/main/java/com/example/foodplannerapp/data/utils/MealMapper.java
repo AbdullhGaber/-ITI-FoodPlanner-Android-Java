@@ -1,12 +1,15 @@
 package com.example.foodplannerapp.data.utils;
 import android.content.Context;
+
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import java.io.File;
+import java.io.FileInputStream;
 
 public class MealMapper {
-    public static Meal toModel(com.example.foodplannerapp.data.db.meals.entities.Meal entity) {
+    public static Meal toModel(MealEntity entity) {
         if (entity == null) return null;
 
         Meal meal = new Meal();
@@ -42,14 +45,15 @@ public class MealMapper {
         meal.setStrMeasure2(entity.getStrMeasure2());
         meal.setStrMeasure3(entity.getStrMeasure3());
         meal.setLocalImageBytes(entity.getLocalImageBytes());
-
+        meal.setDayOfWeek(entity.getDayOfWeek());
+        meal.setFav(entity.isFav());
         return meal;
     }
 
-    public static com.example.foodplannerapp.data.db.meals.entities.Meal toEntity(Meal meal, Context context) {
+    public static MealEntity toEntity(Meal meal, Context context) {
         if (meal == null) return null;
 
-        com.example.foodplannerapp.data.db.meals.entities.Meal entity = new com.example.foodplannerapp.data.db.meals.entities.Meal();
+        MealEntity entity = new MealEntity();
         entity.setIdMeal(meal.getIdMeal());
         entity.setStrMeal(meal.getStrMeal());
         entity.setStrCategory(meal.getStrCategory());
@@ -81,8 +85,9 @@ public class MealMapper {
         entity.setStrMeasure1(meal.getStrMeasure1());
         entity.setStrMeasure2(meal.getStrMeasure2());
         entity.setStrMeasure3(meal.getStrMeasure3());
-        
-        // Download and store image bytes locally
+        entity.setDayOfWeek(meal.getDayOfWeek());
+        entity.setFav(meal.isFav());
+
         if (meal.getStrMealThumb() != null && !meal.getStrMealThumb().isEmpty()) {
             try {
                 File imageFile = Glide.with(context)
@@ -90,20 +95,16 @@ public class MealMapper {
                         .load(meal.getStrMealThumb())
                         .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                         .get();
-                
-                // Convert file to byte array
+
                 byte[] imageBytes = new byte[(int) imageFile.length()];
-                try (java.io.FileInputStream fis = new java.io.FileInputStream(imageFile)) {
+                try (FileInputStream fis = new FileInputStream(imageFile)) {
                     fis.read(imageBytes);
+                    entity.setLocalImageBytes(imageBytes);
                 }
-                entity.setLocalImageBytes(imageBytes);
             } catch (Exception e) {
-                // If image download fails, just skip storing image bytes
                 e.printStackTrace();
             }
         }
-        
-        entity.setLocalImageBytes(meal.getLocalImageBytes());
         return entity;
     }
 }

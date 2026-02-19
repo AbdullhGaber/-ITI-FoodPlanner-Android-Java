@@ -5,30 +5,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.example.foodplannerapp.R;
-import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.FragmentPlannerBinding;
+import com.example.foodplannerapp.presentation.planner.view.adapters.CalendarAdapter;
+import com.example.foodplannerapp.presentation.model.CalendarDateModel;
 import com.example.foodplannerapp.presentation.planner.presenter.PlannerPresenter;
 import com.example.foodplannerapp.presentation.planner.view.adapters.PlannerAdapter;
-import com.google.android.material.chip.Chip;
-
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class PlannerFragment extends Fragment implements PlannerView, PlannerAdapter.OnPlanClickListener {
-
     @Inject
     PlannerPresenter presenter;
-
     private FragmentPlannerBinding binding;
     private PlannerAdapter adapter;
 
@@ -42,12 +42,8 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupRecyclerView();
-        setupChips();
-        
-        // Initial Load (Saturday)
-        presenter.getMealsForDay("Saturday");
+        setupCalendarRecyclerView();
     }
 
     private void setupRecyclerView() {
@@ -56,17 +52,47 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
         binding.rvPlanner.setAdapter(adapter);
     }
 
-    private void setupChips() {
-        binding.chipGroupDays.setOnCheckedChangeListener((group, checkedId) -> {
-            Chip chip = group.findViewById(checkedId);
-            if (chip != null) {
-                presenter.getMealsForDay(chip.getText().toString());
-            }
+    private void setupCalendarRecyclerView() {
+        CalendarAdapter calendarAdapter = new CalendarAdapter(dateModel -> {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String formattedDate = sdf.format(dateModel.getFullDate());
+
+            presenter.getMealsForDay(formattedDate);
         });
+
+        binding.rvCalendar.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvCalendar.setAdapter(calendarAdapter);
+
+        List<CalendarDateModel> upcomingDays = generateNextSevenDays();
+        calendarAdapter.submitList(upcomingDays);
+
+        if (!upcomingDays.isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String todayFormatted = sdf.format(upcomingDays.get(0).getFullDate());
+            presenter.getMealsForDay(todayFormatted);
+        }
+    }
+
+    private List<CalendarDateModel> generateNextSevenDays() {
+        List<CalendarDateModel> dateList = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat dayOfWeekFormat = new SimpleDateFormat("EEE", Locale.getDefault());
+        SimpleDateFormat dayNumberFormat = new SimpleDateFormat("dd", Locale.getDefault());
+
+        for (int i = 0; i < 7; i++) {
+            Date date = calendar.getTime();
+            String dayOfWeek = dayOfWeekFormat.format(date);
+            String dayNumber = dayNumberFormat.format(date);
+
+            dateList.add(new CalendarDateModel(date, dayOfWeek, dayNumber));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return dateList;
     }
 
     @Override
-    public void showPlannedMeals(List<PlanMeal> plans) {
+    public void showPlannedMeals(List<MealEntity> plans) {
         adapter.submitList(plans);
     }
 
@@ -81,17 +107,17 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
     }
 
     @Override
-    public void onPlanClick(PlanMeal plan) {
+    public void onPlanClick(MealEntity plan) {
         PlannerFragmentDirections.ActionPlannerFragmentToMealDetailsFragment action =
-                PlannerFragmentDirections.actionPlannerFragmentToMealDetailsFragment(plan.getMealId());
+                PlannerFragmentDirections.actionPlannerFragmentToMealDetailsFragment(plan.getIdMeal());
         Navigation.findNavController(binding.getRoot()).navigate(action);
     }
 
     @Override
-    public void onDeletePlanClick(PlanMeal plan) {
+    public void onDeletePlanClick(MealEntity plan) {
         presenter.deletePlan(plan);
     }
-    
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

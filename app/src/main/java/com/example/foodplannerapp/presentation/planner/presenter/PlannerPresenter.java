@@ -1,9 +1,12 @@
 package com.example.foodplannerapp.presentation.planner.presenter;
 
-import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
+import android.content.Context;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
+import com.example.foodplannerapp.data.model.meal.Meal;
+
 
 public interface PlannerPresenter {
     void getMealsForDay(String day);
-    void deletePlan(PlanMeal plan);
+    void deletePlan(MealEntity meal);
     void onDestroy();
 }

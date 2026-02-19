@@ -2,8 +2,8 @@ package com.example.foodplannerapp.data.reposetories.meals;
 
 import com.example.foodplannerapp.data.datasources.meals.local.MealsLocalDataSource;
 import com.example.foodplannerapp.data.datasources.meals.remote.MealsRemoteDataSource;
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
-import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
+import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal.MealResponse;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_area.AreaListResponse;
@@ -20,8 +20,8 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 
 public class MealsRepositoryImpl implements MealsRepository{
-    MealsRemoteDataSource mealsRemoteDataSource;
-    MealsLocalDataSource mealslocalDataSource;
+    private final MealsRemoteDataSource mealsRemoteDataSource;
+    private final MealsLocalDataSource mealslocalDataSource;
     private List<Area> cachedAreas;
     @Inject
     public MealsRepositoryImpl(MealsRemoteDataSource mealsRemoteDataSource, MealsLocalDataSource mealslocalDataSource) {
@@ -50,21 +50,24 @@ public class MealsRepositoryImpl implements MealsRepository{
     }
 
     @Override
-    public Flowable<List<Meal>> getFavMeals() {
-        return mealslocalDataSource.getMeals();
+    public Flowable<List<MealEntity>> getFavMeals() {
+        return mealslocalDataSource.getFavMeals();
     }
 
     @Override
-    public Completable insertMeal(Meal meal) {
+    public Completable insertMeal(MealEntity meal) {
         return mealslocalDataSource.insertMeal(meal);
     }
-
     @Override
-    public Completable deleteMeal(Meal meal) {
-        return mealslocalDataSource.deleteMeal(meal);
+    public Completable removeFavoriteMeal(String mealId){
+        return mealslocalDataSource.removeFavoriteMeal(mealId);
     }
     @Override
-    public Single<com.example.foodplannerapp.data.model.meal.Meal> getMealDetails(String mealId) {
+    public Completable removePlanMeal(String mealId){
+        return mealslocalDataSource.removePlanMeal(mealId);
+    }
+    @Override
+    public Single<Meal> getMealDetails(String mealId) {
         return mealslocalDataSource.getMealById(mealId)
                 .map(MealMapper::toModel).switchIfEmpty(
                         mealsRemoteDataSource.getMealById(mealId)
@@ -73,7 +76,7 @@ public class MealsRepositoryImpl implements MealsRepository{
     }
 
     @Override
-    public Single<List<com.example.foodplannerapp.data.model.meal.Meal>> searchMeals(String query, SearchType type) {
+    public Single<List<Meal>> searchMeals(String query, SearchType type) {
         Single<MealResponse> responseSingle;
 
         switch (type) {
@@ -100,19 +103,18 @@ public class MealsRepositoryImpl implements MealsRepository{
             }
         });
     }
-
     @Override
-    public Completable insertPlan(PlanMeal plan) {
-        return mealslocalDataSource.insertPlan(plan);
+    public Completable insertPlan(MealEntity meal) {
+        return mealslocalDataSource.insertMeal(meal);
     }
 
     @Override
-    public Completable deletePlan(PlanMeal plan) {
-        return mealslocalDataSource.deletePlan(plan);
+    public Completable deleteMeal(MealEntity mealEntity) {
+        return mealslocalDataSource.deleteMeal(mealEntity);
     }
 
     @Override
-    public Flowable<List<PlanMeal>> getPlansByDay(String day) {
+    public Flowable<List<MealEntity>> getPlansByDay(String day) {
         return mealslocalDataSource.getPlansByDay(day);
     }
 }

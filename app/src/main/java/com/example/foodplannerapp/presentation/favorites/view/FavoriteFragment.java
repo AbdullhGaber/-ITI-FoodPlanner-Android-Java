@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.FragmentFavoriteBinding;
 import com.example.foodplannerapp.presentation.favorites.presenter.FavoritePresenter;
 import com.example.foodplannerapp.presentation.favorites.view.adapters.FavoriteMealsAdapter;
@@ -49,7 +49,7 @@ public class FavoriteFragment extends Fragment implements FavoriteView, Favorite
     }
 
     @Override
-    public void showFavoriteMeals(List<Meal> meals) {
+    public void showFavoriteMeals(List<MealEntity> meals) {
         if (meals == null || meals.isEmpty()) {
             binding.layoutEmptyState.setVisibility(View.VISIBLE);
             binding.rvFavorites.setVisibility(View.GONE);
@@ -71,14 +71,14 @@ public class FavoriteFragment extends Fragment implements FavoriteView, Favorite
     }
 
     @Override
-    public void onMealClick(Meal meal) {
+    public void onMealClick(MealEntity meal) {
         FavoriteFragmentDirections.ActionFavoriteFragmentToMealDetailsFragment action =
                 FavoriteFragmentDirections.actionFavoriteFragmentToMealDetailsFragment(meal.getIdMeal());
         Navigation.findNavController(binding.getRoot()).navigate(action);
     }
 
     @Override
-    public void onDeleteClick(Meal meal) {
+    public void onDeleteClick(MealEntity meal) {
         favoritePresenter.deleteMeal(meal);
     }
 }

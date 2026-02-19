@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity(tableName = "meals_table")
 @Data
 @NoArgsConstructor
-public class Meal {
+public class MealEntity {
     @PrimaryKey
     @NonNull
     private String idMeal;
@@ -62,5 +62,7 @@ public class Meal {
     private String strSource;
     private String strTags;
     private String strYoutube;
+    private String dayOfWeek;
+    private boolean isFav;
     private byte[] localImageBytes;
 }

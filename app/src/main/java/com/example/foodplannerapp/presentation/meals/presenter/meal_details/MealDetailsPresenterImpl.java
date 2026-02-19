@@ -1,15 +1,14 @@
 package com.example.foodplannerapp.presentation.meals.presenter.meal_details;
 
 import android.content.Context;
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
-import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
+import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.data.utils.MealMapper;
 import com.example.foodplannerapp.presentation.meals.view.meals_details.MealDetailsView;
-
 import javax.inject.Inject;
-
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -27,16 +26,11 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter{
 
     @Override
     public void getMealDetails(String mealId) {
-        view.showLoading(); // Optional: Show a progress bar
-
         Disposable d = mealsRepository.getMealDetails(mealId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        meal -> {
-                            view.hideLoading();
-                            view.showMealDetails(meal);
-                        },
+                        view::showMealDetails,
                         error -> {
                             view.hideLoading();
                             view.showError(error.getMessage());
@@ -46,48 +40,64 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter{
     }
 
     @Override
-    public void addToFavorites(com.example.foodplannerapp.data.model.meal.Meal meal, Context context) {
-        if (meal == null) return;
-
-        // Convert Model to DB Entity
-        Meal dbMeal = MealMapper.toEntity(meal, context);
-
-        Disposable d = mealsRepository.insertMeal(dbMeal)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        () -> view.showSuccess("Added to Favorites"),
-                        error -> view.showError("Failed to add favorite: " + error.getMessage())
-                );
-        compositeDisposable.add(d);
+    public void addToFavorites(Meal currentMeal, Context context) {
+        compositeDisposable.add(
+                Observable.just(currentMeal)
+                        .subscribeOn(Schedulers.io())
+                        .map(meal -> MealMapper.toEntity(meal, context))
+                        .flatMapCompletable(
+                                (mealEntity) -> {
+                                    mealEntity.setFav(true);
+                                    return mealsRepository.insertMeal(mealEntity);
+                                }
+                        )
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                () -> view.showSuccess("Added to favorites"),
+                                throwable -> view.showError("Failed to add to favorites")
+                        )
+        );
     }
 
     @Override
-    public void removeFromFavorites(com.example.foodplannerapp.data.model.meal.Meal meal) {
+    public void removeFromFavorites(Meal meal) {
         if (meal == null) return;
 
-        // Convert Model to DB Entity (we just need the ID for deletion)
-        Meal dbMeal = new Meal();
+        MealEntity dbMeal = new MealEntity();
         dbMeal.setIdMeal(meal.getIdMeal());
         dbMeal.setStrMeal(meal.getStrMeal());
 
-        Disposable d = mealsRepository.deleteMeal(dbMeal)
+        Disposable d = mealsRepository.removeFavoriteMeal(meal.getIdMeal())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> view.showSuccess("Removed from Favorites"),
+                        () -> {
+                            view.showSuccess("Removed from Favorites");
+                            if(meal.getDayOfWeek() == null){
+                                mealsRepository.deleteMeal(dbMeal);
+                            }
+                        },
                         error -> view.showError("Failed to remove favorite: " + error.getMessage())
                 );
         compositeDisposable.add(d);
     }
 
     @Override
-    public void addToPlan(PlanMeal plan) {
-        Disposable d = mealsRepository.insertPlan(plan)
+    public void addToPlan(Meal meal, Context context) {
+        view.showLoading();
+        Disposable d = Observable.just(meal)
                 .subscribeOn(Schedulers.io())
+                .map(
+                        (lMeal) -> MealMapper.toEntity(lMeal,context)
+                )
+                .flatMapCompletable(mealsRepository::insertMeal
+                )
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> view.showSuccess("Meal added to " + plan.getDayOfWeek()),
+                        () -> {
+                            view.hideLoading();
+                            view.showSuccess("Meal added in " + meal.getDayOfWeek());
+                        },
                         error -> view.showError(error.getMessage())
                 );
         compositeDisposable.add(d);

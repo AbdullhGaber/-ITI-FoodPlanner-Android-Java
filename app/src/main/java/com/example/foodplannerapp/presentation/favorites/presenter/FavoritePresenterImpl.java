@@ -1,11 +1,12 @@
 package com.example.foodplannerapp.presentation.favorites.presenter;
 
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.presentation.favorites.view.FavoriteView;
 import javax.inject.Inject;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -34,19 +35,21 @@ public class FavoritePresenterImpl implements FavoritePresenter{
                 );
         compositeDisposable.add(d);
     }
+
     @Override
-    public void deleteMeal(Meal meal) {
-        Disposable d = mealsRepository.deleteMeal(meal)
+    public void deleteMeal(MealEntity meal) {
+        Disposable d = mealsRepository.removeFavoriteMeal(meal.getIdMeal())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {
-                            view.showSuccess("Meal deleted successfully");
+                            view.showSuccess("Meal removed from favorites");
                         },
                         error -> {
-                            view.showError(error.getMessage());
+                            view.showError("Failed to remove: " + error.getMessage());
                         }
                 );
+
         compositeDisposable.add(d);
     }
 

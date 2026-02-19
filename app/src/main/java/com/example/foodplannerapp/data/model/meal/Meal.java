@@ -7,8 +7,10 @@ import com.example.foodplannerapp.data.model.meal_ingeredient.Ingredient;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 
 @Data
 @NoArgsConstructor
@@ -67,6 +69,11 @@ public class Meal implements Parcelable {
     private String strSource;
     private String strTags;
     private String strYoutube;
+    @Setter
+    private String dayOfWeek;
+    @Setter
+    @Getter
+    private boolean isFav;
     private byte[] localImageBytes;
 
 

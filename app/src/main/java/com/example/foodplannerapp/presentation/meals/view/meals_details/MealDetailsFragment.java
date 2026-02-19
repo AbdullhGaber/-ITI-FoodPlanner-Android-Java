@@ -23,8 +23,8 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 import com.example.foodplannerapp.presentation.meals.view.adapters.InstructionsAdapter;
+import com.example.foodplannerapp.presentation.meals.view.meals_details.meal_plan.MealPlanBottomSheet;
 import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 
@@ -61,7 +61,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         updateFavoriteIcon();
         binding.btnFavorite.setOnClickListener(v -> toggleFavorite());
         binding.btnBack.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
-        binding.btnCalendar.setOnClickListener(v -> showDayPicker());
+        binding.btnCalendar.setOnClickListener(v -> showDatePicker());
     }
 
     @Override
@@ -192,41 +192,30 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         return null;
     }
 
-    private void showDayPicker() {
-        final String[] days = {"Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Choose a Day")
-                .setItems(days, (dialog, which) -> {
-                    String selectedDay = days[which];
-                    saveMealToPlan(selectedDay);
-                })
-                .show();
+    private void showDatePicker() {
+        MealPlanBottomSheet bottomSheet = new MealPlanBottomSheet();
+        bottomSheet.setOnPlanSaveListener((date, mealType) -> {
+            String formattedDay = date + " - " + mealType;
+            saveMealToPlan(formattedDay);
+        });
+        bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
     }
     private void saveMealToPlan(String day) {
         if (currentMeal == null) return;
-
-        PlanMeal plan = new PlanMeal(
-                        currentMeal.getIdMeal(),
-                        day,
-                        currentMeal.getStrMeal(),
-                        currentMeal.getStrMealThumb(),
-                        currentMeal.getStrArea(),
-                        currentMeal.getStrCategory(),
-                        currentMeal.getLocalImageBytes()
-                );
-
-        presenter.addToPlan(plan);
+        currentMeal.setDayOfWeek(day);
+        presenter.addToPlan(currentMeal,requireContext());
     }
 
     @Override
     public void showLoading() {
-//        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.progressBarMealDetails.setVisibility(View.VISIBLE);
+        binding.loadingOverlayMealDetails.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-//        binding.progressBar.setVisibility(View.GONE);
+        binding.progressBarMealDetails.setVisibility(View.GONE);
+        binding.loadingOverlayMealDetails.setVisibility(View.GONE);
     }
 
     @Override
