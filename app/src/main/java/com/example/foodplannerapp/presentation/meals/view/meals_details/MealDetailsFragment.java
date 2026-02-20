@@ -29,6 +29,7 @@ import com.example.foodplannerapp.presentation.meals.view.meals_details.meal_pla
 import com.example.foodplannerapp.presentation.utils.Dialogs;
 import com.example.foodplannerapp.presentation.utils.Dialogs.WarningStrategy;
 import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
+import com.google.android.material.appbar.AppBarLayout;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import java.util.ArrayList;
@@ -108,6 +109,30 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private void setupUI() {
         binding.contentCoordinator.setVisibility(View.VISIBLE);
         binding.tvMealName.setText(currentMeal.getStrMeal());
+
+        binding.tvToolbarTitle.setText(currentMeal.getStrMeal());
+
+        binding.appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isTitleVisible = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+
+                if (scrollRange + verticalOffset == 0) {
+                    if (!isTitleVisible) {
+                        binding.tvToolbarTitle.animate().alpha(1f).setDuration(200).start();
+                        isTitleVisible = true;
+                    }
+                } else if (isTitleVisible) {
+                    binding.tvToolbarTitle.animate().alpha(0f).setDuration(200).start();
+                    isTitleVisible = false;
+                }
+            }
+        });
 
         if (currentMeal.getStrArea() != null && !currentMeal.getStrArea().isEmpty()) {
             Area areaMapper = new Area();
