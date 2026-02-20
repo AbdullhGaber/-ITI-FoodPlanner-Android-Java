@@ -1,7 +1,5 @@
 package com.example.foodplannerapp.presentation.meals.view.meals_details.meal_plan;
 
-
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +11,20 @@ import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.databinding.BottomSheetMealPlanBinding;
 import com.example.foodplannerapp.presentation.meals.view.listeners.OnPlanSaveListener;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
+
 import lombok.Setter;
 
 public class MealPlanBottomSheet extends BottomSheetDialogFragment {
     private BottomSheetMealPlanBinding binding;
     private Calendar calendar;
+
     @Setter
     private OnPlanSaveListener onPlanSaveListener;
 
@@ -40,6 +44,7 @@ public class MealPlanBottomSheet extends BottomSheetDialogFragment {
             int selectedId = binding.rgMealType.getCheckedRadioButtonId();
             if (selectedId == -1) {
                 Toast.makeText(getContext(), "Please select a meal type", Toast.LENGTH_SHORT).show();
+                return;
             }
 
             String mealType = "";
@@ -61,18 +66,29 @@ public class MealPlanBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void showDatePicker() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                requireContext(),
-                (view, year, month, dayOfMonth) -> {
-                    calendar.set(year, month, dayOfMonth);
-                    updateDateText();
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-        datePickerDialog.show();
+        CalendarConstraints constraints = new CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointForward.now())
+                .build();
+
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select Plan Date")
+                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                .setCalendarConstraints(constraints)
+                .setTheme(R.style.CustomMaterialCalendar)
+                .build();
+
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            utc.setTimeInMillis(selection);
+
+            calendar.set(Calendar.YEAR, utc.get(Calendar.YEAR));
+            calendar.set(Calendar.MONTH, utc.get(Calendar.MONTH));
+            calendar.set(Calendar.DAY_OF_MONTH, utc.get(Calendar.DAY_OF_MONTH));
+
+            updateDateText();
+        });
+
+        datePicker.show(getChildFragmentManager(), "MATERIAL_DATE_PICKER");
     }
 
     private void updateDateText() {
@@ -85,5 +101,4 @@ public class MealPlanBottomSheet extends BottomSheetDialogFragment {
         super.onDestroyView();
         binding = null;
     }
-
 }
