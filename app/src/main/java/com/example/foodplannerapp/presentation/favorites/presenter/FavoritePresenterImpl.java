@@ -36,6 +36,7 @@ public class FavoritePresenterImpl implements FavoritePresenter{
         compositeDisposable.add(d);
     }
 
+
     @Override
     public void deleteMeal(MealEntity meal) {
         Disposable d = mealsRepository.removeFavoriteMeal(meal.getIdMeal())

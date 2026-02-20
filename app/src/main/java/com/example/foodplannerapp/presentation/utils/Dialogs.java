@@ -73,7 +73,7 @@ public class Dialogs {
         }
     }
 
-    public class ErrorStrategy implements DialogStrategy {
+    public static class ErrorStrategy implements DialogStrategy {
         @Override
         public void applyTheme(Context context, DialogCustomAlertBinding binding) {
             binding.lottieDialogIcon.setAnimation(R.raw.error);
@@ -84,13 +84,13 @@ public class Dialogs {
         }
     }
 
-    class WarningStrategy implements DialogStrategy {
+    public static class WarningStrategy implements DialogStrategy {
         @Override
         public void applyTheme(Context context, DialogCustomAlertBinding binding) {
             binding.lottieDialogIcon.setAnimation(R.raw.warning);
-            binding.tvDialogTitle.setTextColor(ContextCompat.getColor(context, R.color.red_error));
+            binding.tvDialogTitle.setTextColor(ContextCompat.getColor(context, R.color.orange));
             binding.btnDialogAction.setBackgroundTintList(
-                    ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red_error))
+                    ColorStateList.valueOf(ContextCompat.getColor(context, R.color.orange))
             );
         }
     }

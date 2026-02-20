@@ -1,7 +1,6 @@
 package com.example.foodplannerapp.presentation.meals.view.meals_details;
 
 import static com.example.foodplannerapp.presentation.utils.ShimmerUtil.addShimmerToImage;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,7 +14,6 @@ import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
-import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.databinding.FragmentMealDetailsBinding;
@@ -24,13 +22,13 @@ import com.example.foodplannerapp.presentation.meals.presenter.meal_details.Meal
 import com.example.foodplannerapp.presentation.meals.view.adapters.IngredientsAdapter;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
-
 import com.example.foodplannerapp.presentation.meals.view.adapters.InstructionsAdapter;
 import com.example.foodplannerapp.presentation.meals.view.meals_details.meal_plan.MealPlanBottomSheet;
+import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.example.foodplannerapp.presentation.utils.Dialogs.WarningStrategy;
 import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +118,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             );
         }
 
-
         setupIngredientsAdapter();
         setupInstructionsAdapter();
         setUpMealInstructionsRv();
@@ -152,17 +149,19 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     }
 
     private void showGuestDialog() {
-        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Guest Mode")
-                .setMessage("You must login to save favorites or plan meals.")
-                .setPositiveButton("Login", (dialog, which) -> {
+        Dialogs.show(
+                requireContext(),
+                new WarningStrategy(),
+                "Guest Mode",
+                "You must login to save favorites or plan meals.",
+                "Login",
+                (dialog) -> {
                     userPrefs.saveGuestMode(false);
                     Intent intent = new Intent(requireActivity(), MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                }
+        );
     }
 
     private void updateFavoriteIcon() {

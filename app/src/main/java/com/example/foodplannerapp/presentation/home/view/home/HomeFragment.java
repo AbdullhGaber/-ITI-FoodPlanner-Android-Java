@@ -22,6 +22,7 @@ import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
 import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
 import com.example.foodplannerapp.presentation.utils.Constants;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.example.foodplannerapp.presentation.utils.Dialogs.ErrorStrategy;
 import com.example.foodplannerapp.presentation.utils.Dialogs.SuccessStrategy;
 import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
 import com.google.android.material.snackbar.Snackbar;
@@ -177,7 +178,14 @@ public class HomeFragment extends Fragment implements HomeView{
 
     @Override
     public void showError(String msg) {
-        Snackbar.make(requireView(),msg,Snackbar.ANIMATION_MODE_FADE).show();
+        Dialogs.show(
+                requireContext(),
+                new ErrorStrategy(),
+                "An Error Occurred",
+                msg,
+                "Ok",
+                Dialog::dismiss
+        );
     }
 
     @Override
