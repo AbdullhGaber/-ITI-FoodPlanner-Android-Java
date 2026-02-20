@@ -1,27 +1,26 @@
 package com.example.foodplannerapp.presentation.favorites.view;
 
+import android.app.Dialog;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.FragmentFavoriteBinding;
 import com.example.foodplannerapp.presentation.favorites.presenter.FavoritePresenter;
 import com.example.foodplannerapp.presentation.favorites.view.adapters.FavoriteMealsAdapter;
+import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.example.foodplannerapp.presentation.utils.Dialogs.WarningStrategy;
 import com.google.android.material.snackbar.Snackbar;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -68,14 +67,46 @@ public class FavoriteFragment extends Fragment implements FavoriteView, Favorite
     }
 
     @Override
-    public void showError(String msg) {
-        Snackbar.make(requireView(),msg,Snackbar.ANIMATION_MODE_FADE).show();
+    public void showError(String title, String message) {
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.ErrorStrategy(),
+                title,
+                message,
+                "Ok",
+                "",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
     }
 
     @Override
-    public void showSuccess(String msg) {
-        Snackbar.make(requireView(),msg,Snackbar.ANIMATION_MODE_FADE).show();
+    public void showUndoMealSnackBar(MealEntity deletedMeal) {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal removed from favorites", Snackbar.LENGTH_LONG);
+
+        snackbar.setAction("UNDO", v -> {
+            favoritePresenter.insertMeal(deletedMeal);
+        });
+
+        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
+        snackbar.show();
     }
+
+    @Override
+    public void showRestoredMealSnackBar() {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal Restored to favorites", Snackbar.LENGTH_LONG);
+        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
+        snackbar.show();
+    }
+
 
     @Override
     public void onMealClick(MealEntity meal) {
@@ -86,6 +117,26 @@ public class FavoriteFragment extends Fragment implements FavoriteView, Favorite
 
     @Override
     public void onDeleteClick(MealEntity meal) {
-        favoritePresenter.deleteMeal(meal);
+        Dialogs.show(
+                requireContext(),
+                new WarningStrategy(),
+                "Remove Favorite?",
+                "Are you sure you want to remove " + meal.getStrMeal() + " from your favorites?",
+                "Yes, Remove",
+                "Cancel",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                        favoritePresenter.deleteMeal(meal);
+                    }
+
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
     }
+
 }

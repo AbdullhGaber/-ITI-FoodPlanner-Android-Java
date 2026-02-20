@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface PlannerView {
     void showPlannedMeals(List<MealEntity> plans);
-    void showError(String message);
-    void showSuccess(String message);
+    void showError(String title, String message);
+    void showUndoPlanSnackBar(MealEntity deletedPlan);
+    void showRestoredPlanSnackBar();
 }

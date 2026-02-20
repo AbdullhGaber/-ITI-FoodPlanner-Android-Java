@@ -5,7 +5,6 @@ import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.presentation.planner.view.PlannerView;
 import javax.inject.Inject;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -33,7 +32,7 @@ public class PlannerPresenterImpl implements PlannerPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         view::showPlannedMeals,
-                        throwable -> view.showError("Error loading meals: " + throwable.getMessage())
+                        throwable -> view.showError("Something went wrong", throwable.getLocalizedMessage())
                 );
 
         disposables.add(currentDayDisposable);
@@ -45,14 +44,22 @@ public class PlannerPresenterImpl implements PlannerPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> {
-                            view.showSuccess("Meal removed successfully");
-                        },
-                        error -> {
-                            view.showError(error.getMessage());
-                        }
+                        ()-> view.showUndoPlanSnackBar(meal),
+                        throwable -> view.showError("Something went wrong", throwable.getLocalizedMessage())
                 );
 
+        disposables.add(d);
+    }
+
+    @Override
+    public void insertPlan(MealEntity meal) {
+        Disposable d = repository.insertMeal(meal)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        view::showRestoredPlanSnackBar,
+                        throwable -> view.showError("Something went wrong", throwable.getLocalizedMessage())
+                );
         disposables.add(d);
     }
 

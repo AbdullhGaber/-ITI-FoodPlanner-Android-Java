@@ -83,7 +83,18 @@ public class HomeFragment extends Fragment implements HomeView{
                         "Logged In Successfully",
                         "Explore and enjoy meals to add to your plans",
                         "Let's Get Started",
-                        Dialog::dismiss
+                        "",
+                        new Dialogs.OnDialogActionListener() {
+                            @Override
+                            public void onPositiveClick(Dialog dialog) {
+                                dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onNegativeClick(Dialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }
                 );
 
                 requireActivity().getIntent().removeExtra("SHOW_REGISTER_SUCCESS");
@@ -94,7 +105,18 @@ public class HomeFragment extends Fragment implements HomeView{
                         "Account Registered Successfully",
                         "Explore and enjoy meals to add to your plans",
                         "Let's Get Started",
-                        Dialog::dismiss
+                        "",
+                        new Dialogs.OnDialogActionListener() {
+                            @Override
+                            public void onPositiveClick(Dialog dialog) {
+                                dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onNegativeClick(Dialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }
                 );
             }
         }
@@ -184,7 +206,18 @@ public class HomeFragment extends Fragment implements HomeView{
                 "An Error Occurred",
                 msg,
                 "Ok",
-                Dialog::dismiss
+                "",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
         );
     }
 

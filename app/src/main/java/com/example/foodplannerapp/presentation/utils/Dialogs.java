@@ -1,7 +1,6 @@
 package com.example.foodplannerapp.presentation.utils;
 
 import android.content.Context;
-import androidx.appcompat.app.AlertDialog;
 import android.app.Dialog;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -13,24 +12,13 @@ import androidx.core.content.ContextCompat;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.databinding.DialogCustomAlertBinding;
 public class Dialogs {
-    public static void showAlertDialog(Context context, String title, String message){
-        new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-                .show();
+    public interface OnDialogActionListener {
+        void onPositiveClick(Dialog dialog);
+        void onNegativeClick(Dialog dialog);
     }
 
-    public enum DialogType {
-        SUCCESS, ERROR, WARNING
-    }
-    public interface OnActionClickListener {
-        void onActionClick(Dialog dialog);
-    }
-
-    public static void show(Context context, DialogStrategy strategy, String title, String message, String buttonText, OnActionClickListener listener) {
+    public static void show(Context context, DialogStrategy strategy, String title, String message, String positiveText, String negativeText, OnDialogActionListener listener) {
         Dialog dialog = new Dialog(context);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         DialogCustomAlertBinding binding = DialogCustomAlertBinding.inflate(LayoutInflater.from(context));
@@ -43,19 +31,26 @@ public class Dialogs {
 
         binding.tvDialogTitle.setText(title);
         binding.tvDialogMessage.setText(message);
-        binding.btnDialogAction.setText(buttonText);
+        binding.btnDialogAction.setText(positiveText);
+        binding.btnDialogCancel.setText(negativeText);
 
         strategy.applyTheme(context,binding);
 
-        binding.btnDialogAction.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onActionClick(dialog);
-            } else {
-                dialog.dismiss();
-            }
-        });
+        setButtonsClickListeners(listener, binding, dialog);
 
         dialog.show();
+    }
+
+    private static void setButtonsClickListeners(OnDialogActionListener listener, DialogCustomAlertBinding binding, Dialog dialog) {
+        binding.btnDialogAction.setOnClickListener(v -> {
+            if (listener != null) listener.onPositiveClick(dialog);
+            else dialog.dismiss();
+        });
+
+        binding.btnDialogCancel.setOnClickListener(v -> {
+            if (listener != null) listener.onNegativeClick(dialog);
+            else dialog.dismiss();
+        });
     }
 
     public interface DialogStrategy {

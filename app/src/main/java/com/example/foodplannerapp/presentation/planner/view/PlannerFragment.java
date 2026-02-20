@@ -1,5 +1,6 @@
 package com.example.foodplannerapp.presentation.planner.view;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +20,9 @@ import com.example.foodplannerapp.presentation.planner.view.adapters.CalendarAda
 import com.example.foodplannerapp.presentation.model.CalendarDateModel;
 import com.example.foodplannerapp.presentation.planner.presenter.PlannerPresenter;
 import com.example.foodplannerapp.presentation.planner.view.adapters.PlannerAdapter;
+import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -109,17 +114,6 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
             adapter.submitList(plans);
         }
     }
-
-    @Override
-    public void showError(String message) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showSuccess(String message) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public void onPlanClick(MealEntity plan) {
         PlannerFragmentDirections.ActionPlannerFragmentToMealDetailsFragment action =
@@ -128,8 +122,67 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
     }
 
     @Override
+    public void showError(String title, String message) {
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.ErrorStrategy(),
+                title,
+                message,
+                "Ok",
+                "",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
+    }
+
+    @Override
     public void onDeletePlanClick(MealEntity plan) {
-        presenter.deletePlan(plan);
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.WarningStrategy(),
+                "Remove from Plan?",
+                "Are you sure you want to remove " + plan.getStrMeal() + " from your schedule?",
+                "Yes, Remove",
+                "Cancel",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                        presenter.deletePlan(plan);
+                    }
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
+    }
+
+    @Override
+     public void showUndoPlanSnackBar(MealEntity deletedPlan) {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal removed from plan", Snackbar.LENGTH_LONG);
+
+        snackbar.setAction("UNDO", v -> {
+            presenter.insertPlan(deletedPlan);
+        });
+
+        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
+        snackbar.show();
+    }
+
+    @Override
+     public void showRestoredPlanSnackBar() {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal Restored to plan", Snackbar.LENGTH_LONG);
+        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
+        snackbar.show();
     }
 
     @Override

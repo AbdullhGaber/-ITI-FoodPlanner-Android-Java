@@ -3,6 +3,7 @@ package com.example.foodplannerapp.presentation.auth.register.views;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -125,7 +126,25 @@ public class RegisterFragment extends Fragment implements RegisterView {
 
     @Override
     public void onRegisterFailed(String title, String message) {
-        Dialogs.showAlertDialog(requireContext(), title, message);
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.ErrorStrategy(),
+                title,
+                message,
+                "Ok",
+                "",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
     }
 
     @Override

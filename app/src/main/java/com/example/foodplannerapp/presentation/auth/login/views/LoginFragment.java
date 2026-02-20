@@ -176,7 +176,25 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void onLoginFailed(String title, String message) {
-        Dialogs.showAlertDialog(requireContext(), title, message);
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.ErrorStrategy(),
+                "An Error Occurred",
+                message,
+                "Ok",
+                "",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
     }
 
     @Override

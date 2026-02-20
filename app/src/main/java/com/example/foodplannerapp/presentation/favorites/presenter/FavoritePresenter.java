@@ -6,4 +6,5 @@ public interface FavoritePresenter {
     void getFavMeals();
     void onDestroy();
     void deleteMeal(MealEntity meal);
+    void insertMeal(MealEntity meal);
 }

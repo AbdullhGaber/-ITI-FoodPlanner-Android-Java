@@ -1,6 +1,8 @@
 package com.example.foodplannerapp.presentation.meals.view.meals_details;
 
 import static com.example.foodplannerapp.presentation.utils.ShimmerUtil.addShimmerToImage;
+
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -155,11 +157,20 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 "Guest Mode",
                 "You must login to save favorites or plan meals.",
                 "Login",
-                (dialog) -> {
-                    userPrefs.saveGuestMode(false);
-                    Intent intent = new Intent(requireActivity(), MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
+                "Another Time",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                            userPrefs.saveGuestMode(false);
+                            Intent intent = new Intent(requireActivity(), MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                    }
+
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
                 }
         );
     }

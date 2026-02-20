@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface FavoriteView {
     void showFavoriteMeals(List<MealEntity> meals);
-    void showError(String msg);
-    void showSuccess(String msg);
+    void showError(String title, String message);
+    void showUndoMealSnackBar(MealEntity deletedMeal);
+    void showRestoredMealSnackBar();
 }
