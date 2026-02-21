@@ -10,5 +10,7 @@ public interface MealDetailsPresenter {
     void addToFavorites(Meal meal, Context context);
     void removeFromFavorites(Meal meal);
     void addToPlan(Meal plan, Context context);
+    void removeUserLoginState();
+    boolean isGuest();
     void onDestroy();
 }

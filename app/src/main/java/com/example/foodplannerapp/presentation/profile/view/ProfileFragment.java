@@ -19,7 +19,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class ProfileFragment extends Fragment implements ProfileView {
     @Inject
     ProfilePresenter presenter;
-
     private FragmentProfileBinding binding;
 
     @Nullable

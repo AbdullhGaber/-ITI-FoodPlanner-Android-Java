@@ -1,5 +1,6 @@
 package com.example.foodplannerapp.presentation.home.presenter.home;
 
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.presentation.home.view.home.HomeView;
 
@@ -17,6 +18,18 @@ public class HomePresenterImpl implements HomePresenter {
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final MealsRepository mealsRepository;
     private final HomeView view;
+    @Inject
+    UserPreferenceDataSource userPref;
+
+    @Override
+    public boolean isGuest() {
+        return userPref.isGuest();
+    }
+
+    @Override
+    public String getUsername() {
+        return userPref.getUsername();
+    }
 
     @Inject
     public HomePresenterImpl(MealsRepository mealsRepository, HomeView view) {

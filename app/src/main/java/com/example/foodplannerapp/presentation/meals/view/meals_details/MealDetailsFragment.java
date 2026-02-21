@@ -1,7 +1,6 @@
 package com.example.foodplannerapp.presentation.meals.view.meals_details;
 
 import static com.example.foodplannerapp.presentation.utils.ShimmerUtil.addShimmerToImage;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.R;
-import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.databinding.FragmentMealDetailsBinding;
@@ -38,12 +36,10 @@ import java.util.List;
 @AndroidEntryPoint
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
     @Inject
-    UserPreferenceDataSource userPrefs;
-    @Inject
     MealDetailsPresenter presenter;
     private FragmentMealDetailsBinding binding;
     private IngredientsAdapter ingredientsAdapter;
-    private InstructionsAdapter instructionsAdapter; // Declare adapter
+    private InstructionsAdapter instructionsAdapter;
     private Meal currentMeal;
     private boolean isFavorite = false;
 
@@ -159,7 +155,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     }
 
     private void toggleFavorite() {
-        if (userPrefs.isGuest()) {
+        if (presenter.isGuest()) {
             showGuestDialog();
             return;
         }
@@ -186,7 +182,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 new Dialogs.OnDialogActionListener() {
                     @Override
                     public void onPositiveClick(Dialog dialog) {
-                            userPrefs.saveGuestMode(false);
+                            presenter.removeUserLoginState();
                             Intent intent = new Intent(requireActivity(), MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);

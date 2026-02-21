@@ -1,6 +1,8 @@
 package com.example.foodplannerapp.presentation.meals.presenter.meal_details;
 
 import android.content.Context;
+
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
@@ -17,6 +19,19 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter{
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final MealsRepository mealsRepository;
     private final MealDetailsView view;
+    @Inject
+    UserPreferenceDataSource userPrefs;
+
+    @Override
+    public boolean isGuest() {
+        return userPrefs.isGuest();
+    }
+
+    @Override
+    public void removeUserLoginState() {
+        userPrefs.saveGuest(false);
+        userPrefs.setLoginState(false, "", "");
+    }
 
     @Inject
     public MealDetailsPresenterImpl(MealsRepository mealsRepository, MealDetailsView view) {

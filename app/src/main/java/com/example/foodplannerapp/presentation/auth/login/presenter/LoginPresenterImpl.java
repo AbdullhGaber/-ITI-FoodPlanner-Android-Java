@@ -1,6 +1,7 @@
 package com.example.foodplannerapp.presentation.auth.login.presenter;
 
 import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
+import com.example.foodplannerapp.data.model.user.User;
 import com.example.foodplannerapp.data.reposetories.auth.login.repository.LoginRepository;
 import com.example.foodplannerapp.data.utils.NetworkResponseCallback;
 import com.example.foodplannerapp.presentation.auth.login.views.LoginView;
@@ -23,8 +24,8 @@ public class LoginPresenterImpl implements LoginPresenter {
                 Completable.timer(2, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
-                            userPrefs.setGuestMode(true);
-                            userPrefs.setLoginState(true, "guest123");
+                            userPrefs.setLoginState(true, "guest123","Guest");
+                            userPrefs.saveGuest(true);
                             loginView.onLoginSuccess();
                         }, throwable -> {
                             loginView.hideProgressbar();
@@ -50,10 +51,9 @@ public class LoginPresenterImpl implements LoginPresenter {
         loginView.showProgressbar();
         loginRepository.login(email, password, new NetworkResponseCallback<>() {
             @Override
-            public void onSuccess(AuthResult result) {
+            public void onSuccess(AuthResult user) {
                 loginView.hideProgressbar();
                 loginView.onLoginSuccess();
-                userPrefs.setLoginState(true, email);
             }
 
             @Override
@@ -70,14 +70,11 @@ public class LoginPresenterImpl implements LoginPresenter {
         });
     }
 
-
     @Override
     public void loginWithGoogle(String idToken) {
         loginRepository.loginWithGoogle(idToken, new NetworkResponseCallback<>() {
             @Override
-            public void onSuccess(AuthResult result) {
-                String email = result.getUser().getEmail();
-                userPrefs.setLoginState(true, email);
+            public void onSuccess(AuthResult authResult) {
                 loginView.onLoginSuccess();
             }
 

@@ -27,18 +27,15 @@ import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterP
 import com.example.foodplannerapp.presentation.utils.Constants;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class RegisterFragment extends Fragment implements RegisterView {
+    @Inject
     RegisterPresenter presenter;
     FragmentRegisterBinding binding;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        presenter = new RegisterPresenterImpl(
-                new RegisterRepositoryImpl(),
-                this
-        );
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -64,7 +61,7 @@ public class RegisterFragment extends Fragment implements RegisterView {
                     String confirmPassword = binding.registerConfirmPasswordEt.getText().toString().trim();
 
                     if (validateInputs(name, email, password, confirmPassword)) {
-                        presenter.createAccount(email, password);
+                        presenter.createAccount(email,name,password);
                     }
                 }
         );

@@ -14,13 +14,13 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     @Inject
     BackupRepository repository;
     private final ProfileView view;
-    private final UserPreferenceDataSource userPrefs;
+    @Inject
+    UserPreferenceDataSource userPrefs;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     @Inject
-    public ProfilePresenterImpl(BackupRepository repository, ProfileView view, UserPreferenceDataSource userPrefs) {
+    public ProfilePresenterImpl(BackupRepository repository, ProfileView view) {
         this.repository = repository;
         this.view = view;
-        this.userPrefs = userPrefs;
     }
     @Override
     public void backup() {
@@ -53,7 +53,7 @@ public class ProfilePresenterImpl implements ProfilePresenter {
     @Override
     public void logout() {
         FirebaseAuth.getInstance().signOut();
-        userPrefs.setLoginState(false, null);
+        userPrefs.setLoginState(false, null, null);
         view.navigateToLogin();
     }
 }

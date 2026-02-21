@@ -37,8 +37,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class HomeFragment extends Fragment implements HomeView{
     @Inject
     HomePresenter homePresenter;
-    @Inject
-    UserPreferenceDataSource userPref;
     FragmentHomeBinding binding;
     AreaAdapter areaAdapter;
     CategoryAdapter categoryAdapter;
@@ -130,7 +128,7 @@ public class HomeFragment extends Fragment implements HomeView{
     }
 
     private void observeData() {
-        if(userPref.isGuest())
+        if(homePresenter.isGuest())
         {
             hideAreaShimmer();
         }else{
@@ -144,18 +142,20 @@ public class HomeFragment extends Fragment implements HomeView{
     private void setUpRvAdapters() {
         areaAdapter = new AreaAdapter();
         categoryAdapter = new CategoryAdapter();
-        if(!userPref.isGuest())
+        if(!homePresenter.isGuest())
             binding.recyclerAreas.setAdapter(areaAdapter);
 
         binding.recyclerCategories.setAdapter(categoryAdapter);
     }
 
     private void initViews() {
-        if(userPref.isGuest()){
+        if(homePresenter.isGuest()){
             binding.tvIngredientsTitle.setVisibility(GONE);
             binding.tvSeeAllCountries.setVisibility(GONE);
             binding.recyclerAreas.setVisibility(GONE);
         }
+
+        binding.tvHomeTitle.setText(homePresenter.getUsername());
 
         binding.tvSeeAllCountries.setOnClickListener(
                 v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_allAreasFragment)

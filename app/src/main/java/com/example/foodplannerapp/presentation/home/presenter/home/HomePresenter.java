@@ -5,5 +5,8 @@ public interface HomePresenter {
     void onRandomMealClick();
     void observeAllAreas();
     void observeAllCategories();
+
+    boolean isGuest();
+    String getUsername();
     void onDestroy();
 }
