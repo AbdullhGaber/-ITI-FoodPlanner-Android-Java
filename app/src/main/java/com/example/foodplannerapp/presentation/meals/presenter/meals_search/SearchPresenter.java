@@ -3,5 +3,6 @@ import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 public interface SearchPresenter {
     void search(String query);
     void setSearchType(MealsRepository.SearchType type);
+    void updateActiveFilters(boolean isName, boolean isCategory, boolean isArea, boolean isIngredient);
     void onDestroy();
 }

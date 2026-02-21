@@ -6,4 +6,7 @@ import java.util.List;
 public interface SearchView {
     void showSearchResults(List<Meal> meals);
     void showError(String message);
+
+    void showInitialState();
+    void showNotFoundState();
 }

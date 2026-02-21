@@ -17,7 +17,7 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out"
-            />
+        />
         <action
             android:id="@+id/action_homeFragment_to_allCategoriesFragment"
             app:destination="@id/allCategoriesFragment"
@@ -60,11 +60,19 @@
     <fragment
         android:id="@+id/allAreasFragment"
         android:name="com.example.foodplannerapp.presentation.home.view.areas.AllAreasFragment"
-        android:label="AllAreasFragment" />
+        android:label="AllAreasFragment" >
+        <action
+            android:id="@+id/action_allAreasFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
     <fragment
         android:id="@+id/allCategoriesFragment"
         android:name="com.example.foodplannerapp.presentation.home.view.categories.AllCategoriesFragment"
-        android:label="AllCategoriesFragment" />
+        android:label="AllCategoriesFragment" >
+        <action
+            android:id="@+id/action_allCategoriesFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mealDetailsFragment"
         android:name="com.example.foodplannerapp.presentation.meals.view.meals_details.MealDetailsFragment"
@@ -84,7 +92,18 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out"
-            />
+        />
+
+        <argument
+            android:name="searchQuery"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="searchType"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/plannerFragment"

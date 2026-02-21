@@ -60,6 +60,18 @@ public class AllCategoriesFragment extends Fragment implements AllCategoriesView
 
         adapter = new CategoryAdapter(true);
 
+        adapter.setListener((clickedCategory) -> {
+            String categoryName = clickedCategory.getName();
+
+            AllCategoriesFragmentDirections.ActionAllCategoriesFragmentToSearchFragment action =
+                    AllCategoriesFragmentDirections.actionAllCategoriesFragmentToSearchFragment();
+
+            action.setSearchQuery(categoryName);
+            action.setSearchType("Category");
+
+            Navigation.findNavController(requireView()).navigate(action);
+        });
+
         binding.rvAllItems.setAdapter(adapter);
     }
 
