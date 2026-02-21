@@ -86,6 +86,7 @@ public class MealMapper {
         entity.setStrMeasure2(meal.getStrMeasure2());
         entity.setStrMeasure3(meal.getStrMeasure3());
         entity.setDayOfWeek(meal.getDayOfWeek());
+        entity.setMealType(meal.getMealType());
         entity.setFav(meal.isFav());
 
         if (meal.getStrMealThumb() != null && !meal.getStrMealThumb().isEmpty()) {

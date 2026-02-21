@@ -63,6 +63,7 @@ public class MealEntity {
     private String strTags;
     private String strYoutube;
     private String dayOfWeek;
+    private String mealType;
     private boolean isFav;
     private byte[] localImageBytes;
 }

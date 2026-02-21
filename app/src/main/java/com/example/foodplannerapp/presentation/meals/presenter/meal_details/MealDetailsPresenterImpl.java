@@ -66,7 +66,6 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter{
         MealEntity dbMeal = new MealEntity();
         dbMeal.setIdMeal(meal.getIdMeal());
         dbMeal.setStrMeal(meal.getStrMeal());
-
         Disposable d = mealsRepository.removeFavoriteMeal(meal.getIdMeal())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -69,10 +69,8 @@ public class Meal implements Parcelable {
     private String strSource;
     private String strTags;
     private String strYoutube;
-    @Setter
+    private String mealType;
     private String dayOfWeek;
-    @Setter
-    @Getter
     private boolean isFav;
     private byte[] localImageBytes;
 

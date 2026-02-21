@@ -247,13 +247,14 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         MealPlanBottomSheet bottomSheet = new MealPlanBottomSheet();
         bottomSheet.setOnPlanSaveListener((date, mealType) -> {
             String formattedDay = date + " - " + mealType;
-            saveMealToPlan(formattedDay);
+            saveMealToPlan(formattedDay, mealType);
         });
         bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
     }
-    private void saveMealToPlan(String day) {
+    private void saveMealToPlan(String day, String mealType) {
         if (currentMeal == null) return;
         currentMeal.setDayOfWeek(day);
+        currentMeal.setMealType(mealType);
         presenter.addToPlan(currentMeal,requireContext());
     }
 

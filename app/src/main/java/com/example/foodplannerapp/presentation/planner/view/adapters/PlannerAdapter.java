@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.ItemMealFavBinding;
+import com.example.foodplannerapp.databinding.ItemMealPlanBinding;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.PlannerV
     @NonNull
     @Override
     public PlannerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemMealFavBinding binding = ItemMealFavBinding.inflate(
+        ItemMealPlanBinding binding = ItemMealPlanBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent, false);
         return new PlannerViewHolder(binding);
     }
@@ -62,16 +63,16 @@ public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.PlannerV
     }
 
     public class PlannerViewHolder extends RecyclerView.ViewHolder {
-        private final ItemMealFavBinding binding;
+        private final ItemMealPlanBinding binding;
 
-        public PlannerViewHolder(ItemMealFavBinding binding) {
+        public PlannerViewHolder(ItemMealPlanBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
         public void bind(MealEntity plan) {
-            binding.tvFavMealName.setText(plan.getStrMeal());
-
+            binding.tvMealName.setText(plan.getStrMeal());
+            binding.tvMealType.setText(plan.getMealType());
             if (plan.getLocalImageBytes() != null && plan.getLocalImageBytes().length > 0) {
                 Glide.with(binding.getRoot().getContext())
                         .load(plan.getLocalImageBytes())
