@@ -3,6 +3,8 @@ package com.example.foodplannerapp.presentation.auth.register.views;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import static com.example.foodplannerapp.presentation.utils.KeyboardUtility.hideKeyboard;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -55,6 +57,7 @@ public class RegisterFragment extends Fragment implements RegisterView {
     private void setOnRegisterButtonClick() {
         binding.registerButton.setOnClickListener(
                 (v) -> {
+                    hideKeyboard(requireActivity());
                     String name = binding.registerFullNameEt.getText().toString().trim();
                     String email = binding.registerEmailEt.getText().toString().trim();
                     String password = binding.registerPasswordEt.getText().toString().trim();

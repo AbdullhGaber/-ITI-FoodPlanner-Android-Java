@@ -3,6 +3,8 @@ package com.example.foodplannerapp.presentation.auth.login.views;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import static com.example.foodplannerapp.presentation.utils.KeyboardUtility.hideKeyboard;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -131,6 +133,7 @@ public class LoginFragment extends Fragment implements LoginView {
     private void setOnLoginButtonClickListener() {
         binding.loginButton.setOnClickListener(
                 (v) -> {
+                    hideKeyboard(requireActivity());
                     String email = binding.loginEmailEt.getText().toString().trim();
                     String password = binding.loginPasswordEt.getText().toString().trim();
 
