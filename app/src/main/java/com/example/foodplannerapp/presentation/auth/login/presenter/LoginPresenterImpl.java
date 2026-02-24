@@ -1,7 +1,6 @@
 package com.example.foodplannerapp.presentation.auth.login.presenter;
 
 import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
-import com.example.foodplannerapp.data.model.user.User;
 import com.example.foodplannerapp.data.reposetories.auth.login.repository.LoginRepository;
 import com.example.foodplannerapp.data.utils.NetworkResponseCallback;
 import com.example.foodplannerapp.presentation.auth.login.views.LoginView;
@@ -24,7 +23,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                 Completable.timer(2, TimeUnit.SECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
-                            userPrefs.setLoginState(true, "guest123","Guest");
+                            userPrefs.setLoginState(true, "guest123","Guest", "guest_id");
                             userPrefs.saveGuest(true);
                             loginView.onLoginSuccess();
                         }, throwable -> {

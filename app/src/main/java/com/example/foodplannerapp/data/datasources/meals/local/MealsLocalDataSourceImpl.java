@@ -17,6 +17,17 @@ public class MealsLocalDataSourceImpl implements MealsLocalDataSource {
 
     @Override
     public Flowable<List<MealEntity>> getFavMeals(){return mealDao.getAllFavMeals();}
+
+    @Override
+    public Completable insertMeals(List<MealEntity> meals) {
+        return mealDao.insertMeals(meals);
+    }
+
+    @Override
+    public Completable deleteAllMeals() {
+        return mealDao.deleteAllMeals();
+    }
+
     @Override
     public Completable insertMeal(MealEntity meal){return mealDao.insertMeal(meal);}
     @Override

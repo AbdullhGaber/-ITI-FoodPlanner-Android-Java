@@ -30,7 +30,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter{
     @Override
     public void removeUserLoginState() {
         userPrefs.saveGuest(false);
-        userPrefs.setLoginState(false, "", "");
+        userPrefs.setLoginState(false, "", "", "");
     }
 
     @Inject
@@ -63,7 +63,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter{
                         .flatMapCompletable(
                                 (mealEntity) -> {
                                     mealEntity.setFav(true);
-                                    return mealsRepository.insertMeal(mealEntity);
+                                    return mealsRepository.insertFavorite(mealEntity);
                                 }
                         )
                         .observeOn(AndroidSchedulers.mainThread())
@@ -88,7 +88,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter{
                         () -> {
                             view.showSuccess("Removed from Favorites");
                             if(meal.getDayOfWeek() == null){
-                                mealsRepository.deleteMeal(dbMeal);
+                                mealsRepository.removeFavoriteMeal(dbMeal.getIdMeal());
                             }
                         },
                         error -> view.showError("Failed to remove favorite: " + error.getMessage())
@@ -104,8 +104,7 @@ public class MealDetailsPresenterImpl implements MealDetailsPresenter{
                 .map(
                         (lMeal) -> MealMapper.toEntity(lMeal,context)
                 )
-                .flatMapCompletable(mealsRepository::insertMeal
-                )
+                .flatMapCompletable(mealsRepository::insertPlanMeal)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {

@@ -17,7 +17,11 @@ import io.reactivex.rxjava3.core.Maybe;
 
 @Dao
 public abstract class MealDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract Completable insertMeals(List<MealEntity> meals);
 
+    @Query("DELETE FROM meals_table")
+    public abstract Completable deleteAllMeals();
     @Query("SELECT * FROM meals_table WHERE isFav = 1")
     public abstract Flowable<List<MealEntity>> getAllFavMeals();
 

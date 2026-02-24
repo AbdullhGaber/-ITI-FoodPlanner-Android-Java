@@ -12,6 +12,7 @@ public class UserPreferenceDataSource {
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private static final String KEY_USER_EMAIL = "user_email";
     private static final String KEY_USER_NAME = "user_name";
+    private static final String KEY_USER_ID = "user_id";
     private final SharedPreferences sharedPreferences;
 
     @Inject
@@ -35,16 +36,21 @@ public class UserPreferenceDataSource {
     public String getUsername() {
         return sharedPreferences.getString(KEY_USER_NAME, "user");
     }
+    public String getUserId() {
+        return sharedPreferences.getString(KEY_USER_ID, "user_id");
+    }
 
-    public void setLoginState(boolean isLoggedIn, String email, String username) {
+    public void setLoginState(boolean isLoggedIn, String email, String username, String uid) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(KEY_IS_LOGGED_IN, isLoggedIn);
         if (isLoggedIn) {
             editor.putString(KEY_USER_EMAIL, email);
             editor.putString(KEY_USER_NAME, username);
+            editor.putString(KEY_USER_ID, uid);
         } else {
             editor.remove(KEY_USER_EMAIL);
             editor.remove(KEY_USER_NAME);
+            editor.remove(KEY_USER_ID);
         }
         editor.apply();
     }

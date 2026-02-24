@@ -1,5 +1,7 @@
 package com.example.foodplannerapp.data.reposetories.auth.register.repository;
 
+import static com.example.foodplannerapp.data.utils.Constants.USERS_COLLECTION;
+
 import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.model.user.User;
 import com.example.foodplannerapp.data.utils.NetworkResponseCallback;
@@ -33,7 +35,7 @@ public class RegisterRepositoryImpl implements RegisterRepository {
                                 );
                                 addUserToFireStore(user);
                                 userPreferenceDataSource.saveGuest(false);
-                                userPreferenceDataSource.setLoginState(true, user.getEmail(), user.getName());
+                                userPreferenceDataSource.setLoginState(true, user.getEmail(), user.getName(), user.getUid());
                                 callback.onSuccess(authResult);
                             }
                     )
@@ -45,7 +47,7 @@ public class RegisterRepositoryImpl implements RegisterRepository {
         }
     }
     private void addUserToFireStore(User user) {
-        DocumentReference df = firestore.collection("user_collection").document(user.getUid());
+        DocumentReference df = firestore.collection(USERS_COLLECTION).document(user.getUid());
         df.set(user);
     }
 }

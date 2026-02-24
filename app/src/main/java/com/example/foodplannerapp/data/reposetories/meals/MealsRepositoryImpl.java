@@ -2,6 +2,7 @@ package com.example.foodplannerapp.data.reposetories.meals;
 
 import com.example.foodplannerapp.data.datasources.meals.local.MealsLocalDataSource;
 import com.example.foodplannerapp.data.datasources.meals.remote.MealsRemoteDataSource;
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal.MealResponse;
@@ -17,21 +18,37 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public class MealsRepositoryImpl implements MealsRepository{
     private final MealsRemoteDataSource mealsRemoteDataSource;
     private final MealsLocalDataSource mealslocalDataSource;
+    private final UserPreferenceDataSource userPref;
+
     private List<Area> cachedAreas;
     @Inject
-    public MealsRepositoryImpl(MealsRemoteDataSource mealsRemoteDataSource, MealsLocalDataSource mealslocalDataSource) {
+    public MealsRepositoryImpl(
+            MealsRemoteDataSource mealsRemoteDataSource,
+            MealsLocalDataSource mealslocalDataSource,
+            UserPreferenceDataSource userPref
+    ) {
         this.mealsRemoteDataSource = mealsRemoteDataSource;
         this.mealslocalDataSource = mealslocalDataSource;
+        this.userPref = userPref;
     }
 
     @Override
     public Single<MealResponse> getRandomMeal() {
         return mealsRemoteDataSource.getRandomMeal();
+    }
+
+    @Override
+    public Single<List<Meal>> getRandomMealsBatch(int count) {
+        return Observable.range(0, count)
+                .flatMapSingle(i -> mealsRemoteDataSource.getRandomMeal())
+                .map(response -> response.getMeals().get(0))
+                .toList();
     }
 
     @Override
@@ -48,23 +65,24 @@ public class MealsRepositoryImpl implements MealsRepository{
     public Single<CategoryResponse> getAllCategories() {
         return mealsRemoteDataSource.getAllMealsCategories();
     }
-
     @Override
     public Flowable<List<MealEntity>> getFavMeals() {
         return mealslocalDataSource.getFavMeals();
     }
 
     @Override
-    public Completable insertMeal(MealEntity meal) {
-        return mealslocalDataSource.insertMeal(meal);
-    }
-    @Override
     public Completable removeFavoriteMeal(String mealId){
-        return mealslocalDataSource.removeFavoriteMeal(mealId);
+        return mealslocalDataSource
+                .removeFavoriteMeal(mealId)
+                .andThen(mealsRemoteDataSource.removeBackupFavorite(userPref.getUserId(), mealId)
+                .onErrorComplete());
     }
     @Override
     public Completable removePlanMeal(String mealId){
-        return mealslocalDataSource.removePlanMeal(mealId);
+        return mealslocalDataSource
+                .removePlanMeal(mealId)
+                .andThen(mealsRemoteDataSource.removeBackupPlan(userPref.getUserId(), mealId)
+                .onErrorComplete());
     }
     @Override
     public Single<Meal> getMealDetails(String mealId) {
@@ -103,14 +121,26 @@ public class MealsRepositoryImpl implements MealsRepository{
             }
         });
     }
+
     @Override
-    public Completable insertPlan(MealEntity meal) {
-        return mealslocalDataSource.insertMeal(meal);
+    public Completable deleteAllMeals() {
+        return mealslocalDataSource.deleteAllMeals();
     }
 
     @Override
-    public Completable deleteMeal(MealEntity mealEntity) {
-        return mealslocalDataSource.deleteMeal(mealEntity);
+    public Completable insertPlanMeal(MealEntity meal) {
+        return mealslocalDataSource
+                .insertMeal(meal)
+                .andThen(mealsRemoteDataSource.backupPlan(userPref.getUserId(), meal)
+                .onErrorComplete());
+    }
+
+    @Override
+    public Completable insertFavorite(MealEntity meal) {
+        return mealslocalDataSource
+                .insertMeal(meal)
+                .andThen(mealsRemoteDataSource.backupFavorite(userPref.getUserId(), meal)
+                .onErrorComplete());
     }
 
     @Override
