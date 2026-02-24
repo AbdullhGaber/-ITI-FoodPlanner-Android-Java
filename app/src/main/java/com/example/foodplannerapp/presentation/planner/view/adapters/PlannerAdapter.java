@@ -1,63 +1,60 @@
 package com.example.foodplannerapp.presentation.planner.view.adapters;
-
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
-import com.example.foodplannerapp.R;
-import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.ItemMealFavBinding;
-import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
+import com.example.foodplannerapp.databinding.ItemMealPlanBinding;
 
 import java.util.List;
 
-public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.PlanViewHolder> {
+public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.PlannerViewHolder> {
+    private final DiffUtil.ItemCallback<MealEntity> diffCallback = new DiffUtil.ItemCallback<>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull MealEntity oldItem, @NonNull MealEntity newItem) {
+            return oldItem.getIdMeal().equals(newItem.getIdMeal()) &&
+                    oldItem.getDayOfWeek().equals(newItem.getDayOfWeek());
+        }
 
-    public interface OnPlanClickListener {
-        void onPlanClick(PlanMeal plan);
-        void onDeletePlanClick(PlanMeal plan);
-    }
+        @Override
+        public boolean areContentsTheSame(@NonNull MealEntity oldItem, @NonNull MealEntity newItem) {
+            return oldItem.getStrMeal().equals(newItem.getStrMeal());
+        }
+    };
+    private final AsyncListDiffer<MealEntity> differ = new AsyncListDiffer<>(this, diffCallback);
 
     private final OnPlanClickListener listener;
+
+    public interface OnPlanClickListener {
+        void onPlanClick(MealEntity plan);
+        void onDeletePlanClick(MealEntity plan);
+    }
 
     public PlannerAdapter(OnPlanClickListener listener) {
         this.listener = listener;
     }
 
-    private final DiffUtil.ItemCallback<PlanMeal> diffCallback = new DiffUtil.ItemCallback<PlanMeal>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull PlanMeal oldItem, @NonNull PlanMeal newItem) {
-            return oldItem.getId() == newItem.getId(); // Compare DB IDs
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull PlanMeal oldItem, @NonNull PlanMeal newItem) {
-            return oldItem.getMealId().equals(newItem.getMealId());
-        }
-    };
-
-    private final AsyncListDiffer<PlanMeal> differ = new AsyncListDiffer<>(this, diffCallback);
-
-    public void submitList(List<PlanMeal> list) {
+    public void submitList(List<MealEntity> list) {
         differ.submitList(list);
     }
 
     @NonNull
     @Override
-    public PlanViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Reuse the item_meal_fav layout
-        ItemMealFavBinding binding = ItemMealFavBinding.inflate(
-                LayoutInflater.from(parent.getContext()), parent, false
-        );
-        return new PlanViewHolder(binding);
+    public PlannerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        ItemMealPlanBinding binding = ItemMealPlanBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new PlannerViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PlanViewHolder holder, int position) {
-        holder.bind(differ.getCurrentList().get(position));
+    public void onBindViewHolder(@NonNull PlannerViewHolder holder, int position) {
+        MealEntity plan = differ.getCurrentList().get(position);
+        holder.bind(plan);
     }
 
     @Override
@@ -65,22 +62,25 @@ public class PlannerAdapter extends RecyclerView.Adapter<PlannerAdapter.PlanView
         return differ.getCurrentList().size();
     }
 
-    class PlanViewHolder extends RecyclerView.ViewHolder {
-        private final ItemMealFavBinding binding;
+    public class PlannerViewHolder extends RecyclerView.ViewHolder {
+        private final ItemMealPlanBinding binding;
 
-        public PlanViewHolder(ItemMealFavBinding binding) {
+        public PlannerViewHolder(ItemMealPlanBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
-        public void bind(PlanMeal plan) {
-            binding.tvFavMealName.setText(plan.getStrMeal());
-            binding.tvFavMealArea.setText(String.format("%s • %s", plan.getStrArea(), plan.getStrCategory()));
-
-            if (plan.getImageBytes() != null && plan.getImageBytes().length > 0) {
-                Glide.with(binding.getRoot()).load(plan.getImageBytes()).into(binding.ivFavMeal);
+        public void bind(MealEntity plan) {
+            binding.tvMealName.setText(plan.getStrMeal());
+            binding.tvMealType.setText(plan.getMealType());
+            if (plan.getLocalImageBytes() != null && plan.getLocalImageBytes().length > 0) {
+                Glide.with(binding.getRoot().getContext())
+                        .load(plan.getLocalImageBytes())
+                        .into(binding.ivFavMeal);
             } else {
-                ShimmerUtil.addShimmerToImage(itemView.getContext(), plan.getStrMealThumb(), binding.ivFavMeal);
+                Glide.with(binding.getRoot().getContext())
+                        .load(plan.getStrMealThumb())
+                        .into(binding.ivFavMeal);
             }
 
             binding.getRoot().setOnClickListener(v -> listener.onPlanClick(plan));

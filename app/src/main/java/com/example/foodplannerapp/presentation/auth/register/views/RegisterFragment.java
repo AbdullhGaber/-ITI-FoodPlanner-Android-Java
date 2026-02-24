@@ -1,5 +1,11 @@
 package com.example.foodplannerapp.presentation.auth.register.views;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import static com.example.foodplannerapp.presentation.utils.KeyboardUtility.hideKeyboard;
+
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,25 +18,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.reposetories.auth.register.repository.RegisterRepositoryImpl;
 import com.example.foodplannerapp.databinding.FragmentRegisterBinding;
 import com.example.foodplannerapp.presentation.activities.FoodActivity;
 import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenter;
 import com.example.foodplannerapp.presentation.auth.register.presenter.RegisterPresenterImpl;
+import com.example.foodplannerapp.presentation.utils.Constants;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class RegisterFragment extends Fragment implements RegisterView {
+    @Inject
     RegisterPresenter presenter;
     FragmentRegisterBinding binding;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        presenter = new RegisterPresenterImpl(
-                new RegisterRepositoryImpl(),
-                this
-        );
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -42,7 +47,6 @@ public class RegisterFragment extends Fragment implements RegisterView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initViews();
         setOnRegisterButtonClick();
         setOnRegisterRedirectClick();
     }
@@ -50,20 +54,17 @@ public class RegisterFragment extends Fragment implements RegisterView {
     private void setOnRegisterButtonClick() {
         binding.registerButton.setOnClickListener(
                 (v) -> {
+                    hideKeyboard(requireActivity());
                     String name = binding.registerFullNameEt.getText().toString().trim();
                     String email = binding.registerEmailEt.getText().toString().trim();
                     String password = binding.registerPasswordEt.getText().toString().trim();
                     String confirmPassword = binding.registerConfirmPasswordEt.getText().toString().trim();
 
                     if (validateInputs(name, email, password, confirmPassword)) {
-                        presenter.createAccount(email, password);
+                        presenter.createAccount(email,name,password);
                     }
                 }
         );
-    }
-
-    private void initViews() {
-        // Views are now accessed through the binding object
     }
 
     private boolean validateInputs(String name, String email, String password, String confirmPassword) {
@@ -111,20 +112,51 @@ public class RegisterFragment extends Fragment implements RegisterView {
 
     private void setOnRegisterRedirectClick() {
         binding.redirectLoginClickable.setOnClickListener(
-                (v) -> Navigation.findNavController(v).navigate(com.example.foodplannerapp.R.id.action_registerFragment_to_loginFragment)
+                (v) -> Navigation.findNavController(v).navigate(R.id.action_registerFragment_to_loginFragment)
         );
     }
 
     @Override
     public void onRegisterSuccess() {
         Intent intent = new Intent(getActivity(), FoodActivity.class);
+        intent.putExtra(Constants.SP_REGISTER_KEY, true);
         startActivity(intent);
         requireActivity().finish();
     }
 
     @Override
     public void onRegisterFailed(String title, String message) {
-        Dialogs.showAlertDialog(requireContext(), title, message);
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.ErrorStrategy(),
+                title,
+                message,
+                "Ok",
+                "",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
+    }
+
+    @Override
+    public void showProgressbar() {
+        binding.progressBarRegister.setVisibility(VISIBLE);
+        binding.loadingOverlayRegister.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideProgressbar() {
+        binding.progressBarRegister.setVisibility(GONE);
+        binding.loadingOverlayRegister.setVisibility(GONE);
     }
 
 }

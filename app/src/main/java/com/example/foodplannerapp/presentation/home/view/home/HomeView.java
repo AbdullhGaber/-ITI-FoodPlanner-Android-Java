@@ -1,5 +1,7 @@
 package com.example.foodplannerapp.presentation.home.view.home;
 
+import android.view.View;
+
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_category.Category;
@@ -7,6 +9,8 @@ import com.example.foodplannerapp.data.model.meal_category.Category;
 import java.util.List;
 public interface HomeView {
     void showAreas(List<Area> areas);
+    void showProgressbar();
+    void hideProgressbar();
     void showCategories(List<Category> categories);
     void showRandomMeal(List<Meal> categories);
     void showError(String msg);
@@ -14,7 +18,12 @@ public interface HomeView {
     void hideAreaShimmer();
     void showCategoryShimmer();
     void hideCategoryShimmer();
-
     void showRandomMealShimmer();
     void hideRandomMealShimmer();
+    void navigateToMealDetailsFragment();
+    void navigateToMealDetailsWithId(String mealId);
+    void moveToNextCarouselItem();
+    void showCarouselMeals(List<Meal> meals);
+    void showCarouselShimmer();
+    void hideCarouselShimmer();
 }

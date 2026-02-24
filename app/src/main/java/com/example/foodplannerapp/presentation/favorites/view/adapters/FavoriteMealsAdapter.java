@@ -2,13 +2,12 @@ package com.example.foodplannerapp.presentation.favorites.view.adapters;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
+import com.bumptech.glide.Glide;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.ItemMealFavBinding;
 
 
@@ -16,8 +15,8 @@ import java.util.List;
 
 public class FavoriteMealsAdapter extends RecyclerView.Adapter<FavoriteMealsAdapter.FavViewHolder> {
     public interface OnFavoriteClickListener {
-        void onMealClick(Meal meal);
-        void onDeleteClick(Meal meal);
+        void onMealClick(MealEntity meal);
+        void onDeleteClick(MealEntity meal);
     }
 
     private final OnFavoriteClickListener listener;
@@ -26,22 +25,22 @@ public class FavoriteMealsAdapter extends RecyclerView.Adapter<FavoriteMealsAdap
         this.listener = listener;
     }
 
-    private final DiffUtil.ItemCallback<Meal> diffCallback = new DiffUtil.ItemCallback<Meal>() {
+    private final DiffUtil.ItemCallback<MealEntity> diffCallback = new DiffUtil.ItemCallback<MealEntity>() {
         @Override
-        public boolean areItemsTheSame(@NonNull Meal oldItem, @NonNull Meal newItem) {
+        public boolean areItemsTheSame(@NonNull MealEntity oldItem, @NonNull MealEntity newItem) {
             return oldItem.getIdMeal().equals(newItem.getIdMeal());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull Meal oldItem, @NonNull Meal newItem) {
+        public boolean areContentsTheSame(@NonNull MealEntity oldItem, @NonNull MealEntity newItem) {
             return oldItem.getIdMeal().equals(newItem.getIdMeal()) && 
                    oldItem.getStrMeal().equals(newItem.getStrMeal());
         }
     };
 
-    private final AsyncListDiffer<Meal> differ = new AsyncListDiffer<>(this, diffCallback);
+    private final AsyncListDiffer<MealEntity> differ = new AsyncListDiffer<>(this, diffCallback);
 
-    public void submitList(List<Meal> list) {
+    public void submitList(List<MealEntity> list) {
         differ.submitList(list);
     }
 
@@ -73,9 +72,19 @@ public class FavoriteMealsAdapter extends RecyclerView.Adapter<FavoriteMealsAdap
             this.binding = binding;
         }
 
-        public void bind(Meal meal) {
+        public void bind(MealEntity meal) {
             binding.tvFavMealName.setText(meal.getStrMeal());
             binding.tvFavMealArea.setText(String.format("%s • %s", meal.getStrArea(), meal.getStrCategory()));
+
+            if (meal.getLocalImageBytes() != null && meal.getLocalImageBytes().length > 0) {
+                Glide.with(binding.getRoot().getContext())
+                        .load(meal.getLocalImageBytes())
+                        .into(binding.ivFavMeal);
+            } else {
+                Glide.with(binding.getRoot().getContext())
+                        .load(meal.getStrMealThumb())
+                        .into(binding.ivFavMeal);
+            }
 
             binding.getRoot().setOnClickListener(v -> {
                 if (listener != null) listener.onMealClick(meal);

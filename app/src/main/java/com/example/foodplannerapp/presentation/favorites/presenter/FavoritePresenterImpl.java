@@ -1,24 +1,32 @@
 package com.example.foodplannerapp.presentation.favorites.presenter;
 
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.presentation.favorites.view.FavoriteView;
 import javax.inject.Inject;
-
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-
 public class FavoritePresenterImpl implements FavoritePresenter{
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final MealsRepository mealsRepository;
     private final FavoriteView view;
 
     @Inject
+    UserPreferenceDataSource userPrefs;
+
+    @Inject
     public FavoritePresenterImpl(MealsRepository mealsRepository, FavoriteView view) {
         this.mealsRepository = mealsRepository;
         this.view = view;
+    }
+
+    @Override
+    public void removeUserLoginState() {
+        userPrefs.saveGuest(false);
+        userPrefs.setLoginState(false, "", "", "");
     }
 
     @Override
@@ -28,25 +36,39 @@ public class FavoritePresenterImpl implements FavoritePresenter{
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         view::showFavoriteMeals,
-                        error -> {
-                            view.showError(error.getLocalizedMessage());
-                        }
+                        throwable -> view.showError("Something went wrong!", throwable.getLocalizedMessage())
                 );
         compositeDisposable.add(d);
     }
+
     @Override
-    public void deleteMeal(Meal meal) {
-        Disposable d = mealsRepository.deleteMeal(meal)
+    public boolean isGuest() {
+        return userPrefs.isGuest();
+    }
+
+    @Override
+    public void deleteMeal(MealEntity meal) {
+        Disposable d = mealsRepository.removeFavoriteMeal(meal.getIdMeal())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> {
-                            view.showSuccess("Meal deleted successfully");
-                        },
-                        error -> {
-                            view.showError(error.getMessage());
-                        }
+                        () -> view.showUndoMealSnackBar(meal),
+                        throwable -> view.showError("Something went wrong!", throwable.getLocalizedMessage())
                 );
+
+        compositeDisposable.add(d);
+    }
+
+    @Override
+    public void insertMeal(MealEntity meal) {
+        Disposable d = mealsRepository.insertFavorite(meal)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        view::showRestoredMealSnackBar,
+                        throwable -> view.showError("Something went wrong!", throwable.getLocalizedMessage())
+                );
+
         compositeDisposable.add(d);
     }
 

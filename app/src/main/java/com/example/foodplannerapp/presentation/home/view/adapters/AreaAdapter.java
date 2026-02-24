@@ -10,14 +10,22 @@ import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.foodplannerapp.data.model.meal_area.Area;
+import com.example.foodplannerapp.data.model.meal_category.Category;
 import com.example.foodplannerapp.databinding.ItemAreaBinding;
 import com.example.foodplannerapp.databinding.ItemAreaGridBinding;
 import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
 
 import java.util.List;
 
-public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.AreaViewHolder> {
+import lombok.Setter;
 
+public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.AreaViewHolder> {
+    public interface OnClickListener{
+        void onClick(Area area);
+    }
+
+    @Setter
+    private AreaAdapter.OnClickListener listener;
     private final DiffUtil.ItemCallback<Area> diffCallback = new DiffUtil.ItemCallback<>() {
         @Override
         public boolean areItemsTheSame(@NonNull Area oldItem, @NonNull Area newItem) {
@@ -70,7 +78,7 @@ public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.AreaViewHolder
         differ.submitList(list);
     }
 
-    public static class AreaViewHolder extends RecyclerView.ViewHolder {
+    public class AreaViewHolder extends RecyclerView.ViewHolder {
         private final ImageView imgFlag;
         private final TextView tvAreaName;
         private final Context context;
@@ -85,6 +93,11 @@ public class AreaAdapter extends RecyclerView.Adapter<AreaAdapter.AreaViewHolder
         public void bind(Area area) {
             tvAreaName.setText(area.getAreaName());
             ShimmerUtil.addShimmerToImage(context,area.getFlagUrl(), imgFlag);
+            itemView.setOnClickListener(
+                    (v) -> {
+                        if(listener != null) listener.onClick(area);
+                    }
+            );
         }
     }
 }

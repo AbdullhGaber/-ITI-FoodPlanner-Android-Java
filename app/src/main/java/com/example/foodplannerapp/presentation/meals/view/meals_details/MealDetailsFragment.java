@@ -1,11 +1,12 @@
 package com.example.foodplannerapp.presentation.meals.view.meals_details;
 
+import static com.example.foodplannerapp.presentation.utils.ShimmerUtil.addShimmerToImage;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,26 +14,32 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.example.foodplannerapp.R;
-import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.model.meal.Meal;
+import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.databinding.FragmentMealDetailsBinding;
 import com.example.foodplannerapp.presentation.activities.MainActivity;
 import com.example.foodplannerapp.presentation.meals.presenter.meal_details.MealDetailsPresenter;
 import com.example.foodplannerapp.presentation.meals.view.adapters.IngredientsAdapter;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
+import com.example.foodplannerapp.presentation.meals.view.adapters.InstructionsAdapter;
+import com.example.foodplannerapp.presentation.meals.view.meals_details.meal_plan.MealPlanBottomSheet;
+import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.example.foodplannerapp.presentation.utils.Dialogs.WarningStrategy;
+import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
+import com.google.android.material.appbar.AppBarLayout;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import java.util.ArrayList;
+import java.util.List;
 
 @AndroidEntryPoint
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
     @Inject
-    UserPreferenceDataSource userPrefs;
-    @Inject
     MealDetailsPresenter presenter;
-
     private FragmentMealDetailsBinding binding;
     private IngredientsAdapter ingredientsAdapter;
+    private InstructionsAdapter instructionsAdapter;
     private Meal currentMeal;
     private boolean isFavorite = false;
 
@@ -51,36 +58,95 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             String mealId = MealDetailsFragmentArgs.fromBundle(getArguments()).getMealId();
             presenter.getMealDetails(mealId);
         }
-
-        setupIngredients();
-
+        updateFavoriteIcon();
         binding.btnFavorite.setOnClickListener(v -> toggleFavorite());
         binding.btnBack.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
-        binding.btnCalendar.setOnClickListener(v -> showDayPicker());
+        binding.btnCalendar.setOnClickListener(v -> showDatePicker());
     }
 
     @Override
     public void showMealDetails(Meal meal) {
+        ShimmerUtil.showShimmer(binding.shimmerViewContainer);
         this.currentMeal = meal;
-
-        if (meal.getLocalImageBytes() != null && meal.getLocalImageBytes().length > 0) {
-            isFavorite = true;
-        } else {
-            isFavorite = false;
-        }
-        updateFavoriteIcon();
+        isFavorite = meal.getLocalImageBytes() != null && meal.getLocalImageBytes().length > 0;
 
         setupUI();
         setupVideo();
+        ShimmerUtil.hideShimmer(binding.shimmerViewContainer);
+    }
 
-        ingredientsAdapter.submitList(meal.getIngredientsList());
+    private void setupIngredientsAdapter() {
+        ingredientsAdapter = new IngredientsAdapter();
+        binding.rvIngredients.setAdapter(ingredientsAdapter);
+    }
+    private void setupInstructionsAdapter() {
+        instructionsAdapter = new InstructionsAdapter();
+        binding.rvInstructions.setAdapter(instructionsAdapter);
+    }
+
+    private void setUpIngredientsRv() {
+        ingredientsAdapter.submitList(currentMeal.getIngredientsList());
+    }
+    private void setUpMealInstructionsRv(){
+        String rawInstructions = currentMeal.getStrInstructions();
+
+        if (rawInstructions != null && !rawInstructions.isEmpty()) {
+            String[] splitSteps = rawInstructions.split("\\r?\\n");
+            List<String> stepList = new ArrayList<>();
+            for (String step : splitSteps) {
+                if (!step.trim().isEmpty() && !step.toLowerCase().contains("step") && step.length() > 1) {
+                    stepList.add(step.trim());
+                }
+            }
+            instructionsAdapter.submitList(stepList);
+        }
     }
 
     private void setupUI() {
+        binding.contentCoordinator.setVisibility(View.VISIBLE);
         binding.tvMealName.setText(currentMeal.getStrMeal());
-        binding.tvArea.setText(currentMeal.getStrArea());
-        binding.tvInstructions.setText(currentMeal.getStrInstructions());
-        
+
+        binding.tvToolbarTitle.setText(currentMeal.getStrMeal());
+
+        binding.appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isTitleVisible = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+
+                if (scrollRange + verticalOffset == 0) {
+                    if (!isTitleVisible) {
+                        binding.tvToolbarTitle.animate().alpha(1f).setDuration(200).start();
+                        isTitleVisible = true;
+                    }
+                } else if (isTitleVisible) {
+                    binding.tvToolbarTitle.animate().alpha(0f).setDuration(200).start();
+                    isTitleVisible = false;
+                }
+            }
+        });
+
+        if (currentMeal.getStrArea() != null && !currentMeal.getStrArea().isEmpty()) {
+            Area areaMapper = new Area();
+
+            areaMapper.setAreaName(currentMeal.getStrArea());
+            addShimmerToImage(
+                    requireContext(),
+                    areaMapper.getFlagUrl(),
+                    binding.ivAreaFlag
+            );
+        }
+
+        setupIngredientsAdapter();
+        setupInstructionsAdapter();
+        setUpMealInstructionsRv();
+        setUpIngredientsRv();
+        binding.rvInstructions.setNestedScrollingEnabled(false);
+
         if (currentMeal.getLocalImageBytes() != null && currentMeal.getLocalImageBytes().length > 0) {
             Glide.with(this).load(currentMeal.getLocalImageBytes()).into(binding.ivMealImage);
         } else {
@@ -88,14 +154,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         }
     }
 
-    private void setupIngredients() {
-        ingredientsAdapter = new IngredientsAdapter();
-        binding.rvIngredients.setAdapter(ingredientsAdapter);
-    }
-
     private void toggleFavorite() {
-        if (userPrefs.isGuest()) {
-            showGuestDialog(); // Stop here
+        if (presenter.isGuest()) {
+            showGuestDialog();
             return;
         }
         if (currentMeal == null) return;
@@ -111,21 +172,28 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     }
 
     private void showGuestDialog() {
-        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Guest Mode")
-                .setMessage("You must login to save favorites or plan meals.")
-                .setPositiveButton("Login", (dialog, which) -> {
-                    // Clear Guest Mode
-                    userPrefs.saveGuestMode(false);
+        Dialogs.show(
+                requireContext(),
+                new WarningStrategy(),
+                "Guest Mode",
+                "You must login to save favorites or plan meals.",
+                "Login",
+                "Another Time",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                            presenter.removeUserLoginState();
+                            Intent intent = new Intent(requireActivity(), MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                    }
 
-                    // Navigate back to MainActivity (Auth)
-                    Intent intent = new Intent(requireActivity(), MainActivity.class);
-                    // Clear the back stack so they can't go back to FoodActivity without login
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
     }
 
     private void updateFavoriteIcon() {
@@ -171,43 +239,31 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         return null;
     }
 
-    private void showDayPicker() {
-        final String[] days = {"Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-
-        new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Choose a Day")
-                .setItems(days, (dialog, which) -> {
-                    String selectedDay = days[which];
-                    saveMealToPlan(selectedDay);
-                })
-                .show();
+    private void showDatePicker() {
+        MealPlanBottomSheet bottomSheet = new MealPlanBottomSheet();
+        bottomSheet.setOnPlanSaveListener((date, mealType) -> {
+            String formattedDay = date + " - " + mealType;
+            saveMealToPlan(formattedDay, mealType);
+        });
+        bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
     }
-    private void saveMealToPlan(String day) {
+    private void saveMealToPlan(String day, String mealType) {
         if (currentMeal == null) return;
-
-        com.example.foodplannerapp.data.db.meals.entities.PlanMeal plan =
-                new com.example.foodplannerapp.data.db.meals.entities.PlanMeal(
-                        currentMeal.getIdMeal(),
-                        day,
-                        currentMeal.getStrMeal(),
-                        currentMeal.getStrMealThumb(),
-                        currentMeal.getStrArea(),
-                        currentMeal.getStrCategory(),
-                        currentMeal.getLocalImageBytes()
-                );
-
-        presenter.addToPlan(plan);
+        currentMeal.setDayOfWeek(day);
+        currentMeal.setMealType(mealType);
+        presenter.addToPlan(currentMeal,requireContext());
     }
 
     @Override
     public void showLoading() {
-        // Create a ProgressBar in your XML with id "progressBar"
-        // binding.progressBar.setVisibility(View.VISIBLE);
+        binding.progressBarMealDetails.setVisibility(View.VISIBLE);
+        binding.loadingOverlayMealDetails.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-        // binding.progressBar.setVisibility(View.GONE);
+        binding.progressBarMealDetails.setVisibility(View.GONE);
+        binding.loadingOverlayMealDetails.setVisibility(View.GONE);
     }
 
     @Override
@@ -233,7 +289,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             presenter.onDestroy();
         }
         if (binding != null) {
-            binding.youtubePlayerView.release(); // Explicitly release just in case
+            binding.youtubePlayerView.release();
         }
         binding = null;
     }

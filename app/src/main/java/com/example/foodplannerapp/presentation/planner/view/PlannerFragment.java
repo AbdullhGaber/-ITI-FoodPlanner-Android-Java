@@ -1,34 +1,42 @@
 package com.example.foodplannerapp.presentation.planner.view;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.foodplannerapp.R;
-import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.FragmentPlannerBinding;
+import com.example.foodplannerapp.presentation.activities.MainActivity;
+import com.example.foodplannerapp.presentation.planner.view.adapters.CalendarAdapter;
+import com.example.foodplannerapp.presentation.model.CalendarDateModel;
 import com.example.foodplannerapp.presentation.planner.presenter.PlannerPresenter;
 import com.example.foodplannerapp.presentation.planner.view.adapters.PlannerAdapter;
-import com.google.android.material.chip.Chip;
+import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.google.android.material.snackbar.Snackbar;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class PlannerFragment extends Fragment implements PlannerView, PlannerAdapter.OnPlanClickListener {
-
     @Inject
     PlannerPresenter presenter;
-
     private FragmentPlannerBinding binding;
     private PlannerAdapter adapter;
 
@@ -43,11 +51,29 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setupRecyclerView();
-        setupChips();
-        
-        // Initial Load (Saturday)
-        presenter.getMealsForDay("Saturday");
+        if (presenter.isGuest()) {
+            showGuestLockedState();
+        } else {
+            setupRecyclerView();
+            setupCalendarRecyclerView();
+        }
+    }
+
+    private void showGuestLockedState() {
+        binding.tvPlannerTitle.setVisibility(View.GONE);
+        binding.rvCalendar.setVisibility(View.GONE);
+        binding.rvPlanner.setVisibility(View.GONE);
+        binding.layoutEmpty.emptyStateContainer.setVisibility(View.GONE);
+
+        binding.layoutGuestLocked.guestLockedContainer.setVisibility(View.VISIBLE);
+
+        binding.layoutGuestLocked.btnGoToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            presenter.removeUserLoginState();
+            startActivity(intent);
+            requireActivity().finish();
+        });
     }
 
     private void setupRecyclerView() {
@@ -56,42 +82,130 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
         binding.rvPlanner.setAdapter(adapter);
     }
 
-    private void setupChips() {
-        binding.chipGroupDays.setOnCheckedChangeListener((group, checkedId) -> {
-            Chip chip = group.findViewById(checkedId);
-            if (chip != null) {
-                presenter.getMealsForDay(chip.getText().toString());
-            }
+    private void setupCalendarRecyclerView() {
+        CalendarAdapter calendarAdapter = new CalendarAdapter(dateModel -> {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String formattedDate = sdf.format(dateModel.getFullDate());
+
+            presenter.getMealsForDay(formattedDate);
         });
+
+        binding.rvCalendar.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvCalendar.setAdapter(calendarAdapter);
+
+        List<CalendarDateModel> upcomingDays = generateNextSevenDays();
+        calendarAdapter.submitList(upcomingDays);
+
+        if (!upcomingDays.isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String todayFormatted = sdf.format(upcomingDays.get(0).getFullDate());
+            presenter.getMealsForDay(todayFormatted);
+        }
+    }
+
+    private List<CalendarDateModel> generateNextSevenDays() {
+        List<CalendarDateModel> dateList = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat dayOfWeekFormat = new SimpleDateFormat("EEE", Locale.getDefault());
+        SimpleDateFormat dayNumberFormat = new SimpleDateFormat("dd", Locale.getDefault());
+
+        for (int i = 0; i < 7; i++) {
+            Date date = calendar.getTime();
+            String dayOfWeek = dayOfWeekFormat.format(date);
+            String dayNumber = dayNumberFormat.format(date);
+
+            dateList.add(new CalendarDateModel(date, dayOfWeek, dayNumber));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return dateList;
     }
 
     @Override
-    public void showPlannedMeals(List<PlanMeal> plans) {
-        adapter.submitList(plans);
-    }
+    public void showPlannedMeals(List<MealEntity> plans) {
+        if (plans == null || plans.isEmpty()) {
+            binding.rvPlanner.setVisibility(View.GONE);
+            binding.layoutEmpty.emptyStateContainer.setVisibility(View.VISIBLE);
 
-    @Override
-    public void showError(String message) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-    }
+            binding.layoutEmpty.tvEmptyTitle.setText(R.string.no_planned_meals_yet);
+            binding.layoutEmpty.tvEmptySubtitle.setText(R.string.tap_on_calendar_icon_on_a_meal_to_see_it_here);
 
-    @Override
-    public void showSuccess(String message) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-    }
+        } else {
+            binding.layoutEmpty.emptyStateContainer.setVisibility(View.GONE);
+            binding.rvPlanner.setVisibility(View.VISIBLE);
 
+            adapter.submitList(plans);
+        }
+    }
     @Override
-    public void onPlanClick(PlanMeal plan) {
+    public void onPlanClick(MealEntity plan) {
         PlannerFragmentDirections.ActionPlannerFragmentToMealDetailsFragment action =
-                PlannerFragmentDirections.actionPlannerFragmentToMealDetailsFragment(plan.getMealId());
+                PlannerFragmentDirections.actionPlannerFragmentToMealDetailsFragment(plan.getIdMeal());
         Navigation.findNavController(binding.getRoot()).navigate(action);
     }
 
     @Override
-    public void onDeletePlanClick(PlanMeal plan) {
-        presenter.deletePlan(plan);
+    public void showError(String title, String message) {
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.ErrorStrategy(),
+                title,
+                message,
+                "Ok",
+                "",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
     }
-    
+
+    @Override
+    public void onDeletePlanClick(MealEntity plan) {
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.WarningStrategy(),
+                "Remove from Plan?",
+                "Are you sure you want to remove " + plan.getStrMeal() + " from your schedule?",
+                "Yes, Remove",
+                "Cancel",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                        presenter.deletePlan(plan);
+                    }
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
+    }
+
+    @Override
+     public void showUndoPlanSnackBar(MealEntity deletedPlan) {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal removed from plan", Snackbar.LENGTH_LONG);
+
+        snackbar.setAction("UNDO", v -> presenter.insertPlan(deletedPlan));
+
+        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
+        snackbar.show();
+    }
+
+    @Override
+     public void showRestoredPlanSnackBar() {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal Restored to plan", Snackbar.LENGTH_LONG);
+        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
+        snackbar.show();
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

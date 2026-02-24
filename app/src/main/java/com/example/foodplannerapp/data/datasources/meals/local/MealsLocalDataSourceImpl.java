@@ -1,8 +1,6 @@
 package com.example.foodplannerapp.data.datasources.meals.local;
 import com.example.foodplannerapp.data.db.meals.dao.MealDao;
-import com.example.foodplannerapp.data.db.meals.dao.PlanDao;
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
-import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 
 import java.util.List;
 import javax.inject.Inject;
@@ -12,40 +10,48 @@ import io.reactivex.rxjava3.core.Maybe;
 
 public class MealsLocalDataSourceImpl implements MealsLocalDataSource {
     private final MealDao mealDao;
-    private final PlanDao planDao;
     @Inject
-    public MealsLocalDataSourceImpl(MealDao mealDao, PlanDao planDao) {
+    public MealsLocalDataSourceImpl(MealDao mealDao) {
         this.mealDao = mealDao;
-        this.planDao = planDao;
     }
 
     @Override
-    public Flowable<List<Meal>> getMeals(){return mealDao.getAllMeals();}
-    @Override
-    public Completable insertMeal(Meal meal){return mealDao.insertMeal(meal);}
+    public Flowable<List<MealEntity>> getFavMeals(){return mealDao.getAllFavMeals();}
 
     @Override
-    public Completable deleteMeal(Meal meal) {
-        return mealDao.deleteMeal(meal);
+    public Completable insertMeals(List<MealEntity> meals) {
+        return mealDao.insertMeals(meals);
     }
 
     @Override
-    public Maybe<Meal> getMealById(String mealId) {
+    public Completable deleteAllMeals() {
+        return mealDao.deleteAllMeals();
+    }
+
+    @Override
+    public Completable insertMeal(MealEntity meal){return mealDao.insertMeal(meal);}
+    @Override
+    public Completable removeFavoriteMeal(String mealId){
+        return mealDao.removeFavoriteMeal(mealId);
+    }
+
+    @Override
+    public Completable deleteMeal(MealEntity mealEntity) {
+        return mealDao.deleteMeal(mealEntity);
+    }
+
+    @Override
+    public Completable removePlanMeal(String mealId){
+        return mealDao.removePlanMeal(mealId);
+    }
+
+    @Override
+    public Maybe<MealEntity> getMealById(String mealId) {
         return mealDao.getMealById(mealId);
     }
 
     @Override
-    public Completable insertPlan(PlanMeal plan) {
-        return planDao.insertPlan(plan) ;
-    }
-
-    @Override
-    public Completable deletePlan(PlanMeal plan) {
-        return planDao.deletePlan(plan);
-    }
-
-    @Override
-    public Flowable<List<PlanMeal>> getPlansByDay(String day) {
-        return planDao.getPlansByDay(day);
+    public Flowable<List<MealEntity>> getPlansByDay(String day) {
+        return mealDao.getPlansByDay(day);
     }
 }

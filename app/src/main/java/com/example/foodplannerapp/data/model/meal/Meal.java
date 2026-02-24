@@ -7,8 +7,10 @@ import com.example.foodplannerapp.data.model.meal_ingeredient.Ingredient;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 
 @Data
 @NoArgsConstructor
@@ -67,40 +69,41 @@ public class Meal implements Parcelable {
     private String strSource;
     private String strTags;
     private String strYoutube;
+    private String mealType;
+    private String dayOfWeek;
+    private boolean isFav;
     private byte[] localImageBytes;
 
 
     public List<Ingredient> getIngredientsList() {
         List<Ingredient> list = new ArrayList<>();
-
-        // Check all 20 potential ingredients
-        addIfValid(list, strIngredient1);
-        addIfValid(list, strIngredient2);
-        addIfValid(list, strIngredient3);
-        addIfValid(list, strIngredient4);
-        addIfValid(list, strIngredient5);
-        addIfValid(list, strIngredient6);
-        addIfValid(list, strIngredient7);
-        addIfValid(list, strIngredient8);
-        addIfValid(list, strIngredient9);
-        addIfValid(list, strIngredient10);
-        addIfValid(list, strIngredient11);
-        addIfValid(list, strIngredient12);
-        addIfValid(list, strIngredient13);
-        addIfValid(list, strIngredient14);
-        addIfValid(list, strIngredient15);
-        addIfValid(list, strIngredient16);
-        addIfValid(list, strIngredient17);
-        addIfValid(list, strIngredient18);
-        addIfValid(list, strIngredient19);
-        addIfValid(list, strIngredient20);
+        addIfValid(list, strIngredient1,strMeasure1);
+        addIfValid(list, strIngredient2,strMeasure2);
+        addIfValid(list, strIngredient3,strMeasure3);
+        addIfValid(list, strIngredient4,strMeasure4);
+        addIfValid(list, strIngredient5,strMeasure5);
+        addIfValid(list, strIngredient6,strMeasure6);
+        addIfValid(list, strIngredient7,strMeasure7);
+        addIfValid(list, strIngredient8,strMeasure8);
+        addIfValid(list, strIngredient9,strMeasure9);
+        addIfValid(list, strIngredient10,strMeasure10);
+        addIfValid(list, strIngredient11,strMeasure11);
+        addIfValid(list, strIngredient12,strMeasure12);
+        addIfValid(list, strIngredient13,strMeasure13);
+        addIfValid(list, strIngredient14,strMeasure14);
+        addIfValid(list, strIngredient15,strMeasure15);
+        addIfValid(list, strIngredient16,strMeasure16);
+        addIfValid(list, strIngredient17,strMeasure17);
+        addIfValid(list, strIngredient18,strMeasure18);
+        addIfValid(list, strIngredient19,strMeasure19);
+        addIfValid(list, strIngredient20,strMeasure20);
 
         return list;
     }
 
-    private void addIfValid(List<Ingredient> list, String ingredientName) {
+    private void addIfValid(List<Ingredient> list, String ingredientName, String measure) {
         if (ingredientName != null && !ingredientName.trim().isEmpty()) {
-            list.add(new Ingredient(ingredientName));
+            list.add(new Ingredient(ingredientName, measure));
         }
     }
 
@@ -224,7 +227,7 @@ public class Meal implements Parcelable {
         return 0;
     }
 
-    public static final Creator<Meal> CREATOR = new Creator<Meal>() {
+    public static final Creator<Meal> CREATOR = new Creator<>() {
         @Override
         public Meal createFromParcel(Parcel in) {
             return new Meal(in);

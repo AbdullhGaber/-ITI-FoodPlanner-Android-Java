@@ -5,23 +5,38 @@ import com.example.foodplannerapp.data.reposetories.auth.login.repository.LoginR
 import com.example.foodplannerapp.data.utils.NetworkResponseCallback;
 import com.example.foodplannerapp.presentation.auth.login.views.LoginView;
 import com.google.firebase.auth.AuthResult;
-
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
-
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class LoginPresenterImpl implements LoginPresenter {
     private final LoginRepository loginRepository;
     private final LoginView loginView;
     private final UserPreferenceDataSource userPrefs;
-
+    private final CompositeDisposable disposables = new CompositeDisposable();
     @Override
     public void guestMode() {
-        userPrefs.setGuestMode(true);
-        loginView.onLoginSuccess();
+        loginView.showProgressbar();
+        disposables.add(
+                Completable.timer(2, TimeUnit.SECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(() -> {
+                            userPrefs.setLoginState(true, "guest123","Guest", "guest_id");
+                            userPrefs.saveGuest(true);
+                            loginView.onLoginSuccess();
+                        }, throwable -> {
+                            loginView.hideProgressbar();
+                            loginView.onLoginFailed("Error", "Something went wrong");
+                        })
+        );
     }
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    @Override
+    public boolean isGuestMode() {
+        return userPrefs.isGuest();
+    }
 
     @Inject
     public LoginPresenterImpl(LoginRepository loginRepository, LoginView loginView, UserPreferenceDataSource userPrefs) {
@@ -32,33 +47,33 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void login(String email, String password) {
+        loginView.showProgressbar();
         loginRepository.login(email, password, new NetworkResponseCallback<>() {
             @Override
-            public void onSuccess(AuthResult result) {
+            public void onSuccess(AuthResult user) {
+                loginView.hideProgressbar();
                 loginView.onLoginSuccess();
-                userPrefs.setLoginState(true, email);
             }
 
             @Override
             public void onFail(String message) {
+                loginView.hideProgressbar();
                 loginView.onLoginFailed("Request Error", message);
             }
 
             @Override
             public void onServerError(String message) {
+                loginView.hideProgressbar();
                 loginView.onLoginFailed("Server Error", message);
             }
         });
     }
 
-
     @Override
     public void loginWithGoogle(String idToken) {
         loginRepository.loginWithGoogle(idToken, new NetworkResponseCallback<>() {
             @Override
-            public void onSuccess(AuthResult result) {
-                String email = result.getUser().getEmail();
-                userPrefs.setLoginState(true, email);
+            public void onSuccess(AuthResult authResult) {
                 loginView.onLoginSuccess();
             }
 

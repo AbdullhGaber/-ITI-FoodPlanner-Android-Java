@@ -2,10 +2,10 @@ package com.example.foodplannerapp.data.reposetories.meals;
 
 import com.example.foodplannerapp.data.datasources.meals.local.MealsLocalDataSource;
 import com.example.foodplannerapp.data.datasources.meals.remote.MealsRemoteDataSource;
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
-import com.example.foodplannerapp.data.db.meals.entities.PlanMeal;
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
+import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal.MealResponse;
-import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_area.AreaListResponse;
 import com.example.foodplannerapp.data.model.meal_category.CategoryResponse;
 import com.example.foodplannerapp.data.utils.MealMapper;
@@ -17,16 +17,22 @@ import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public class MealsRepositoryImpl implements MealsRepository{
-    MealsRemoteDataSource mealsRemoteDataSource;
-    MealsLocalDataSource mealslocalDataSource;
-    private List<Area> cachedAreas;
+    private final MealsRemoteDataSource mealsRemoteDataSource;
+    private final MealsLocalDataSource mealslocalDataSource;
+    private final UserPreferenceDataSource userPref;
     @Inject
-    public MealsRepositoryImpl(MealsRemoteDataSource mealsRemoteDataSource, MealsLocalDataSource mealslocalDataSource) {
+    public MealsRepositoryImpl(
+            MealsRemoteDataSource mealsRemoteDataSource,
+            MealsLocalDataSource mealslocalDataSource,
+            UserPreferenceDataSource userPref
+    ) {
         this.mealsRemoteDataSource = mealsRemoteDataSource;
         this.mealslocalDataSource = mealslocalDataSource;
+        this.userPref = userPref;
     }
 
     @Override
@@ -35,36 +41,43 @@ public class MealsRepositoryImpl implements MealsRepository{
     }
 
     @Override
-    public Single<AreaListResponse> getAllAreas() {
-        if (cachedAreas != null && !cachedAreas.isEmpty()) {
-            return Single.just(new AreaListResponse(cachedAreas));
-        }
+    public Single<List<Meal>> getRandomMealsBatch(int count) {
+        return Observable.range(0, count)
+                .flatMapSingle(i -> mealsRemoteDataSource.getRandomMeal())
+                .map(response -> response.getMeals().get(0))
+                .toList();
+    }
 
-        return mealsRemoteDataSource.getAllAreas()
-                .doOnSuccess(response -> cachedAreas = response.getAreas());
+    @Override
+    public Single<AreaListResponse> getAllAreas() {
+        return mealsRemoteDataSource.getAllAreas();
     }
 
     @Override
     public Single<CategoryResponse> getAllCategories() {
         return mealsRemoteDataSource.getAllMealsCategories();
     }
-
     @Override
-    public Flowable<List<Meal>> getFavMeals() {
-        return mealslocalDataSource.getMeals();
+    public Flowable<List<MealEntity>> getFavMeals() {
+        return mealslocalDataSource.getFavMeals();
     }
 
     @Override
-    public Completable insertMeal(Meal meal) {
-        return mealslocalDataSource.insertMeal(meal);
-    }
-
-    @Override
-    public Completable deleteMeal(Meal meal) {
-        return mealslocalDataSource.deleteMeal(meal);
+    public Completable removeFavoriteMeal(String mealId){
+        return mealslocalDataSource
+                .removeFavoriteMeal(mealId)
+                .andThen(mealsRemoteDataSource.removeBackupFavorite(userPref.getUserId(), mealId)
+                        .onErrorComplete());
     }
     @Override
-    public Single<com.example.foodplannerapp.data.model.meal.Meal> getMealDetails(String mealId) {
+    public Completable removePlanMeal(String mealId){
+        return mealslocalDataSource
+                .removePlanMeal(mealId)
+                .andThen(mealsRemoteDataSource.removeBackupPlan(userPref.getUserId(), mealId)
+                        .onErrorComplete());
+    }
+    @Override
+    public Single<Meal> getMealDetails(String mealId) {
         return mealslocalDataSource.getMealById(mealId)
                 .map(MealMapper::toModel).switchIfEmpty(
                         mealsRemoteDataSource.getMealById(mealId)
@@ -73,7 +86,7 @@ public class MealsRepositoryImpl implements MealsRepository{
     }
 
     @Override
-    public Single<List<com.example.foodplannerapp.data.model.meal.Meal>> searchMeals(String query, SearchType type) {
+    public Single<List<Meal>> searchMeals(String query, SearchType type) {
         Single<MealResponse> responseSingle;
 
         switch (type) {
@@ -102,17 +115,28 @@ public class MealsRepositoryImpl implements MealsRepository{
     }
 
     @Override
-    public Completable insertPlan(PlanMeal plan) {
-        return mealslocalDataSource.insertPlan(plan);
+    public Completable deleteAllMeals() {
+        return mealslocalDataSource.deleteAllMeals();
     }
 
     @Override
-    public Completable deletePlan(PlanMeal plan) {
-        return mealslocalDataSource.deletePlan(plan);
+    public Completable insertPlanMeal(MealEntity meal) {
+        return mealslocalDataSource
+                .insertMeal(meal)
+                .andThen(mealsRemoteDataSource.backupPlan(userPref.getUserId(), meal)
+                        .onErrorComplete());
     }
 
     @Override
-    public Flowable<List<PlanMeal>> getPlansByDay(String day) {
+    public Completable insertFavorite(MealEntity meal) {
+        return mealslocalDataSource
+                .insertMeal(meal)
+                .andThen(mealsRemoteDataSource.backupFavorite(userPref.getUserId(), meal)
+                        .onErrorComplete());
+    }
+
+    @Override
+    public Flowable<List<MealEntity>> getPlansByDay(String day) {
         return mealslocalDataSource.getPlansByDay(day);
     }
 }

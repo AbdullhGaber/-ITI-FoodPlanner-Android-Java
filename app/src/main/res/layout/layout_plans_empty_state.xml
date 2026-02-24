@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/empty_state_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_empty"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/no_plans" />
+
+    <TextView
+    android:id="@+id/tv_empty_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
+    android:fontFamily="sans-serif-black"
+    android:gravity="center"
+    android:textColor="@color/dark_charcoal"
+    android:textSize="22sp"
+    tools:text="No Plans Yet" />
+
+    <TextView
+        android:id="@+id/tv_empty_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textColor="@color/olive_grey"
+        android:textSize="16sp"
+        tools:text="Start exploring and add your plan meals here." />
+
+</LinearLayout>

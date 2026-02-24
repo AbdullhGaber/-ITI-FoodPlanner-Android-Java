@@ -22,4 +22,8 @@
     <string name="default_web_client_id">6066479135-o38acc5o26kpfu2plr566d7kej3a9aa8.apps.googleusercontent.com</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_favorites_yet">No Favorites Yet!</string>
+    <string name="tap_the_heart_icon_on_a_meal_to_save_it_here">Tap the heart icon on a meal to save it here.</string>
+    <string name="no_planned_meals_yet">No Planned Meals Yet!</string>
+    <string name="tap_on_calendar_icon_on_a_meal_to_see_it_here">Tap on calendar icon on a meal to see it here</string>
 </resources>

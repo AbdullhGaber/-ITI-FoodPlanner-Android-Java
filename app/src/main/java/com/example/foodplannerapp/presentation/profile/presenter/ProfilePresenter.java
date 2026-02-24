@@ -7,10 +7,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public interface ProfilePresenter {
-     void backup();
-
-     void restore();
-
      void logout();
      void onDestroy();
 }

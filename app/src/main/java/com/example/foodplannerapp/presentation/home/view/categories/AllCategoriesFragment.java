@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -13,6 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal_category.Category;
+import com.example.foodplannerapp.data.utils.NetworkUtils;
 import com.example.foodplannerapp.databinding.FragmentViewAllBinding;
 import com.example.foodplannerapp.presentation.home.presenter.categories.AllCategoriesPresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
@@ -44,7 +47,16 @@ public class AllCategoriesFragment extends Fragment implements AllCategoriesView
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         initViews();
         setUpRecyclerViewAdapter();
-        presenter.observeAllCategories();
+        fetchDataWithNetworkCheck();
+    }
+
+    private void fetchDataWithNetworkCheck() {
+        if (NetworkUtils.isNetworkAvailable(requireContext())) {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.GONE);
+            presenter.observeAllCategories();
+        } else {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setUpRecyclerViewAdapter() {
@@ -58,10 +70,20 @@ public class AllCategoriesFragment extends Fragment implements AllCategoriesView
 
         adapter = new CategoryAdapter(true);
 
+        adapter.setListener((clickedCategory) -> {
+            String categoryName = clickedCategory.getName();
+
+            AllCategoriesFragmentDirections.ActionAllCategoriesFragmentToSearchFragment action =
+                    AllCategoriesFragmentDirections.actionAllCategoriesFragmentToSearchFragment();
+
+            action.setSearchQuery(categoryName);
+            action.setSearchType("Category");
+
+            Navigation.findNavController(requireView()).navigate(action);
+        });
+
         binding.rvAllItems.setAdapter(adapter);
     }
-
-
 
     private void initViews(){
         binding.tvTitle.setText(R.string.all_categories);
@@ -71,6 +93,15 @@ public class AllCategoriesFragment extends Fragment implements AllCategoriesView
     @Override
     public void showCategories(List<Category> categories) {
         adapter.submitList(categories);
+
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
+                requireContext(),
+                R.anim.layout_animation_jump
+        );
+
+        binding.rvAllItems.setLayoutAnimation(controller);
+
+        binding.rvAllItems.scheduleLayoutAnimation();
     }
     @Override
     public void showError(String msg) {

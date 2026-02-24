@@ -9,20 +9,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.example.foodplannerapp.databinding.FragmentProfileBinding;
-import com.example.foodplannerapp.presentation.activities.MainActivity; // Assuming MainActivity is your login activity
+import com.example.foodplannerapp.presentation.activities.MainActivity;
 import com.example.foodplannerapp.presentation.profile.presenter.ProfilePresenter;
-
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class ProfileFragment extends Fragment implements ProfileView {
-
     @Inject
     ProfilePresenter presenter;
-
     private FragmentProfileBinding binding;
 
     @Nullable
@@ -35,9 +31,6 @@ public class ProfileFragment extends Fragment implements ProfileView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        binding.btnBackup.setOnClickListener(v -> presenter.backup());
-        binding.btnRestore.setOnClickListener(v -> presenter.restore());
         binding.btnLogout.setOnClickListener(v -> presenter.logout());
     }
 

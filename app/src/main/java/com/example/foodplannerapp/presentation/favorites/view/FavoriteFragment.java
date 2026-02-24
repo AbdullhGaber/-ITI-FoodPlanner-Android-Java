@@ -1,25 +1,28 @@
 package com.example.foodplannerapp.presentation.favorites.view;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.foodplannerapp.data.db.meals.entities.Meal;
+import com.example.foodplannerapp.R;
+import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.FragmentFavoriteBinding;
+import com.example.foodplannerapp.presentation.activities.MainActivity;
 import com.example.foodplannerapp.presentation.favorites.presenter.FavoritePresenter;
 import com.example.foodplannerapp.presentation.favorites.view.adapters.FavoriteMealsAdapter;
+import com.example.foodplannerapp.presentation.utils.Dialogs;
+import com.example.foodplannerapp.presentation.utils.Dialogs.WarningStrategy;
 import com.google.android.material.snackbar.Snackbar;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -36,8 +39,28 @@ public class FavoriteFragment extends Fragment implements FavoriteView, Favorite
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupRecyclerView();
-        observeMeals();
+        if (favoritePresenter.isGuest()) {
+            showGuestLockedState();
+        } else {
+            setupRecyclerView();
+            observeMeals();
+        }
+    }
+
+    private void showGuestLockedState() {
+        binding.tvFavoritesTitle.setVisibility(View.GONE);
+        binding.rvFavorites.setVisibility(View.GONE);
+        binding.layoutEmpty.emptyStateContainer.setVisibility(View.GONE);
+
+        binding.layoutGuestLocked.guestLockedContainer.setVisibility(View.VISIBLE);
+
+        binding.layoutGuestLocked.btnGoToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            favoritePresenter.removeUserLoginState();
+            startActivity(intent);
+            requireActivity().finish();
+        });
     }
     private void setupRecyclerView() {
         adapter = new FavoriteMealsAdapter(this);
@@ -49,36 +72,91 @@ public class FavoriteFragment extends Fragment implements FavoriteView, Favorite
     }
 
     @Override
-    public void showFavoriteMeals(List<Meal> meals) {
+    public void showFavoriteMeals(List<MealEntity> meals) {
         if (meals == null || meals.isEmpty()) {
-            binding.layoutEmptyState.setVisibility(View.VISIBLE);
             binding.rvFavorites.setVisibility(View.GONE);
+            binding.layoutEmpty.emptyStateContainer.setVisibility(View.VISIBLE);
+
+            binding.layoutEmpty.tvEmptyTitle.setText(R.string.no_favorites_yet);
+            binding.layoutEmpty.tvEmptySubtitle.setText(R.string.tap_the_heart_icon_on_a_meal_to_save_it_here);
+
         } else {
-            binding.layoutEmptyState.setVisibility(View.GONE);
+            binding.layoutEmpty.emptyStateContainer.setVisibility(View.GONE);
             binding.rvFavorites.setVisibility(View.VISIBLE);
+
             adapter.submitList(meals);
         }
     }
 
     @Override
-    public void showError(String msg) {
-        Snackbar.make(requireView(),msg,Snackbar.ANIMATION_MODE_FADE).show();
+    public void showError(String title, String message) {
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.ErrorStrategy(),
+                title,
+                message,
+                "Ok",
+                "",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
     }
 
     @Override
-    public void showSuccess(String msg) {
-        Snackbar.make(requireView(),msg,Snackbar.ANIMATION_MODE_FADE).show();
+    public void showUndoMealSnackBar(MealEntity deletedMeal) {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal removed from favorites", Snackbar.LENGTH_LONG);
+
+        snackbar.setAction("UNDO", v -> favoritePresenter.insertMeal(deletedMeal));
+
+        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
+        snackbar.show();
     }
 
     @Override
-    public void onMealClick(Meal meal) {
+    public void showRestoredMealSnackBar() {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal Restored to favorites", Snackbar.LENGTH_LONG);
+        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
+        snackbar.show();
+    }
+
+
+    @Override
+    public void onMealClick(MealEntity meal) {
         FavoriteFragmentDirections.ActionFavoriteFragmentToMealDetailsFragment action =
                 FavoriteFragmentDirections.actionFavoriteFragmentToMealDetailsFragment(meal.getIdMeal());
         Navigation.findNavController(binding.getRoot()).navigate(action);
     }
 
     @Override
-    public void onDeleteClick(Meal meal) {
-        favoritePresenter.deleteMeal(meal);
+    public void onDeleteClick(MealEntity meal) {
+        Dialogs.show(
+                requireContext(),
+                new WarningStrategy(),
+                "Remove Favorite?",
+                "Are you sure you want to remove " + meal.getStrMeal() + " from your favorites?",
+                "Yes, Remove",
+                "Cancel",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                        favoritePresenter.deleteMeal(meal);
+                    }
+
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
     }
+
 }

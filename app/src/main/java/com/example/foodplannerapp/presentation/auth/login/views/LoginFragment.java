@@ -1,25 +1,26 @@
 package com.example.foodplannerapp.presentation.auth.login.views;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static com.example.foodplannerapp.presentation.utils.KeyboardUtility.hideKeyboard;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-
-import com.example.foodplannerapp.R; // Ensure this imports YOUR R class
-import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
+import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.databinding.FragmentLoginBinding;
 import com.example.foodplannerapp.presentation.activities.FoodActivity;
 import com.example.foodplannerapp.presentation.auth.login.presenter.LoginPresenter;
+import com.example.foodplannerapp.presentation.utils.Constants;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -27,7 +28,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -36,11 +36,9 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Inject
     LoginPresenter presenter;
-
     FragmentLoginBinding binding;
     private GoogleSignInClient googleSignInClient;
 
-    // FIX 1: Use the modern Activity Result Launcher
     private final ActivityResultLauncher<Intent> googleSignInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -78,12 +76,7 @@ public class LoginFragment extends Fragment implements LoginView {
     }
 
     private void initGoogleSignIn() {
-        // FIX 2: You MUST use the "Web Client ID" from Firebase Console here.
-        // Do NOT use the Android Client ID.
         String webClientId = getString(R.string.default_web_client_id);
-        // Note: Google Services plugin usually generates this string resource automatically.
-        // If R.string.default_web_client_id is red, paste the hardcoded string from Step 1.
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(webClientId)
                 .requestEmail()
@@ -93,12 +86,10 @@ public class LoginFragment extends Fragment implements LoginView {
     }
 
     private void setOnGoogleSignInClick() {
-        // FIX 3: Click listener for the new custom button
         binding.btnGoogleSignin.setOnClickListener(v -> signInWithGoogle());
     }
 
     private void signInWithGoogle() {
-        // Always sign out first to allow account selection
         googleSignInClient.signOut().addOnCompleteListener(task -> {
             Intent signInIntent = googleSignInClient.getSignInIntent();
             googleSignInLauncher.launch(signInIntent);
@@ -109,16 +100,12 @@ public class LoginFragment extends Fragment implements LoginView {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             if (account != null && account.getIdToken() != null) {
-                // Pass the ID Token to presenter -> repository -> firebase
                 presenter.loginWithGoogle(account.getIdToken());
             }
         } catch (ApiException e) {
-            // Common error: 12500 (SHA-1 missing), 10 (Dev config error)
             onLoginFailed("Google Sign-In Failed", "Error Code: " + e.getStatusCode());
         }
     }
-
-    // --- Rest of your existing code remains the same ---
 
     private void setOnRegisterRedirectClick() {
         binding.redirectRegisterClickable.setOnClickListener(
@@ -128,6 +115,7 @@ public class LoginFragment extends Fragment implements LoginView {
     private void setOnLoginButtonClickListener() {
         binding.loginButton.setOnClickListener(
                 (v) -> {
+                    hideKeyboard(requireActivity());
                     String email = binding.loginEmailEt.getText().toString().trim();
                     String password = binding.loginPasswordEt.getText().toString().trim();
 
@@ -164,13 +152,46 @@ public class LoginFragment extends Fragment implements LoginView {
     @Override
     public void onLoginSuccess() {
         Intent intent = new Intent(getActivity(), FoodActivity.class);
+        if(!presenter.isGuestMode()){
+            intent.putExtra(Constants.SP_LOGIN_KEY, true);
+        }
         startActivity(intent);
         requireActivity().finish();
     }
 
     @Override
     public void onLoginFailed(String title, String message) {
-        Dialogs.showAlertDialog(requireContext(), title, message);
+        Dialogs.show(
+                requireContext(),
+                new Dialogs.ErrorStrategy(),
+                "An Error Occurred",
+                message,
+                "Ok",
+                "",
+                new Dialogs.OnDialogActionListener() {
+                    @Override
+                    public void onPositiveClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onNegativeClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }
+        );
+    }
+
+    @Override
+    public void showProgressbar() {
+        binding.progressBarLogin.setVisibility(VISIBLE);
+        binding.loadingOverlayLogin.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hideProgressbar() {
+        binding.progressBarLogin.setVisibility(GONE);
+        binding.loadingOverlayLogin.setVisibility(GONE);
     }
 
     @Override

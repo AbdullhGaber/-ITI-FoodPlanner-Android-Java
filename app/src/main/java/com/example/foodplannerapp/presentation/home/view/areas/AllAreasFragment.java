@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +21,7 @@ import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.databinding.FragmentViewAllBinding;
 import com.example.foodplannerapp.presentation.home.presenter.areas.AllAreasPresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
+import com.example.foodplannerapp.presentation.home.view.categories.AllCategoriesFragmentDirections;
 import com.example.foodplannerapp.presentation.utils.GridSpacingItemDecoration;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -60,12 +63,34 @@ public class AllAreasFragment extends Fragment implements AllAreasView {
         binding.rvAllItems.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacingInPixels, true));
 
         adapter = new AreaAdapter(true);
+
+        adapter.setListener((area) -> {
+            String areaName = area.getAreaName();
+
+            AllAreasFragmentDirections.ActionAllAreasFragmentToSearchFragment action =
+                    AllAreasFragmentDirections.actionAllAreasFragmentToSearchFragment();
+
+            action.setSearchQuery(areaName);
+            action.setSearchType("Area");
+
+            Navigation.findNavController(requireView()).navigate(action);
+        });
         binding.rvAllItems.setAdapter(adapter);
+
     }
 
     @Override
     public void showAreas(List<Area> areas) {
         adapter.submitList(areas);
+
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
+                requireContext(),
+                R.anim.layout_animation_jump
+        );
+
+        binding.rvAllItems.setLayoutAnimation(controller);
+
+        binding.rvAllItems.scheduleLayoutAnimation();
     }
 
     private void initViews(){

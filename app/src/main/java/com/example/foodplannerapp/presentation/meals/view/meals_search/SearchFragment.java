@@ -14,12 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
+import com.example.foodplannerapp.data.utils.NetworkUtils; // Ensure this matches your package
 import com.example.foodplannerapp.databinding.FragmentSearchBinding;
 import com.example.foodplannerapp.presentation.meals.presenter.meals_search.SearchPresenter;
 import com.example.foodplannerapp.presentation.meals.view.adapters.SearchAdapter;
 import com.google.android.material.snackbar.Snackbar;
 
-
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -45,6 +46,46 @@ public class SearchFragment extends Fragment implements SearchView, SearchAdapte
         setupRecyclerView();
         setupSearchInput();
         setupChipGroup();
+
+        binding.btnBack.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
+
+        binding.layoutNoInternet.btnRetryConnection.setOnClickListener(v -> {
+            String currentText = binding.etSearch.getText().toString();
+            performSearch(currentText);
+        });
+
+        if (!NetworkUtils.isNetworkAvailable(requireContext())) {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.VISIBLE);
+        }
+
+        if (getArguments() != null) {
+            SearchFragmentArgs args = SearchFragmentArgs.fromBundle(getArguments());
+            String query = args.getSearchQuery();
+            String type = args.getSearchType();
+
+            if (query != null && type != null) {
+                binding.chipGroupSearchType.clearCheck();
+
+                if (type.equals("Category")) {
+                    binding.chipGroupSearchType.check(R.id.chip_category);
+                    presenter.setSearchType(MealsRepository.SearchType.CATEGORY);
+                } else if (type.equals("Area")) {
+                    binding.chipGroupSearchType.check(R.id.chip_area);
+                    presenter.setSearchType(MealsRepository.SearchType.AREA);
+                }
+
+                binding.etSearch.setText(query);
+            }
+        }
+    }
+
+    private void performSearch(String query) {
+        if (NetworkUtils.isNetworkAvailable(requireContext())) {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.GONE);
+            presenter.search(query);
+        } else {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setupRecyclerView() {
@@ -60,7 +101,7 @@ public class SearchFragment extends Fragment implements SearchView, SearchAdapte
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                presenter.search(s.toString());
+                performSearch(s.toString());
             }
 
             @Override
@@ -69,34 +110,25 @@ public class SearchFragment extends Fragment implements SearchView, SearchAdapte
     }
 
     private void setupChipGroup() {
-        binding.chipGroupSearchType.check(R.id.chip_name);
-        
-        binding.chipGroupSearchType.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.chip_name) {
-                presenter.setSearchType(MealsRepository.SearchType.NAME);
-            } else if (checkedId == R.id.chip_ingredient) {
-                presenter.setSearchType(MealsRepository.SearchType.INGREDIENT);
-            } else if (checkedId == R.id.chip_area) {
-                presenter.setSearchType(MealsRepository.SearchType.AREA);
-            } else if (checkedId == R.id.chip_category) {
-                presenter.setSearchType(MealsRepository.SearchType.CATEGORY);
-            }
+        binding.chipGroupSearchType.setOnCheckedStateChangeListener((group, checkedIds) -> {
+
+            boolean isName = checkedIds.contains(R.id.chip_name);
+            boolean isCategory = checkedIds.contains(R.id.chip_category);
+            boolean isArea = checkedIds.contains(R.id.chip_area);
+            boolean isIngredient = checkedIds.contains(R.id.chip_ingredient);
+
+            presenter.updateActiveFilters(isName, isCategory, isArea, isIngredient);
 
             String currentText = binding.etSearch.getText().toString();
             if (!currentText.isEmpty()) {
-                presenter.search(currentText);
+                performSearch(currentText);
             }
         });
     }
 
     @Override
-    public void showSearchResults(List<Meal> meals) {
-        adapter.submitList(meals);
-    }
-
-    @Override
     public void showError(String message) {
-        Snackbar.make(requireView(),message,Snackbar.ANIMATION_MODE_FADE).show();
+        Snackbar.make(requireView(), message, Snackbar.ANIMATION_MODE_FADE).show();
     }
 
     @Override
@@ -104,6 +136,30 @@ public class SearchFragment extends Fragment implements SearchView, SearchAdapte
         SearchFragmentDirections.ActionSearchFragmentToMealDetailsFragment action =
                 SearchFragmentDirections.actionSearchFragmentToMealDetailsFragment(meal.getIdMeal());
         Navigation.findNavController(binding.getRoot()).navigate(action);
+    }
+
+    @Override
+    public void showSearchResults(List<Meal> meals) {
+        binding.rvSearchResults.setVisibility(View.VISIBLE);
+        binding.layoutSearchInitial.setVisibility(View.GONE);
+        binding.layoutNotFound.setVisibility(View.GONE);
+        adapter.submitList(meals);
+    }
+
+    @Override
+    public void showInitialState() {
+        binding.rvSearchResults.setVisibility(View.GONE);
+        binding.layoutNotFound.setVisibility(View.GONE);
+        binding.layoutSearchInitial.setVisibility(View.VISIBLE);
+        adapter.submitList(new ArrayList<>());
+    }
+
+    @Override
+    public void showNotFoundState() {
+        binding.rvSearchResults.setVisibility(View.GONE);
+        binding.layoutSearchInitial.setVisibility(View.GONE);
+        binding.layoutNotFound.setVisibility(View.VISIBLE);
+        adapter.submitList(new ArrayList<>());
     }
 
     @Override

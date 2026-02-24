@@ -19,5 +19,20 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
+    <style name="RoundedImage" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="CustomMaterialCalendar" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="colorSurface">@color/creamy</item>
+
+        <item name="colorPrimary">@color/orange</item>
+
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorOnSurface">@color/dark_charcoal</item>
+    </style>
+
     <style name="Theme.FoodPlannerApp" parent="Base.Theme.FoodPlannerApp" />
 </resources>

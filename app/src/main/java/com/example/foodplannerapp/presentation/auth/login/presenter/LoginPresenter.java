@@ -5,6 +5,7 @@ import android.content.Context;
 public interface LoginPresenter {
     void login(String email, String password);
     void guestMode();
+    boolean isGuestMode();
     void loginWithGoogle(String idToken);
     void onDestroy();
 }

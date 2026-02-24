@@ -91,6 +91,7 @@ dependencies {
     implementation(libs.hilt.android)
     annotationProcessor(libs.hilt.compiler)
     implementation(libs.google.firebase.firestore)
+    implementation(libs.lottie.v630)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

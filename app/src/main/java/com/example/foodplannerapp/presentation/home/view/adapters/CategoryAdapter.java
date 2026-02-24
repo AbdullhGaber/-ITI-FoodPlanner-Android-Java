@@ -3,6 +3,7 @@ package com.example.foodplannerapp.presentation.home.view.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,8 +18,15 @@ import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
 
 import java.util.List;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+import lombok.Setter;
 
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+    public interface OnClickListener{
+        void onClick(Category category);
+    }
+
+    @Setter
+    private OnClickListener listener;
     private final DiffUtil.ItemCallback<Category> diffCallback = new DiffUtil.ItemCallback<>() {
         @Override
         public boolean areItemsTheSame(@NonNull Category oldItem, @NonNull Category newItem) {
@@ -71,12 +79,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         differ.submitList(list);
     }
 
-    public static class CategoryViewHolder extends RecyclerView.ViewHolder {
+    public class CategoryViewHolder extends RecyclerView.ViewHolder {
         ImageView imgCategory;
         TextView tvCategoryName;
         Context context;
 
-        public CategoryViewHolder(@NonNull android.view.View itemView, ImageView imgCategory, TextView tvCategoryName, Context context) {
+        public CategoryViewHolder(@NonNull View itemView, ImageView imgCategory, TextView tvCategoryName, Context context) {
             super(itemView);
             this.imgCategory = imgCategory;
             this.tvCategoryName = tvCategoryName;
@@ -86,6 +94,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         public void bind(Category category) {
             tvCategoryName.setText(category.getName());
             ShimmerUtil.addShimmerToImage(context, category.getImage(), imgCategory);
+            itemView.setOnClickListener(
+                    (v) -> {
+                        if(listener != null) listener.onClick(category);
+                    }
+            );
         }
     }
 }
