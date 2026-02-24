@@ -26,7 +26,7 @@ public class FavoritePresenterImpl implements FavoritePresenter{
     @Override
     public void removeUserLoginState() {
         userPrefs.saveGuest(false);
-        userPrefs.setLoginState(false, "", "");
+        userPrefs.setLoginState(false, "", "", "");
     }
 
     @Override
@@ -61,7 +61,7 @@ public class FavoritePresenterImpl implements FavoritePresenter{
 
     @Override
     public void insertMeal(MealEntity meal) {
-        Disposable d = mealsRepository.insertMeal(meal)
+        Disposable d = mealsRepository.insertFavorite(meal)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

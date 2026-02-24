@@ -21,4 +21,9 @@ public interface HomeView {
     void showRandomMealShimmer();
     void hideRandomMealShimmer();
     void navigateToMealDetailsFragment();
+    void navigateToMealDetailsWithId(String mealId);
+    void moveToNextCarouselItem();
+    void showCarouselMeals(List<Meal> meals);
+    void showCarouselShimmer();
+    void hideCarouselShimmer();
 }

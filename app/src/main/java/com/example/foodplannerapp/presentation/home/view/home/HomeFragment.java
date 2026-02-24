@@ -8,11 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.foodplannerapp.R;
-import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_category.Category;
@@ -20,17 +20,14 @@ import com.example.foodplannerapp.databinding.FragmentHomeBinding;
 import com.example.foodplannerapp.presentation.home.presenter.home.HomePresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
 import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
+import com.example.foodplannerapp.presentation.home.view.adapters.MealCarouselAdapter;
 import com.example.foodplannerapp.presentation.utils.Constants;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
 import com.example.foodplannerapp.presentation.utils.Dialogs.ErrorStrategy;
 import com.example.foodplannerapp.presentation.utils.Dialogs.SuccessStrategy;
 import com.example.foodplannerapp.presentation.utils.ShimmerUtil;
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -41,6 +38,13 @@ public class HomeFragment extends Fragment implements HomeView{
     AreaAdapter areaAdapter;
     CategoryAdapter categoryAdapter;
     Meal currentMeal;
+    private MealCarouselAdapter carouselAdapter;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        checkAndShowAuthSuccessDialog();
+    }
 
     @Nullable
     @Override
@@ -52,7 +56,6 @@ public class HomeFragment extends Fragment implements HomeView{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        checkAndShowAuthSuccessDialog();
         initViews();
         binding.mealDayContainer.setOnClickListener(
                 (v) ->{
@@ -127,16 +130,19 @@ public class HomeFragment extends Fragment implements HomeView{
         Navigation.findNavController(requireView()).navigate(action);
     }
 
+
+
     private void observeData() {
-        if(homePresenter.isGuest())
-        {
+        if(homePresenter.isGuest()) {
             hideAreaShimmer();
-        }else{
+        } else {
             homePresenter.observeAllAreas();
         }
 
         homePresenter.observeAllCategories();
         homePresenter.observeRandomMeal();
+
+        homePresenter.observeCarouselMeals();
     }
 
     private void setUpRvAdapters() {
@@ -146,6 +152,63 @@ public class HomeFragment extends Fragment implements HomeView{
             binding.recyclerAreas.setAdapter(areaAdapter);
 
         binding.recyclerCategories.setAdapter(categoryAdapter);
+
+        carouselAdapter = new MealCarouselAdapter();
+        binding.vpMealsCarousel.setAdapter(carouselAdapter);
+        carouselAdapter.setListener(
+                (meal) -> {
+                    homePresenter.onCarouselMealClick(meal);
+                }
+        );
+
+        binding.vpMealsCarousel.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                    homePresenter.stopAutoScroll();
+                } else if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    homePresenter.startAutoScroll();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void navigateToMealDetailsWithId(String mealId) {
+        HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
+                HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(mealId);
+        Navigation.findNavController(requireView()).navigate(action);
+    }
+
+    @Override
+    public void showCarouselMeals(List<Meal> meals) {
+        carouselAdapter.submitList(meals);
+    }
+
+    @Override
+    public void showCarouselShimmer() {
+        binding.carouselShimmer.showShimmer(true);
+        binding.carouselShimmer.setVisibility(View.VISIBLE);
+        binding.vpMealsCarousel.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideCarouselShimmer() {
+        binding.carouselShimmer.showShimmer(false);
+        binding.carouselShimmer.setVisibility(View.GONE);
+        binding.vpMealsCarousel.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void moveToNextCarouselItem() {
+        if (carouselAdapter.getItemCount() > 0) {
+            int nextItem = binding.vpMealsCarousel.getCurrentItem() + 1;
+            if (nextItem >= carouselAdapter.getItemCount()) {
+                nextItem = 0;
+            }
+            binding.vpMealsCarousel.setCurrentItem(nextItem, true);
+        }
     }
 
     private void initViews() {

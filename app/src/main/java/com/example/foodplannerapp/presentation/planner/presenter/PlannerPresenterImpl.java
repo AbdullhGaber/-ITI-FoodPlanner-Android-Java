@@ -26,7 +26,7 @@ public class PlannerPresenterImpl implements PlannerPresenter {
     @Override
     public void removeUserLoginState() {
         userPrefs.saveGuest(false);
-        userPrefs.setLoginState(false, "", "");
+        userPrefs.setLoginState(false, "", "", "");
     }
 
     @Override
@@ -67,7 +67,7 @@ public class PlannerPresenterImpl implements PlannerPresenter {
 
     @Override
     public void insertPlan(MealEntity meal) {
-        Disposable d = repository.insertMeal(meal)
+        Disposable d = repository.insertPlanMeal(meal)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

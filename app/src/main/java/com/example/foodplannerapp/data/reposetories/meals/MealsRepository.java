@@ -13,19 +13,21 @@ import io.reactivex.rxjava3.core.Single;
 
 public interface MealsRepository {
     Single<MealResponse> getRandomMeal();
+    Single<List<Meal>> getRandomMealsBatch(int count);
     Single<AreaListResponse> getAllAreas();
     Single<CategoryResponse> getAllCategories();
     Flowable<List<MealEntity>> getFavMeals();
-    Completable insertMeal(MealEntity meal);
-    Completable deleteMeal(MealEntity mealEntity);
 
     Single<Meal> getMealDetails(String mealId);
     Single<List<Meal>> searchMeals(String query, SearchType type);
     enum SearchType {
         NAME, INGREDIENT, AREA, CATEGORY
     }
-    Completable insertPlan(MealEntity meal);
+    Completable deleteAllMeals();
+    Completable insertPlanMeal(MealEntity meal);
+    Completable insertFavorite(MealEntity meal);
     Completable removeFavoriteMeal(String mealId);
     Completable removePlanMeal(String mealId);
     Flowable<List<MealEntity>> getPlansByDay(String day);
+
 }

@@ -3,8 +3,13 @@ package com.example.foodplannerapp.data.db.meals.entities;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import com.google.firebase.firestore.Exclude;
+
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity(tableName = "meals_table")
 @Data
@@ -65,5 +70,16 @@ public class MealEntity {
     private String dayOfWeek;
     private String mealType;
     private boolean isFav;
+    @Exclude
     private byte[] localImageBytes;
+
+    @Exclude
+    public byte[] getLocalImageBytes() {
+        return localImageBytes;
+    }
+
+    @Exclude
+    public void setLocalImageBytes(byte[] localImageBytes) {
+        this.localImageBytes = localImageBytes;
+    }
 }

@@ -143,7 +143,57 @@
                 </androidx.cardview.widget.CardView>
 
             </FrameLayout>
+            <TextView
+                android:id="@+id/tv_products_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Featured Meals"
+                android:textColor="@color/dark_charcoal"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/meal_day_container" />
 
+            <FrameLayout
+                android:id="@+id/carousel_container"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_products_title"
+                tools:visibility="visible">
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/carouselShimmer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingHorizontal="40dp"
+                    app:shimmer_auto_start="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <include
+                            layout="@layout/item_meal_carousel_placeholder"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </LinearLayout>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/vp_meals_carousel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingHorizontal="16dp"
+                    android:visibility="invisible" />
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/tv_ingredients_title"
@@ -156,7 +206,7 @@
                 android:textColor="@color/dark_charcoal"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/meal_day_container" />
+                app:layout_constraintTop_toBottomOf="@id/carousel_container" />
 
             <TextView
                 android:id="@+id/tv_see_all_countries"

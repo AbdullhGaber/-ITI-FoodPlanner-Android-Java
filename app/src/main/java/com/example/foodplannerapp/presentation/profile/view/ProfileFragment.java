@@ -31,9 +31,6 @@ public class ProfileFragment extends Fragment implements ProfileView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        binding.btnBackup.setOnClickListener(v -> presenter.backup());
-        binding.btnRestore.setOnClickListener(v -> presenter.restore());
         binding.btnLogout.setOnClickListener(v -> presenter.logout());
     }
 
