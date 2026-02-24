@@ -48,4 +48,10 @@
         tools:layout_editor_absoluteX="16dp"
         tools:listitem="@layout/item_meal_fav" />
 
+    <include
+        android:id="@+id/layout_guest_locked"
+        layout="@layout/layout_guest_locked_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

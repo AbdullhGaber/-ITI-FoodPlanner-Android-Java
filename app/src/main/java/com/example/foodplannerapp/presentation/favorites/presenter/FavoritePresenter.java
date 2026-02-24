@@ -4,6 +4,8 @@ import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 
 public interface FavoritePresenter {
     void getFavMeals();
+    void removeUserLoginState();
+    boolean isGuest();
     void onDestroy();
     void deleteMeal(MealEntity meal);
     void insertMeal(MealEntity meal);

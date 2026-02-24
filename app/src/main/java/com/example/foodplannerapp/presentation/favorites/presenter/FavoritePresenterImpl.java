@@ -1,5 +1,6 @@
 package com.example.foodplannerapp.presentation.favorites.presenter;
 
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.presentation.favorites.view.FavoriteView;
@@ -14,9 +15,18 @@ public class FavoritePresenterImpl implements FavoritePresenter{
     private final FavoriteView view;
 
     @Inject
+    UserPreferenceDataSource userPrefs;
+
+    @Inject
     public FavoritePresenterImpl(MealsRepository mealsRepository, FavoriteView view) {
         this.mealsRepository = mealsRepository;
         this.view = view;
+    }
+
+    @Override
+    public void removeUserLoginState() {
+        userPrefs.saveGuest(false);
+        userPrefs.setLoginState(false, "", "");
     }
 
     @Override
@@ -31,6 +41,10 @@ public class FavoritePresenterImpl implements FavoritePresenter{
         compositeDisposable.add(d);
     }
 
+    @Override
+    public boolean isGuest() {
+        return userPrefs.isGuest();
+    }
 
     @Override
     public void deleteMeal(MealEntity meal) {

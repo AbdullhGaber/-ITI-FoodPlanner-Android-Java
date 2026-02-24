@@ -1,5 +1,6 @@
 package com.example.foodplannerapp.presentation.planner.presenter;
 
+import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
 import com.example.foodplannerapp.presentation.planner.view.PlannerView;
@@ -13,11 +14,24 @@ public class PlannerPresenterImpl implements PlannerPresenter {
     private final PlannerView view;
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable currentDayDisposable;
+    @Inject
+    UserPreferenceDataSource userPrefs;
 
     @Inject
     public PlannerPresenterImpl(MealsRepository repository, PlannerView view) {
         this.repository = repository;
         this.view = view;
+    }
+
+    @Override
+    public void removeUserLoginState() {
+        userPrefs.saveGuest(false);
+        userPrefs.setLoginState(false, "", "");
+    }
+
+    @Override
+    public boolean isGuest() {
+        return userPrefs.isGuest();
     }
 
     @Override

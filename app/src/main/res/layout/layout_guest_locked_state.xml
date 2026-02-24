@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/guest_locked_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/creamy"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_lock"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_locked_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/lock"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_locked_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Feature Locked"
+        android:textColor="@color/dark_charcoal"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/tv_locked_subtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lottie_lock"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_locked_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="Sign up or Log in to access this feature."
+        android:textColor="@color/olive_grey"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/btn_go_to_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_locked_title"
+        tools:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_go_to_login"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/orange"
+        android:text="Login"
+        android:fontFamily="@font/poppins_extra_bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tv_locked_subtitle"
+        app:layout_constraintStart_toStartOf="@+id/tv_locked_subtitle"
+        app:layout_constraintTop_toBottomOf="@id/tv_locked_subtitle"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

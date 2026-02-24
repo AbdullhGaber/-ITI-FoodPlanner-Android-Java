@@ -1,6 +1,7 @@
 package com.example.foodplannerapp.presentation.favorites.view;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.FragmentFavoriteBinding;
+import com.example.foodplannerapp.presentation.activities.MainActivity;
 import com.example.foodplannerapp.presentation.favorites.presenter.FavoritePresenter;
 import com.example.foodplannerapp.presentation.favorites.view.adapters.FavoriteMealsAdapter;
 import com.example.foodplannerapp.presentation.utils.Dialogs;
@@ -37,8 +39,28 @@ public class FavoriteFragment extends Fragment implements FavoriteView, Favorite
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupRecyclerView();
-        observeMeals();
+        if (favoritePresenter.isGuest()) {
+            showGuestLockedState();
+        } else {
+            setupRecyclerView();
+            observeMeals();
+        }
+    }
+
+    private void showGuestLockedState() {
+        binding.tvFavoritesTitle.setVisibility(View.GONE);
+        binding.rvFavorites.setVisibility(View.GONE);
+        binding.layoutEmpty.emptyStateContainer.setVisibility(View.GONE);
+
+        binding.layoutGuestLocked.guestLockedContainer.setVisibility(View.VISIBLE);
+
+        binding.layoutGuestLocked.btnGoToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            favoritePresenter.removeUserLoginState();
+            startActivity(intent);
+            requireActivity().finish();
+        });
     }
     private void setupRecyclerView() {
         adapter = new FavoriteMealsAdapter(this);
@@ -92,9 +114,7 @@ public class FavoriteFragment extends Fragment implements FavoriteView, Favorite
     public void showUndoMealSnackBar(MealEntity deletedMeal) {
         Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal removed from favorites", Snackbar.LENGTH_LONG);
 
-        snackbar.setAction("UNDO", v -> {
-            favoritePresenter.insertMeal(deletedMeal);
-        });
+        snackbar.setAction("UNDO", v -> favoritePresenter.insertMeal(deletedMeal));
 
         snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
         snackbar.show();

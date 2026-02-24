@@ -1,11 +1,11 @@
 package com.example.foodplannerapp.presentation.planner.view;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.databinding.FragmentPlannerBinding;
+import com.example.foodplannerapp.presentation.activities.MainActivity;
 import com.example.foodplannerapp.presentation.planner.view.adapters.CalendarAdapter;
 import com.example.foodplannerapp.presentation.model.CalendarDateModel;
 import com.example.foodplannerapp.presentation.planner.presenter.PlannerPresenter;
@@ -49,8 +50,30 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupRecyclerView();
-        setupCalendarRecyclerView();
+
+        if (presenter.isGuest()) {
+            showGuestLockedState();
+        } else {
+            setupRecyclerView();
+            setupCalendarRecyclerView();
+        }
+    }
+
+    private void showGuestLockedState() {
+        binding.tvPlannerTitle.setVisibility(View.GONE);
+        binding.rvCalendar.setVisibility(View.GONE);
+        binding.rvPlanner.setVisibility(View.GONE);
+        binding.layoutEmpty.emptyStateContainer.setVisibility(View.GONE);
+
+        binding.layoutGuestLocked.guestLockedContainer.setVisibility(View.VISIBLE);
+
+        binding.layoutGuestLocked.btnGoToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            presenter.removeUserLoginState();
+            startActivity(intent);
+            requireActivity().finish();
+        });
     }
 
     private void setupRecyclerView() {
@@ -170,9 +193,7 @@ public class PlannerFragment extends Fragment implements PlannerView, PlannerAda
      public void showUndoPlanSnackBar(MealEntity deletedPlan) {
         Snackbar snackbar = Snackbar.make(binding.getRoot(), "Meal removed from plan", Snackbar.LENGTH_LONG);
 
-        snackbar.setAction("UNDO", v -> {
-            presenter.insertPlan(deletedPlan);
-        });
+        snackbar.setAction("UNDO", v -> presenter.insertPlan(deletedPlan));
 
         snackbar.setActionTextColor(ContextCompat.getColor(requireContext(),R.color.green_header));
         snackbar.show();
