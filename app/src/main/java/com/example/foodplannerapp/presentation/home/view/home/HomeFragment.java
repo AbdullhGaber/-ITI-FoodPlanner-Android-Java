@@ -16,6 +16,7 @@ import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_category.Category;
+import com.example.foodplannerapp.data.utils.NetworkUtils;
 import com.example.foodplannerapp.databinding.FragmentHomeBinding;
 import com.example.foodplannerapp.presentation.home.presenter.home.HomePresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.AreaAdapter;
@@ -65,7 +66,30 @@ public class HomeFragment extends Fragment implements HomeView{
                 }
         );
         setUpRvAdapters();
-        observeData();
+
+        binding.layoutNoInternet.btnRetryConnection.setOnClickListener(v -> {
+            fetchDataWithNetworkCheck();
+        });
+
+        fetchDataWithNetworkCheck();
+    }
+
+    private void fetchDataWithNetworkCheck() {
+        if (NetworkUtils.isNetworkAvailable(requireContext())) {
+            showMainContent();
+            observeData();
+        } else {
+            showNoInternetState();
+        }
+    }
+    private void showMainContent() {
+        binding.mainContent.setVisibility(View.VISIBLE);
+        binding.layoutNoInternet.noInternetContainer.setVisibility(View.GONE);
+    }
+    private void showNoInternetState() {
+        binding.mainContent.setVisibility(View.GONE);
+
+        binding.layoutNoInternet.noInternetContainer.setVisibility(View.VISIBLE);
     }
 
     private void checkAndShowAuthSuccessDialog() {

@@ -14,11 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.reposetories.meals.MealsRepository;
+import com.example.foodplannerapp.data.utils.NetworkUtils; // Ensure this matches your package
 import com.example.foodplannerapp.databinding.FragmentSearchBinding;
 import com.example.foodplannerapp.presentation.meals.presenter.meals_search.SearchPresenter;
 import com.example.foodplannerapp.presentation.meals.view.adapters.SearchAdapter;
 import com.google.android.material.snackbar.Snackbar;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,15 @@ public class SearchFragment extends Fragment implements SearchView, SearchAdapte
 
         binding.btnBack.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
 
-        // Check for incoming arguments from Categories or Areas screens
+        binding.layoutNoInternet.btnRetryConnection.setOnClickListener(v -> {
+            String currentText = binding.etSearch.getText().toString();
+            performSearch(currentText);
+        });
+
+        if (!NetworkUtils.isNetworkAvailable(requireContext())) {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.VISIBLE);
+        }
+
         if (getArguments() != null) {
             SearchFragmentArgs args = SearchFragmentArgs.fromBundle(getArguments());
             String query = args.getSearchQuery();
@@ -71,6 +79,15 @@ public class SearchFragment extends Fragment implements SearchView, SearchAdapte
         }
     }
 
+    private void performSearch(String query) {
+        if (NetworkUtils.isNetworkAvailable(requireContext())) {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.GONE);
+            presenter.search(query);
+        } else {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void setupRecyclerView() {
         adapter = new SearchAdapter(this);
         binding.rvSearchResults.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -84,7 +101,7 @@ public class SearchFragment extends Fragment implements SearchView, SearchAdapte
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                presenter.search(s.toString());
+                performSearch(s.toString());
             }
 
             @Override
@@ -104,16 +121,15 @@ public class SearchFragment extends Fragment implements SearchView, SearchAdapte
 
             String currentText = binding.etSearch.getText().toString();
             if (!currentText.isEmpty()) {
-                presenter.search(currentText);
+                performSearch(currentText);
             }
         });
     }
 
     @Override
     public void showError(String message) {
-        Snackbar.make(requireView(),message,Snackbar.ANIMATION_MODE_FADE).show();
+        Snackbar.make(requireView(), message, Snackbar.ANIMATION_MODE_FADE).show();
     }
-
 
     @Override
     public void onMealClick(Meal meal) {

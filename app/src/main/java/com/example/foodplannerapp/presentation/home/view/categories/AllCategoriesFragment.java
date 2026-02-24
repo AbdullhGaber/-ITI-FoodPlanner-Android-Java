@@ -15,6 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import com.example.foodplannerapp.R;
 import com.example.foodplannerapp.data.model.meal_category.Category;
+import com.example.foodplannerapp.data.utils.NetworkUtils;
 import com.example.foodplannerapp.databinding.FragmentViewAllBinding;
 import com.example.foodplannerapp.presentation.home.presenter.categories.AllCategoriesPresenter;
 import com.example.foodplannerapp.presentation.home.view.adapters.CategoryAdapter;
@@ -46,7 +47,16 @@ public class AllCategoriesFragment extends Fragment implements AllCategoriesView
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         initViews();
         setUpRecyclerViewAdapter();
-        presenter.observeAllCategories();
+        fetchDataWithNetworkCheck();
+    }
+
+    private void fetchDataWithNetworkCheck() {
+        if (NetworkUtils.isNetworkAvailable(requireContext())) {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.GONE);
+            presenter.observeAllCategories();
+        } else {
+            binding.layoutNoInternet.noInternetContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setUpRecyclerViewAdapter() {

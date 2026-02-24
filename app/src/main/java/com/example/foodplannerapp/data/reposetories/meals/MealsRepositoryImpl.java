@@ -6,7 +6,6 @@ import com.example.foodplannerapp.data.datasources.user.UserPreferenceDataSource
 import com.example.foodplannerapp.data.db.meals.entities.MealEntity;
 import com.example.foodplannerapp.data.model.meal.Meal;
 import com.example.foodplannerapp.data.model.meal.MealResponse;
-import com.example.foodplannerapp.data.model.meal_area.Area;
 import com.example.foodplannerapp.data.model.meal_area.AreaListResponse;
 import com.example.foodplannerapp.data.model.meal_category.CategoryResponse;
 import com.example.foodplannerapp.data.utils.MealMapper;
@@ -25,8 +24,6 @@ public class MealsRepositoryImpl implements MealsRepository{
     private final MealsRemoteDataSource mealsRemoteDataSource;
     private final MealsLocalDataSource mealslocalDataSource;
     private final UserPreferenceDataSource userPref;
-
-    private List<Area> cachedAreas;
     @Inject
     public MealsRepositoryImpl(
             MealsRemoteDataSource mealsRemoteDataSource,
@@ -53,12 +50,7 @@ public class MealsRepositoryImpl implements MealsRepository{
 
     @Override
     public Single<AreaListResponse> getAllAreas() {
-        if (cachedAreas != null && !cachedAreas.isEmpty()) {
-            return Single.just(new AreaListResponse(cachedAreas));
-        }
-
-        return mealsRemoteDataSource.getAllAreas()
-                .doOnSuccess(response -> cachedAreas = response.getAreas());
+        return mealsRemoteDataSource.getAllAreas();
     }
 
     @Override
@@ -75,14 +67,14 @@ public class MealsRepositoryImpl implements MealsRepository{
         return mealslocalDataSource
                 .removeFavoriteMeal(mealId)
                 .andThen(mealsRemoteDataSource.removeBackupFavorite(userPref.getUserId(), mealId)
-                .onErrorComplete());
+                        .onErrorComplete());
     }
     @Override
     public Completable removePlanMeal(String mealId){
         return mealslocalDataSource
                 .removePlanMeal(mealId)
                 .andThen(mealsRemoteDataSource.removeBackupPlan(userPref.getUserId(), mealId)
-                .onErrorComplete());
+                        .onErrorComplete());
     }
     @Override
     public Single<Meal> getMealDetails(String mealId) {
@@ -132,7 +124,7 @@ public class MealsRepositoryImpl implements MealsRepository{
         return mealslocalDataSource
                 .insertMeal(meal)
                 .andThen(mealsRemoteDataSource.backupPlan(userPref.getUserId(), meal)
-                .onErrorComplete());
+                        .onErrorComplete());
     }
 
     @Override
@@ -140,7 +132,7 @@ public class MealsRepositoryImpl implements MealsRepository{
         return mealslocalDataSource
                 .insertMeal(meal)
                 .andThen(mealsRemoteDataSource.backupFavorite(userPref.getUserId(), meal)
-                .onErrorComplete());
+                        .onErrorComplete());
     }
 
     @Override
