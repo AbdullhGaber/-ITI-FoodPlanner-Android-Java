@@ -7,6 +7,8 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public interface ProfilePresenter {
+     void observeMealCounts();
+     void observeUserData();
      void logout();
      void onDestroy();
 }

@@ -7,6 +7,8 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
 
 public interface MealsLocalDataSource {
+    Flowable<Integer> getFavoritesCount();
+    Flowable<Integer> getPlansCount();
     Flowable<List<MealEntity>> getFavMeals();
     Completable insertMeals(List<MealEntity> meals);
     Completable deleteAllMeals();

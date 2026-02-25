@@ -9,6 +9,7 @@
     <style name="Base.Theme.FoodPlannerApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorSecondaryContainer">@color/creamy100</item>
     </style>
 
     <style name="ShapeAppearance.AreaFlag" parent="ShapeAppearance.MaterialComponents.MediumComponent">

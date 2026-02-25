@@ -36,6 +36,16 @@ public class MealsRepositoryImpl implements MealsRepository{
     }
 
     @Override
+    public Flowable<Integer> getFavoritesCount() {
+        return mealslocalDataSource.getFavoritesCount();
+    }
+
+    @Override
+    public Flowable<Integer> getPlansCount() {
+        return mealslocalDataSource.getPlansCount();
+    }
+
+    @Override
     public Single<MealResponse> getRandomMeal() {
         return mealsRemoteDataSource.getRandomMeal();
     }
