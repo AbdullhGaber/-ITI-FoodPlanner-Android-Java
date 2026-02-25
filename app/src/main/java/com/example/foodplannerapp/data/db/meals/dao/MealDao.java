@@ -17,6 +17,11 @@ import io.reactivex.rxjava3.core.Maybe;
 
 @Dao
 public abstract class MealDao {
+    @Query("SELECT COUNT(*) FROM meals_table WHERE isFav = 1")
+    public abstract Flowable<Integer> getFavoritesCount();
+
+    @Query("SELECT COUNT(*) FROM meals_table WHERE dayOfWeek IS NOT NULL AND dayOfWeek != ''")
+    public abstract Flowable<Integer> getPlansCount();
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract Completable insertMeals(List<MealEntity> meals);
 

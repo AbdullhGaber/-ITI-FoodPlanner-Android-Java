@@ -16,6 +16,16 @@ public class MealsLocalDataSourceImpl implements MealsLocalDataSource {
     }
 
     @Override
+    public Flowable<Integer> getFavoritesCount() {
+        return mealDao.getFavoritesCount();
+    }
+
+    @Override
+    public Flowable<Integer> getPlansCount() {
+        return mealDao.getPlansCount();
+    }
+
+    @Override
     public Flowable<List<MealEntity>> getFavMeals(){return mealDao.getAllFavMeals();}
 
     @Override

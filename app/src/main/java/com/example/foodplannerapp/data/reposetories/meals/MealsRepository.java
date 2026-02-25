@@ -12,6 +12,8 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 
 public interface MealsRepository {
+    Flowable<Integer> getFavoritesCount();
+    Flowable<Integer> getPlansCount();
     Single<MealResponse> getRandomMeal();
     Single<List<Meal>> getRandomMealsBatch(int count);
     Single<AreaListResponse> getAllAreas();

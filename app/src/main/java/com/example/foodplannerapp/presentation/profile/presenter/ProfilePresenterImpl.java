@@ -22,6 +22,31 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         this.repository = repository;
         this.view = view;
     }
+    @Override
+    public void observeMealCounts() {
+        Disposable favDisposable = repository.getFavoritesCount()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        view::showFavoritesCount,
+                        error -> view.showError(error.getMessage())
+                );
+
+        Disposable planDisposable = repository.getPlansCount()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        view::showPlansCount,
+                        error -> view.showError(error.getMessage())
+                );
+
+        compositeDisposable.addAll(favDisposable, planDisposable);
+    }
+
+    @Override
+    public void observeUserData() {
+        view.displayUserData(userPrefs.getUsername(),userPrefs.getUserEmail());
+    }
 
     @Override
     public void onDestroy() {
